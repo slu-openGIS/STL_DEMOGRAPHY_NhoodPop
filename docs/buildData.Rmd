@@ -1,0 +1,159 @@
+---
+title: "Build Population Estimate Data"
+author: "Christopher Prener, Ph.D."
+date: '(`r format(Sys.time(), "%B %d, %Y")`)'
+output: 
+  github_document: default
+  html_notebook: default 
+---
+
+## Introduction
+This notebook creates the requested population estimates.
+
+## Dependencies
+This notebook requires a number of different `R` packages:
+
+```{r load-packages}
+# tidyverse packages
+library(dplyr)         # data wrangling
+library(readr)         # working with csv data
+
+# spatial packages
+library(areal)         # interpolation
+library(sf)            # working with spatial data
+library(tidycensus)    # census api access
+library(tigris)        # tiger/line api access
+
+# other packages
+library(here)          # file path management
+```
+
+## Download Demographic Data
+All data are downloaded from the Census Bureau's API via `tidycensus`. 
+
+### 2010
+These data are from the decennial census.
+
+```{r download-2010, results='hide'}
+get_decennial(geography = "tract", variables = "P001001", state = 29, county = 510, geometry = TRUE) %>% 
+  select(GEOID, NAME, value) %>%
+  rename(pop10 = value) -> stl10
+```
+
+### 2011
+These data are from the 2007-2011 5-year American Community Survey estimates.
+
+```{r download-2011}
+get_acs(geography = "tract", year = 2011, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop11 = estimate,
+         pop11_m = moe) -> stl11
+```
+
+### 2012
+These data are from the 2008-2012 5-year American Community Survey estimates.
+
+```{r download-2012}
+get_acs(geography = "tract", year = 2012, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop12 = estimate,
+         pop12_m = moe) -> stl12
+```
+
+### 2013
+These data are from the 2009-2013 5-year American Community Survey estimates.
+
+```{r download-2013}
+get_acs(geography = "tract", year = 2013, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop13 = estimate,
+         pop13_m = moe) -> stl13
+```
+
+### 2014
+These data are from the 2010-2014 5-year American Community Survey estimates.
+
+```{r download-2014}
+get_acs(geography = "tract", year = 2014, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop14 = estimate,
+         pop14_m = moe) -> stl14
+```
+
+### 2015
+These data are from the 2011-2015 5-year American Community Survey estimates.
+
+```{r download-2015}
+get_acs(geography = "tract", year = 2015, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop15 = estimate,
+         pop15_m = moe) -> stl15
+```
+
+### 2016
+These data are from the 2012-2016 5-year American Community Survey estimates.
+
+```{r download-2016}
+get_acs(geography = "tract", year = 2016, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop16 = estimate,
+         pop16_m = moe) -> stl16
+```
+
+### 2017
+These data are from the 2013-2017 5-year American Community Survey estimates.
+
+```{r download-2017}
+get_acs(geography = "tract", year = 2017, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop17 = estimate,
+         pop17_m = moe) -> stl17
+```
+
+## Combine Data
+We have these data in a number of different tables, so the next step is to join them together by `GEOID`.
+
+```{r combine-data}
+left_join(stl10, stl11, by = "GEOID") %>%
+  left_join(., stl12, by = "GEOID") %>%
+  left_join(., stl13, by = "GEOID") %>%
+  left_join(., stl14, by = "GEOID") %>%
+  left_join(., stl15, by = "GEOID") %>%
+  left_join(., stl16, by = "GEOID") %>%
+  left_join(., stl17, by = "GEOID") %>%
+  st_transform(crs = 26915) -> tractPop
+```
+
+We'll write these data to a `.csv` file for future reference:
+
+```{r write-combined-data}
+# remove geometric data
+tractPop_tbl <- tractPop
+st_geometry(tractPop_tbl) <- NULL
+
+# write output
+write_csv(tractPop_tbl, here("data", "STL_PopByTract.csv"))
+```
+
+## Interpolate Neighborhood Data
+Next, we'll use a technique called [areal weighted interpolation](https://slu-opengis.github.io/areal/articles/areal-weighted-interpolation.html) to produce estimates at the neighborhood level. As before, we'll write the data to a `.csv` file for future analysis.
+
+```{r interpolate}
+# read neighborhood data, re-project, and interpolate
+st_read(here("data", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM, NHD_NAME) %>%
+  aw_interpolate(tid = NHD_NUM, source = tractPop, sid = GEOID, 
+                 weight = "sum", output = "sf", 
+                 extensive = c("pop10", "pop11", "pop11_m", 
+                               "pop12", "pop12_m", "pop13", "pop13_m", 
+                               "pop14", "pop14_m", "pop15", "pop15_m", 
+                               "pop16", "pop16_m", "pop17", "pop17_m")
+                 ) -> nhoodPop
+
+# remove geometric data
+st_geometry(nhoodPop) <- NULL
+
+# write output
+write_csv(nhoodPop, here("data", "STL_PopByNhood.csv"))
+```
