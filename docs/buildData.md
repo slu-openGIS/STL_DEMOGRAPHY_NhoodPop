@@ -646,7 +646,7 @@ rm(pop00, stl00)
 
 ### Combine 1940s-2000s Data
 
-Next, we’ll join all of the neighborhood esimtates we’ve created so far
+Next, we’ll join all of the neighborhood estimates we’ve created so far
 together into a single object:
 
 ``` r
