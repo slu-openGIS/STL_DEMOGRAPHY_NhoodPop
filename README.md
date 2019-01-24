@@ -31,6 +31,6 @@ Once particular note is that the neighborhood data used for estimates have had s
 
 ### Sources of Error - Estimates Based on the ACS
 1. The American Community Survey 5-year estimates are [pooled](https://www.census.gov/programs-surveys/acs/guidance/estimates.html) over a period of 5 years, so they are the most reliable of the 5-year estimates but the least current. Some analysts use the midpoint year (so 2013-2017's 5 year estimate midpoint year would be 2014) as the "actual year" that these data represent for this reason. 
-2. The ACS are different than Decennial Census values - the ACS estimates come with a [margin of error](https://walkerke.github.io/tidycensus/articles/margins-of-error.html) that represents the number of individuals (plus or minus) the population value may be off by.
+2. The ACS are different than Decennial Census values - the ACS estimates come with a [margin of error](https://walkerke.github.io/tidycensus/articles/margins-of-error.html) that represents the number of individuals (plus or minus) the population value may be off by. Each margin of error variable has a `_m` suffix.
 
 So, bottom line, these data are not census data but rather population estimates, which have been used to produce neighborhood-level estimates. At each level of abstraction, then, there is going to be some error. They're therefore indicative of trends but fundamentally different than then decennial census data.
