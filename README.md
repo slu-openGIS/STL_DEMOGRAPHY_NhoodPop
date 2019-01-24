@@ -1,4 +1,4 @@
-# STL_DEMOGRAPHICS_NhoodPop
+# STL_DEMOGRAPHY_NhoodPop
 
 This repository contains code for creating a data set originally requested by Janelle O'Day at the St. Louis Post-Dispatch. The original request was for population estimates similar to those found [here](https://chris-prener.github.io/dataviz/project/stl-pop-change/) but for each year between 2010 and 2017. This repository contains data for the original request as well as estimates derived from each decennial census between 1940 and 2000. 
 
