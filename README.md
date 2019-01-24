@@ -21,6 +21,9 @@ The two data frames, one for the historical data (1940-2000) and one for the mod
 
 ## Notes
 
+### Non-Integer Data
+Users of the data should note that the estimates are non-integer values - the Franz Park population in 1940 has been estimated to be `3308.9920443033734`. This, of course, is not possible in a "real world" sense - there perhaps 3309 or 3307 individuals (though, for reasons described below, the actual population could also be different). This is a by-product of the areal weighted interpolation method, and values can be rounded to achieve an integer estimate.
+
 ### Sources of Error - All Data
 The process I use to create the neighborhood estimates, [areal weighted interpolation](https://slu-opengis.github.io/areal/articles/areal-weighted-interpolation.html), introduces some area because it assumes that individuals are evenly spread throughout the source features. Imagine a census tract that is evenly split between a residential area and a commercial area with no residential population. Areal weighted interpolation isn't capable of estimating this level of complexity - it assumes that half the people live in the the commercial area. So, it isn't perfect. It is the simplest approach and the most common for estimating data for overlapping but incongruent spatial features. This approach therefore also introduces noise into the estimates.
 
