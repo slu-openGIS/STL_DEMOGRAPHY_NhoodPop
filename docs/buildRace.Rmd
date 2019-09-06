@@ -1,0 +1,65 @@
+---
+title: "Build Race Data"
+author: "Christopher Prener, Ph.D."
+date: '(`r format(Sys.time(), "%B %d, %Y")`)'
+output: 
+  github_document: default
+  html_notebook: default 
+---
+
+## Introduction
+This notebook creates neighborhood population estimates for both white and African American residents.
+
+## Dependencies
+This notebook requires a number of different `R` packages:
+
+```{r load-packages}
+# tidyverse packages
+library(dplyr)         # data wrangling
+library(readr)         # working with csv data
+library(stringr)       # string tools
+
+# spatial packages
+library(areal)         # interpolation
+library(sf)            # working with spatial data
+library(tidycensus)    # census api access
+library(tigris)        # tiger/line api access
+
+# other packages
+library(here)          # file path management
+library(testthat)      # unit testing
+```
+
+We also use a function for unit testing ID numbers:
+
+```{r load-functions}
+source(here("source", "unique_id.R"))
+```
+
+## Create Demographic Data, 1940-2000
+These decennial census data were obtained from two sources. The tract-level shapefiles were obtained from IPUMS' [NHGIS](https://www.nhgis.org) database. They come for the entire U.S. (or as much of the U.S. as was tracted at that point - full tract coverage is relatively recent). They were merged with tract-level data obtained from [NHGIS](http://socialexplorer.com) that was already clean and ready to use for each decade.
+
+### 1940
+First, we need to load the shapefile geometry:
+
+```{r load-1940-shapefile}
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_tracts40.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl40
+```
+
+Next, we need to load the census data and combine it with the spatial data. We need to create the `TRACTID` variable out of a larger variable named `Geo_Name`. A unit test is included to ensure that the `TRACTID` variable we are creating uniquely identifies observations:
+
+```{r add-1940-pop}
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_race40.csv")) %>%
+  select(Geo_Name, SE_T001_001) %>%
+  rename(TRACTID = Geo_Name) %>%
+  mutate(TRACTID = str_pad(string = TRACTID, width = 5, side = "left", pad = "0")) -> race40
+
+# unit test
+# pop40 %>% unique_id(TRACTID) -> idUnique
+# expect_equal(idUnique, TRUE)
+
+# join data
+# stl40 <- left_join(stl40, pop40, by = "TRACTID")
+```
