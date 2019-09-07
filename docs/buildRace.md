@@ -59,7 +59,7 @@ library(tigris)        # tiger/line api access
 library(here)          # file path management
 ```
 
-    ## here() starts at /Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop
+    ## here() starts at /Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop
 
 ``` r
 library(testthat)      # unit testing
@@ -90,8 +90,7 @@ and ready to use for each decade.
 
 ### 1940
 
-First, we need to load the shapefile
-geometry:
+First, we need to load the shapefile geometry:
 
 ``` r
 st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_tracts40.shp"),
@@ -99,7 +98,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl40
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts40' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts40' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 128 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -155,7 +154,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "nonwhite")) -> nhood40
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -194,7 +193,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts50", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl50
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts50' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts50' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 128 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -237,7 +236,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "black")) -> nhood50
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -268,7 +267,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts60", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl60
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts60' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts60' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 128 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -311,7 +310,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "black")) -> nhood60
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -343,7 +342,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts70", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl70
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts70' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts70' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 126 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -386,7 +385,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "black")) -> nhood70
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -417,7 +416,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts80", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl80
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts80' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts80' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 113 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -460,7 +459,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "black")) -> nhood80
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -493,4 +492,466 @@ left_join(nhood40, nhood50, by = "NHD_NUM") %>%
 
 # clean up enviornment
 rm(nhood40, nhood50, nhood60, nhood70, nhood80, idUnique, unique_id)
+```
+
+## Download Demographic Data, 1990-2017
+
+All data for this era are downloaded from the Census Bureau’s API via
+`tidycensus`.
+
+### 1990
+
+These data are from the decennial census. Note that the white population
+is neighborhoods is 12 people less than the total white population,
+because Census Tract 1018.99 does not have any geometry. The black
+population is unaffected.
+
+``` r
+# white
+get_decennial(geography = "tract", variables = "P0060001", state = 29, county = 510, year = 1990, geometry = TRUE) %>%
+  st_transform(crs = 26915) %>%
+  select(GEOID, NAME, value) %>%
+  rename(white90 = value) -> white90
+```
+
+    ## Getting data from the 1990 decennial Census
+
+    ## Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.
+
+``` r
+# black 
+get_decennial(geography = "tract", variables = "P0060002", state = 29, county = 510, year = 1990, geometry = FALSE) %>% 
+  select(GEOID, value) %>%
+  rename(black90 = value) -> black90
+```
+
+    ## Getting data from the 1990 decennial Census
+
+``` r
+# combine
+stl90 <- left_join(white90, black90, by = "GEOID")
+
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = stl90, sid = GEOID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = c("white90", "black90")) -> nhood90
+
+# unit tests
+expect_equal(aw_verify(source = stl90, sourceValue = white90, result = nhood90, resultValue = white90), FALSE)
+expect_equal(sum(nhood90$white90), sum(white90$white90)-12)
+expect_equal(aw_verify(source = stl90, sourceValue = black90, result = nhood90, resultValue = black90), TRUE)
+
+# remove intermediate objects
+rm(white90, black90, stl90)
+```
+
+### 2000
+
+These data are from the decennial census.
+
+``` r
+# white
+get_decennial(geography = "tract", variables = "P003003", state = 29, county = 510, year = 2000, geometry = TRUE) %>% 
+  st_transform(crs = 26915) %>%
+  select(GEOID, NAME, value) %>%
+  rename(white00 = value) -> white00
+```
+
+    ## Getting data from the 2000 decennial Census
+
+    ## Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.
+
+``` r
+# black 
+get_decennial(geography = "tract", variables = "P003004", state = 29, county = 510, year = 2000, geometry = FALSE) %>% 
+  select(GEOID, value) %>%
+  rename(black00 = value) -> black00
+```
+
+    ## Getting data from the 2000 decennial Census
+
+``` r
+# combine
+stl00 <- left_join(white00, black00, by = "GEOID")
+
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = stl00, sid = GEOID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = c("white00", "black00")) -> nhood00
+
+# unit tests
+expect_equal(aw_verify(source = stl00, sourceValue = white00, result = nhood00, resultValue = white00), TRUE)
+expect_equal(aw_verify(source = stl00, sourceValue = black00, result = nhood00, resultValue = black00), TRUE)
+
+# remove intermediate objects
+rm(white00, black00, stl00)
+```
+
+### 2010
+
+These data are from the decennial census.
+
+``` r
+# white
+get_decennial(geography = "tract", variables = "P003002", state = 29, county = 510, year = 2010, geometry = TRUE) %>% 
+  st_transform(crs = 26915) %>%
+  select(GEOID, NAME, value) %>%
+  rename(white10 = value) -> white10
+```
+
+    ## Getting data from the 2010 decennial Census
+
+    ## Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.
+
+``` r
+# black 
+get_decennial(geography = "tract", variables = "P003003", state = 29, county = 510, year = 2010, geometry = FALSE) %>% 
+  select(GEOID, value) %>%
+  rename(black10 = value) -> black10
+```
+
+    ## Getting data from the 2010 decennial Census
+
+``` r
+# combine
+stl10 <- left_join(white10, black10, by = "GEOID")
+
+# remove intermediate objects
+rm(white10, black10)
+```
+
+### 2011
+
+These data are from the 2007-2011 5-year American Community Survey
+estimates.
+
+``` r
+# white
+get_acs(geography = "tract", year = 2011, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white11 = estimate,
+         white11_m = moe) -> white11
+```
+
+    ## Getting data from the 2007-2011 5-year ACS
+
+``` r
+# black
+get_acs(geography = "tract", year = 2011, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black11 = estimate,
+         black11_m = moe) -> black11
+```
+
+    ## Getting data from the 2007-2011 5-year ACS
+
+``` r
+# combine
+stl11 <- left_join(white11, black11, by = "GEOID")
+
+# remove intermediate objects
+rm(white11, black11)
+```
+
+### 2012
+
+These data are from the 2008-2012 5-year American Community Survey
+estimates.
+
+``` r
+# white
+get_acs(geography = "tract", year = 2012, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white12 = estimate,
+         white12_m = moe) -> white12
+```
+
+    ## Getting data from the 2008-2012 5-year ACS
+
+``` r
+# black
+get_acs(geography = "tract", year = 2012, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black12 = estimate,
+         black12_m = moe) -> black12
+```
+
+    ## Getting data from the 2008-2012 5-year ACS
+
+``` r
+# combine
+stl12 <- left_join(white12, black12, by = "GEOID")
+
+# remove intermediate objects
+rm(white12, black12)
+```
+
+### 2013
+
+These data are from the 2009-2013 5-year American Community Survey
+estimates.
+
+``` r
+# white
+get_acs(geography = "tract", year = 2013, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white13 = estimate,
+         white13_m = moe) -> white13
+```
+
+    ## Getting data from the 2009-2013 5-year ACS
+
+``` r
+# black
+get_acs(geography = "tract", year = 2013, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black13 = estimate,
+         black13_m = moe) -> black13
+```
+
+    ## Getting data from the 2009-2013 5-year ACS
+
+``` r
+# combine
+stl13 <- left_join(white13, black13, by = "GEOID")
+
+# remove intermediate objects
+rm(white13, black13)
+```
+
+### 2014
+
+These data are from the 2010-2014 5-year American Community Survey
+estimates.
+
+``` r
+# white
+get_acs(geography = "tract", year = 2014, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white14 = estimate,
+         white14_m = moe) -> white14
+```
+
+    ## Getting data from the 2010-2014 5-year ACS
+
+``` r
+# black
+get_acs(geography = "tract", year = 2014, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black14 = estimate,
+         black14_m = moe) -> black14
+```
+
+    ## Getting data from the 2010-2014 5-year ACS
+
+``` r
+# combine
+stl14 <- left_join(white14, black14, by = "GEOID")
+
+# remove intermediate objects
+rm(white14, black14)
+```
+
+### 2015
+
+These data are from the 2011-2015 5-year American Community Survey
+estimates.
+
+``` r
+# white
+get_acs(geography = "tract", year = 2015, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white15 = estimate,
+         white15_m = moe) -> white15
+```
+
+    ## Getting data from the 2011-2015 5-year ACS
+
+``` r
+# black
+get_acs(geography = "tract", year = 2015, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black15 = estimate,
+         black15_m = moe) -> black15
+```
+
+    ## Getting data from the 2011-2015 5-year ACS
+
+``` r
+# combine
+stl15 <- left_join(white15, black15, by = "GEOID")
+
+# remove intermediate objects
+rm(white15, black15)
+```
+
+### 2016
+
+These data are from the 2012-2016 5-year American Community Survey
+estimates.
+
+``` r
+# white
+get_acs(geography = "tract", year = 2016, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white16 = estimate,
+         white16_m = moe) -> white16
+```
+
+    ## Getting data from the 2012-2016 5-year ACS
+
+``` r
+# black
+get_acs(geography = "tract", year = 2016, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black16 = estimate,
+         black16_m = moe) -> black16
+```
+
+    ## Getting data from the 2012-2016 5-year ACS
+
+``` r
+# combine
+stl16 <- left_join(white16, black16, by = "GEOID")
+
+# remove intermediate objects
+rm(white16, black16)
+```
+
+### 2017
+
+These data are from the 2013-2017 5-year American Community Survey
+estimates.
+
+``` r
+# white
+get_acs(geography = "tract", year = 2017, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white17 = estimate,
+         white17_m = moe) -> white17
+```
+
+    ## Getting data from the 2013-2017 5-year ACS
+
+``` r
+# black
+get_acs(geography = "tract", year = 2017, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black17 = estimate,
+         black17_m = moe) -> black17
+```
+
+    ## Getting data from the 2013-2017 5-year ACS
+
+``` r
+# combine
+stl17 <- left_join(white17, black17, by = "GEOID")
+
+# remove intermediate objects
+rm(white17, black17)
+```
+
+### Combine Data
+
+We have these data in a number of different tables, so the next step is
+to join them together by `GEOID`.
+
+``` r
+left_join(stl10, stl11, by = "GEOID") %>%
+  left_join(., stl12, by = "GEOID") %>%
+  left_join(., stl13, by = "GEOID") %>%
+  left_join(., stl14, by = "GEOID") %>%
+  left_join(., stl15, by = "GEOID") %>%
+  left_join(., stl16, by = "GEOID") %>%
+  left_join(., stl17, by = "GEOID") %>%
+  st_transform(crs = 26915) -> tractRace
+
+# clean up enviornment
+rm(stl10, stl11, stl12, stl13, stl14, stl15, stl16, stl17)
+```
+
+### Interpolate Neighborhood Data
+
+Next, we’ll use the same estimation process we used before on the
+2010-2017 data:
+
+``` r
+# read neighborhood data, re-project, and interpolate
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = tractRace, sid = GEOID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = c("white10", "black10", 
+                               "white11", "black11",
+                               "white12", "black12",
+                               "white13", "black13",
+                               "white14", "black14",
+                               "white15", "black15",
+                               "white16", "black16",
+                               "white17", "black17")
+                 ) -> nhoodRace_10_17
+```
+
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Simple feature collection with 88 features and 6 fields
+    ## geometry type:  MULTIPOLYGON
+    ## dimension:      XY
+    ## bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
+    ## epsg (SRID):    NA
+    ## proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs
+
+``` r
+# unit test
+expect_equal(aw_verify(source = tractRace, sourceValue = white10, result = nhoodRace_10_17, resultValue = white10), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black10, result = nhoodRace_10_17, resultValue = black10), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white11, result = nhoodRace_10_17, resultValue = white11), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black11, result = nhoodRace_10_17, resultValue = black11), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white12, result = nhoodRace_10_17, resultValue = white12), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black12, result = nhoodRace_10_17, resultValue = black12), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white13, result = nhoodRace_10_17, resultValue = white13), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black13, result = nhoodRace_10_17, resultValue = black13), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white14, result = nhoodRace_10_17, resultValue = white14), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black14, result = nhoodRace_10_17, resultValue = black14), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white15, result = nhoodRace_10_17, resultValue = white15), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black15, result = nhoodRace_10_17, resultValue = black15), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white16, result = nhoodRace_10_17, resultValue = white16), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black16, result = nhoodRace_10_17, resultValue = black16), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white17, result = nhoodRace_10_17, resultValue = white17), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black17, result = nhoodRace_10_17, resultValue = black17), TRUE)
+
+# clean up enviornment
+rm(tractRace)
+```
+
+## Combine Historical and Modern Census Data
+
+Next, we’ll combine the two data objects to create a single table of
+census estimates:
+
+``` r
+nhoodRace <- left_join(nhoodPop_40_80, nhood90, by = "NHD_NUM") %>%
+  left_join(., nhood00, by = "NHD_NUM") %>%
+  left_join(., nhoodRace_10_17, by = "NHD_NUM")
+
+# clean up enviornment
+rm(nhoodPop_40_80, nhood90, nhood00, nhoodRace_10_17)
+```
+
+## Export
+
+Finally, we’ll write the data to a `.csv` file for future analysis.
+
+``` r
+# write output
+write_csv(nhoodRace, here("data", "clean", "STL_RaceByNhood.csv"))
 ```

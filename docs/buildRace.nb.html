@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Christopher Prener, Ph.D." />
@@ -1484,7 +1485,7 @@ window.initializeCodeFolding = function(show) {
 
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
-    if (show)
+    if (show || $(this)[0].classList.contains('fold-show'))
       div.addClass('in');
     var id = 'rcode-643E0F36' + currentIndex++;
     div.attr('id', id);
@@ -1614,7 +1615,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -1712,28 +1712,10 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 <style type="text/css">
 .code-folding-btn { margin-bottom: 4px; }
 </style>
-<script>
-$(document).ready(function () {
-  window.initializeSourceEmbed("buildRace.Rmd");
-  window.initializeCodeFolding("show" === "show");
-});
-</script>
 
 
 
@@ -1819,8 +1801,8 @@ library(testthat)      # unit testing</code></pre>
         stringsAsFactors = FALSE) %&gt;%
   st_transform(crs = 26915) -&gt; stl40</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czQwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjggZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTIgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts40' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9jaHJpcy1wcmVuZXIvU1RMX0RFTU9HUkFQSFlfTmhvb2RQb3AvZGF0YS9zcGF0aWFsL1NUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNDAvU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MC5zaHAnIHVzaW5nIGRyaXZlciBgRVNSSSBTaGFwZWZpbGUnXG5TaW1wbGUgZmVhdHVyZSBjb2xsZWN0aW9uIHdpdGggMTI4IGZlYXR1cmVzIGFuZCAxIGZpZWxkXG5nZW9tZXRyeSB0eXBlOiAgUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogLTkwLjMyMDUyIHltaW46IDM4LjUzMTg1IHhtYXg6IC05MC4xNjY0MSB5bWF4OiAzOC43NzQzNVxuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9bG9uZ2xhdCArZWxscHM9R1JTODAgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts40&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 128 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -1871,8 +1853,8 @@ st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND
                  weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
                  extensive = c(&quot;white&quot;, &quot;nonwhite&quot;)) -&gt; nhood40</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL2NocmlzLXByZW5lci9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvbmhvb2QvQk5EX05oZDg4X2N3LnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCA4OCBmZWF0dXJlcyBhbmQgNiBmaWVsZHNcbmdlb21ldHJ5IHR5cGU6ICBNVUxUSVBPTFlHT05cbmRpbWVuc2lvbjogICAgICBYWVxuYmJveDogICAgICAgICAgIHhtaW46IDg3MTUxMi4zIHltaW46IDk4Mjk5NC40IHhtYXg6IDkxMjg1MC41IHltYXg6IDEwNzA5NTdcbmVwc2cgKFNSSUQpOiAgICBOQVxucHJvajRzdHJpbmc6ICAgICtwcm9qPXRtZXJjICtsYXRfMD0zNS44MzMzMzMzMzMzMzMzNCArbG9uXzA9LTkwLjUgK2s9MC45OTk5MzMzMzMzMzMzMzMzICt4XzA9MjUwMDAwICt5XzA9MCArZGF0dW09TkFEODMgK3VuaXRzPXVzLWZ0ICtub19kZWZzXG4ifQ== -->
+<pre><code>Reading layer `BND_Nhd88_cw&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -1880,10 +1862,13 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNDAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNDAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw0MCwgc291cmNlVmFsdWUgPSBub253aGl0ZSwgcmVzdWx0ID0gbmhvb2Q0MCwgcmVzdWx0VmFsdWUgPSBub253aGl0ZSksIFRSVUUpXG5cbiMgY2xlYW4tdXAgZW52aW9ybm1lbnRcbnJtKHJhY2U0MCwgc3RsNDApXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNDAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNDAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw0MCwgc291cmNlVmFsdWUgPSBub253aGl0ZSwgcmVzdWx0ID0gbmhvb2Q0MCwgcmVzdWx0VmFsdWUgPSBub253aGl0ZSksIFRSVUUpXG5cbiMgcmVuYW1lIHJhY2UgdmFyaWFibGVzXG5uaG9vZDQwIDwtIHJlbmFtZShuaG9vZDQwLCB3aGl0ZTQwID0gd2hpdGUsIG5vbndoaXRlNDAgPSBub253aGl0ZSlcblxuIyBjbGVhbi11cCBlbnZpb3JubWVudFxucm0ocmFjZTQwLCBzdGw0MClcbmBgYCJ9 -->
 <pre class="r"><code># unit test
 expect_equal(aw_verify(source = stl40, sourceValue = white, result = nhood40, resultValue = white), TRUE)
 expect_equal(aw_verify(source = stl40, sourceValue = nonwhite, result = nhood40, resultValue = nonwhite), TRUE)
+
+# rename race variables
+nhood40 &lt;- rename(nhood40, white40 = white, nonwhite40 = nonwhite)
 
 # clean-up enviornment
 rm(race40, stl40)</code></pre>
@@ -1903,8 +1888,8 @@ st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tract
         stringsAsFactors = FALSE) %&gt;%
   st_transform(crs = 26915) -&gt; stl50</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czUwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjggZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts50' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9jaHJpcy1wcmVuZXIvU1RMX0RFTU9HUkFQSFlfTmhvb2RQb3AvZGF0YS9zcGF0aWFsL1NUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNTAvU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MC5zaHAnIHVzaW5nIGRyaXZlciBgRVNSSSBTaGFwZWZpbGUnXG5TaW1wbGUgZmVhdHVyZSBjb2xsZWN0aW9uIHdpdGggMTI4IGZlYXR1cmVzIGFuZCAxIGZpZWxkXG5nZW9tZXRyeSB0eXBlOiAgUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogLTkwLjMyMDUxIHltaW46IDM4LjUzMTg1IHhtYXg6IC05MC4xNjY0MSB5bWF4OiAzOC43NzQzNVxuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9bG9uZ2xhdCArZWxscHM9R1JTODAgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts50&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 128 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -1946,8 +1931,8 @@ st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND
                  weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
                  extensive = c(&quot;white&quot;, &quot;black&quot;)) -&gt; nhood50</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL2NocmlzLXByZW5lci9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvbmhvb2QvQk5EX05oZDg4X2N3LnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCA4OCBmZWF0dXJlcyBhbmQgNiBmaWVsZHNcbmdlb21ldHJ5IHR5cGU6ICBNVUxUSVBPTFlHT05cbmRpbWVuc2lvbjogICAgICBYWVxuYmJveDogICAgICAgICAgIHhtaW46IDg3MTUxMi4zIHltaW46IDk4Mjk5NC40IHhtYXg6IDkxMjg1MC41IHltYXg6IDEwNzA5NTdcbmVwc2cgKFNSSUQpOiAgICBOQVxucHJvajRzdHJpbmc6ICAgICtwcm9qPXRtZXJjICtsYXRfMD0zNS44MzMzMzMzMzMzMzMzNCArbG9uXzA9LTkwLjUgK2s9MC45OTk5MzMzMzMzMzMzMzMzICt4XzA9MjUwMDAwICt5XzA9MCArZGF0dW09TkFEODMgK3VuaXRzPXVzLWZ0ICtub19kZWZzXG4ifQ== -->
+<pre><code>Reading layer `BND_Nhd88_cw&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -1955,10 +1940,13 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNTAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNTAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw1MCwgc291cmNlVmFsdWUgPSBibGFjaywgcmVzdWx0ID0gbmhvb2Q1MCwgcmVzdWx0VmFsdWUgPSBibGFjayksIFRSVUUpXG5cbiMgY2xlYW4tdXAgZW52aW9ybm1lbnRcbnJtKHJhY2U1MCwgc3RsNTApXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNTAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNTAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw1MCwgc291cmNlVmFsdWUgPSBibGFjaywgcmVzdWx0ID0gbmhvb2Q1MCwgcmVzdWx0VmFsdWUgPSBibGFjayksIFRSVUUpXG5cbiMgcmVuYW1lIHJhY2UgdmFyaWFibGVzXG5uaG9vZDUwIDwtIHJlbmFtZShuaG9vZDUwLCB3aGl0ZTUwID0gd2hpdGUsIGJsYWNrNTAgPSBibGFjaylcblxuIyBjbGVhbi11cCBlbnZpb3JubWVudFxucm0ocmFjZTUwLCBzdGw1MClcbmBgYCJ9 -->
 <pre class="r"><code># unit test
 expect_equal(aw_verify(source = stl50, sourceValue = white, result = nhood50, resultValue = white), TRUE)
 expect_equal(aw_verify(source = stl50, sourceValue = black, result = nhood50, resultValue = black), TRUE)
+
+# rename race variables
+nhood50 &lt;- rename(nhood50, white50 = white, black50 = black)
 
 # clean-up enviornment
 rm(race50, stl50)</code></pre>
@@ -1977,8 +1965,8 @@ st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tract
         stringsAsFactors = FALSE) %&gt;%
   st_transform(crs = 26915) -&gt; stl60</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czYwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjggZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts60' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9jaHJpcy1wcmVuZXIvU1RMX0RFTU9HUkFQSFlfTmhvb2RQb3AvZGF0YS9zcGF0aWFsL1NUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNjAvU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MC5zaHAnIHVzaW5nIGRyaXZlciBgRVNSSSBTaGFwZWZpbGUnXG5TaW1wbGUgZmVhdHVyZSBjb2xsZWN0aW9uIHdpdGggMTI4IGZlYXR1cmVzIGFuZCAxIGZpZWxkXG5nZW9tZXRyeSB0eXBlOiAgUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogLTkwLjMyMDUxIHltaW46IDM4LjUzMTg1IHhtYXg6IC05MC4xNjY0MSB5bWF4OiAzOC43NzQzNVxuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9bG9uZ2xhdCArZWxscHM9R1JTODAgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts60&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 128 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -2020,8 +2008,8 @@ st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND
                  weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
                  extensive = c(&quot;white&quot;, &quot;black&quot;)) -&gt; nhood60</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL2NocmlzLXByZW5lci9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvbmhvb2QvQk5EX05oZDg4X2N3LnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCA4OCBmZWF0dXJlcyBhbmQgNiBmaWVsZHNcbmdlb21ldHJ5IHR5cGU6ICBNVUxUSVBPTFlHT05cbmRpbWVuc2lvbjogICAgICBYWVxuYmJveDogICAgICAgICAgIHhtaW46IDg3MTUxMi4zIHltaW46IDk4Mjk5NC40IHhtYXg6IDkxMjg1MC41IHltYXg6IDEwNzA5NTdcbmVwc2cgKFNSSUQpOiAgICBOQVxucHJvajRzdHJpbmc6ICAgICtwcm9qPXRtZXJjICtsYXRfMD0zNS44MzMzMzMzMzMzMzMzNCArbG9uXzA9LTkwLjUgK2s9MC45OTk5MzMzMzMzMzMzMzMzICt4XzA9MjUwMDAwICt5XzA9MCArZGF0dW09TkFEODMgK3VuaXRzPXVzLWZ0ICtub19kZWZzXG4ifQ== -->
+<pre><code>Reading layer `BND_Nhd88_cw&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -2029,10 +2017,13 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNjAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNjAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw2MCwgc291cmNlVmFsdWUgPSBibGFjaywgcmVzdWx0ID0gbmhvb2Q2MCwgcmVzdWx0VmFsdWUgPSBibGFjayksIFRSVUUpXG5cbiMgY2xlYW4tdXAgZW52aW9ybm1lbnRcbnJtKHJhY2U2MCwgc3RsNjApXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNjAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNjAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw2MCwgc291cmNlVmFsdWUgPSBibGFjaywgcmVzdWx0ID0gbmhvb2Q2MCwgcmVzdWx0VmFsdWUgPSBibGFjayksIFRSVUUpXG5cbiMgcmVuYW1lIHJhY2UgdmFyaWFibGVzXG5uaG9vZDYwIDwtIHJlbmFtZShuaG9vZDYwLCB3aGl0ZTYwID0gd2hpdGUsIGJsYWNrNjAgPSBibGFjaylcblxuIyBjbGVhbi11cCBlbnZpb3JubWVudFxucm0ocmFjZTYwLCBzdGw2MClcbmBgYCJ9 -->
 <pre class="r"><code># unit test
 expect_equal(aw_verify(source = stl60, sourceValue = white, result = nhood60, resultValue = white), TRUE)
 expect_equal(aw_verify(source = stl60, sourceValue = black, result = nhood60, resultValue = black), TRUE)
+
+# rename race variables
+nhood60 &lt;- rename(nhood60, white60 = white, black60 = black)
 
 # clean-up enviornment
 rm(race60, stl60)</code></pre>
@@ -2051,8 +2042,8 @@ st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tract
         stringsAsFactors = FALSE) %&gt;%
   st_transform(crs = 26915) -&gt; stl70</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czcwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjYgZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts70' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9jaHJpcy1wcmVuZXIvU1RMX0RFTU9HUkFQSFlfTmhvb2RQb3AvZGF0YS9zcGF0aWFsL1NUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNzAvU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MC5zaHAnIHVzaW5nIGRyaXZlciBgRVNSSSBTaGFwZWZpbGUnXG5TaW1wbGUgZmVhdHVyZSBjb2xsZWN0aW9uIHdpdGggMTI2IGZlYXR1cmVzIGFuZCAxIGZpZWxkXG5nZW9tZXRyeSB0eXBlOiAgUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogLTkwLjMyMDUxIHltaW46IDM4LjUzMTg1IHhtYXg6IC05MC4xNjY0MSB5bWF4OiAzOC43NzQzNVxuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9bG9uZ2xhdCArZWxscHM9R1JTODAgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts70&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 126 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -2094,8 +2085,8 @@ st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND
                  weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
                  extensive = c(&quot;white&quot;, &quot;black&quot;)) -&gt; nhood70</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL2NocmlzLXByZW5lci9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvbmhvb2QvQk5EX05oZDg4X2N3LnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCA4OCBmZWF0dXJlcyBhbmQgNiBmaWVsZHNcbmdlb21ldHJ5IHR5cGU6ICBNVUxUSVBPTFlHT05cbmRpbWVuc2lvbjogICAgICBYWVxuYmJveDogICAgICAgICAgIHhtaW46IDg3MTUxMi4zIHltaW46IDk4Mjk5NC40IHhtYXg6IDkxMjg1MC41IHltYXg6IDEwNzA5NTdcbmVwc2cgKFNSSUQpOiAgICBOQVxucHJvajRzdHJpbmc6ICAgICtwcm9qPXRtZXJjICtsYXRfMD0zNS44MzMzMzMzMzMzMzMzNCArbG9uXzA9LTkwLjUgK2s9MC45OTk5MzMzMzMzMzMzMzMzICt4XzA9MjUwMDAwICt5XzA9MCArZGF0dW09TkFEODMgK3VuaXRzPXVzLWZ0ICtub19kZWZzXG4ifQ== -->
+<pre><code>Reading layer `BND_Nhd88_cw&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -2103,10 +2094,13 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNzAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNzAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw3MCwgc291cmNlVmFsdWUgPSBibGFjaywgcmVzdWx0ID0gbmhvb2Q3MCwgcmVzdWx0VmFsdWUgPSBibGFjayksIFRSVUUpXG5cbiMgY2xlYW4tdXAgZW52aW9ybm1lbnRcbnJtKHJhY2U3MCwgc3RsNzApXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNzAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNzAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw3MCwgc291cmNlVmFsdWUgPSBibGFjaywgcmVzdWx0ID0gbmhvb2Q3MCwgcmVzdWx0VmFsdWUgPSBibGFjayksIFRSVUUpXG5cbiMgcmVuYW1lIHJhY2UgdmFyaWFibGVzXG5uaG9vZDcwIDwtIHJlbmFtZShuaG9vZDcwLCB3aGl0ZTcwID0gd2hpdGUsIGJsYWNrNzAgPSBibGFjaylcblxuIyBjbGVhbi11cCBlbnZpb3JubWVudFxucm0ocmFjZTcwLCBzdGw3MClcbmBgYCJ9 -->
 <pre class="r"><code># unit test
 expect_equal(aw_verify(source = stl70, sourceValue = white, result = nhood70, resultValue = white), TRUE)
 expect_equal(aw_verify(source = stl70, sourceValue = black, result = nhood70, resultValue = black), TRUE)
+
+# rename race variables
+nhood70 &lt;- rename(nhood70, white70 = white, black70 = black)
 
 # clean-up enviornment
 rm(race70, stl70)</code></pre>
@@ -2125,8 +2119,8 @@ st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tract
         stringsAsFactors = FALSE) %&gt;%
   st_transform(crs = 26915) -&gt; stl80</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czgwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMTMgZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts80' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9jaHJpcy1wcmVuZXIvU1RMX0RFTU9HUkFQSFlfTmhvb2RQb3AvZGF0YS9zcGF0aWFsL1NUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzODAvU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MC5zaHAnIHVzaW5nIGRyaXZlciBgRVNSSSBTaGFwZWZpbGUnXG5TaW1wbGUgZmVhdHVyZSBjb2xsZWN0aW9uIHdpdGggMTEzIGZlYXR1cmVzIGFuZCAxIGZpZWxkXG5nZW9tZXRyeSB0eXBlOiAgUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogLTkwLjMyMDUxIHltaW46IDM4LjUzMTg1IHhtYXg6IC05MC4xNjY0MSB5bWF4OiAzOC43NzQzNVxuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9bG9uZ2xhdCArZWxscHM9R1JTODAgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts80&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 113 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -2168,8 +2162,8 @@ st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND
                  weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
                  extensive = c(&quot;white&quot;, &quot;black&quot;)) -&gt; nhood80</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL2NocmlzLXByZW5lci9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvbmhvb2QvQk5EX05oZDg4X2N3LnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCA4OCBmZWF0dXJlcyBhbmQgNiBmaWVsZHNcbmdlb21ldHJ5IHR5cGU6ICBNVUxUSVBPTFlHT05cbmRpbWVuc2lvbjogICAgICBYWVxuYmJveDogICAgICAgICAgIHhtaW46IDg3MTUxMi4zIHltaW46IDk4Mjk5NC40IHhtYXg6IDkxMjg1MC41IHltYXg6IDEwNzA5NTdcbmVwc2cgKFNSSUQpOiAgICBOQVxucHJvajRzdHJpbmc6ICAgICtwcm9qPXRtZXJjICtsYXRfMD0zNS44MzMzMzMzMzMzMzMzNCArbG9uXzA9LTkwLjUgK2s9MC45OTk5MzMzMzMzMzMzMzMzICt4XzA9MjUwMDAwICt5XzA9MCArZGF0dW09TkFEODMgK3VuaXRzPXVzLWZ0ICtub19kZWZzXG4ifQ== -->
+<pre><code>Reading layer `BND_Nhd88_cw&#39; from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp&#39; using driver `ESRI Shapefile&#39;
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -2177,10 +2171,13 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsODAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kODAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw4MCwgc291cmNlVmFsdWUgPSBibGFjaywgcmVzdWx0ID0gbmhvb2Q4MCwgcmVzdWx0VmFsdWUgPSBibGFjayksIFRSVUUpXG5cbiMgY2xlYW4tdXAgZW52aW9ybm1lbnRcbnJtKHJhY2U4MCwgc3RsODApXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsODAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kODAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw4MCwgc291cmNlVmFsdWUgPSBibGFjaywgcmVzdWx0ID0gbmhvb2Q4MCwgcmVzdWx0VmFsdWUgPSBibGFjayksIFRSVUUpXG5cbiMgcmVuYW1lIHJhY2UgdmFyaWFibGVzXG5uaG9vZDgwIDwtIHJlbmFtZShuaG9vZDgwLCB3aGl0ZTgwID0gd2hpdGUsIGJsYWNrODAgPSBibGFjaylcblxuIyBjbGVhbi11cCBlbnZpb3JubWVudFxucm0ocmFjZTgwLCBzdGw4MClcbmBgYCJ9 -->
 <pre class="r"><code># unit test
 expect_equal(aw_verify(source = stl80, sourceValue = white, result = nhood80, resultValue = white), TRUE)
 expect_equal(aw_verify(source = stl80, sourceValue = black, result = nhood80, resultValue = black), TRUE)
+
+# rename race variables
+nhood80 &lt;- rename(nhood80, white80 = white, black80 = black)
 
 # clean-up enviornment
 rm(race80, stl80)</code></pre>
@@ -2211,12 +2208,13 @@ rm(nhood40, nhood50, nhood60, nhood70, nhood80, idUnique, unique_id)</code></pre
 <p>All data for this era are downloaded from the Census Bureau’s API via <code>tidycensus</code>.</p>
 <div id="section-5" class="section level3">
 <h3>1990</h3>
-<p>These data are from the decennial census.</p>
+<p>These data are from the decennial census. Note that the white population is neighborhoods is 12 people less than the total white population, because Census Tract 1018.99 does not have any geometry. The black population is unaffected.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHZhcmlhYmxlcyA9IFwiUDAwNjAwMDFcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCB5ZWFyID0gMTk5MCwgZ2VvbWV0cnkgPSBUUlVFKSAlPiUgXG4gIHNlbGVjdChHRU9JRCwgTkFNRSwgdmFsdWUpICU+JVxuICByZW5hbWUod2hpdGU5MCA9IHZhbHVlKSAtPiB3aGl0ZTkwXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHZhcmlhYmxlcyA9IFwiUDAwNjAwMDFcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCB5ZWFyID0gMTk5MCwgZ2VvbWV0cnkgPSBUUlVFKSAlPiVcbiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiVcbiAgc2VsZWN0KEdFT0lELCBOQU1FLCB2YWx1ZSkgJT4lXG4gIHJlbmFtZSh3aGl0ZTkwID0gdmFsdWUpIC0+IHdoaXRlOTBcbmBgYCJ9 -->
 <pre class="r"><code># white
-get_decennial(geography = &quot;tract&quot;, variables = &quot;P0060001&quot;, state = 29, county = 510, year = 1990, geometry = TRUE) %&gt;% 
+get_decennial(geography = &quot;tract&quot;, variables = &quot;P0060001&quot;, state = 29, county = 510, year = 1990, geometry = TRUE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
   select(GEOID, NAME, value) %&gt;%
   rename(white90 = value) -&gt; white90</code></pre>
 <!-- rnb-source-end -->
@@ -2226,9 +2224,25 @@ get_decennial(geography = &quot;tract&quot;, variables = &quot;P0060002&quot;, s
   select(GEOID, value) %&gt;%
   rename(black90 = value) -&gt; black90</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGw5MCA8LSBsZWZ0X2pvaW4od2hpdGU5MCwgYmxhY2s5MCwgYnkgPSBcIkdFT0lEXCIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGw5MCA8LSBsZWZ0X2pvaW4od2hpdGU5MCwgYmxhY2s5MCwgYnkgPSBcIkdFT0lEXCIpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJuaG9vZFwiLCBcIkJORF9OaGQ4OF9jdy5zaHBcIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw5MCwgc2lkID0gR0VPSUQsIFxuICAgICAgICAgICAgICAgICB3ZWlnaHQgPSBcInN1bVwiLCBvdXRwdXQgPSBcInRpYmJsZVwiLCBcbiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gYyhcIndoaXRlOTBcIiwgXCJibGFjazkwXCIpKSAtPiBuaG9vZDkwXG4jIHVuaXQgdGVzdHNcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsOTAsIHNvdXJjZVZhbHVlID0gd2hpdGU5MCwgcmVzdWx0ID0gbmhvb2Q5MCwgcmVzdWx0VmFsdWUgPSB3aGl0ZTkwKSwgRkFMU0UpXG5leHBlY3RfZXF1YWwoc3VtKG5ob29kOTAkd2hpdGU5MCksIHN1bSh3aGl0ZTkwJHdoaXRlOTApLTEyKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw5MCwgc291cmNlVmFsdWUgPSBibGFjazkwLCByZXN1bHQgPSBuaG9vZDkwLCByZXN1bHRWYWx1ZSA9IGJsYWNrOTApLCBUUlVFKVxuXG4jIHJlbW92ZSBpbnRlcm1lZGlhdGUgb2JqZWN0c1xucm0od2hpdGU5MCwgYmxhY2s5MCwgc3RsOTApXG5gYGAifQ== -->
 <pre class="r"><code># combine
-stl90 &lt;- left_join(white90, black90, by = &quot;GEOID&quot;)</code></pre>
+stl90 &lt;- left_join(white90, black90, by = &quot;GEOID&quot;)
+
+# interpolate to neighborhoods
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = stl90, sid = GEOID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = c(&quot;white90&quot;, &quot;black90&quot;)) -&gt; nhood90
+# unit tests
+expect_equal(aw_verify(source = stl90, sourceValue = white90, result = nhood90, resultValue = white90), FALSE)
+expect_equal(sum(nhood90$white90), sum(white90$white90)-12)
+expect_equal(aw_verify(source = stl90, sourceValue = black90, result = nhood90, resultValue = black90), TRUE)
+
+# remove intermediate objects
+rm(white90, black90, stl90)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -2238,9 +2252,10 @@ stl90 &lt;- left_join(white90, black90, by = &quot;GEOID&quot;)</code></pre>
 <p>These data are from the decennial census.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHZhcmlhYmxlcyA9IFwiUDAwMzAwM1wiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIHllYXIgPSAyMDAwLCBnZW9tZXRyeSA9IFRSVUUpICU+JSBcbiAgc2VsZWN0KEdFT0lELCBOQU1FLCB2YWx1ZSkgJT4lXG4gIHJlbmFtZSh3aGl0ZTAwID0gdmFsdWUpIC0+IHdoaXRlMDBcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHZhcmlhYmxlcyA9IFwiUDAwMzAwM1wiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIHllYXIgPSAyMDAwLCBnZW9tZXRyeSA9IFRSVUUpICU+JSBcbiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiVcbiAgc2VsZWN0KEdFT0lELCBOQU1FLCB2YWx1ZSkgJT4lXG4gIHJlbmFtZSh3aGl0ZTAwID0gdmFsdWUpIC0+IHdoaXRlMDBcbmBgYCJ9 -->
 <pre class="r"><code># white
 get_decennial(geography = &quot;tract&quot;, variables = &quot;P003003&quot;, state = 29, county = 510, year = 2000, geometry = TRUE) %&gt;% 
+  st_transform(crs = 26915) %&gt;%
   select(GEOID, NAME, value) %&gt;%
   rename(white00 = value) -&gt; white00</code></pre>
 <!-- rnb-source-end -->
@@ -2250,9 +2265,24 @@ get_decennial(geography = &quot;tract&quot;, variables = &quot;P003004&quot;, st
   select(GEOID, value) %&gt;%
   rename(black00 = value) -&gt; black00</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGwwMCA8LSBsZWZ0X2pvaW4od2hpdGUwMCwgYmxhY2swMCwgYnkgPSBcIkdFT0lEXCIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGwwMCA8LSBsZWZ0X2pvaW4od2hpdGUwMCwgYmxhY2swMCwgYnkgPSBcIkdFT0lEXCIpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJuaG9vZFwiLCBcIkJORF9OaGQ4OF9jdy5zaHBcIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGwwMCwgc2lkID0gR0VPSUQsIFxuICAgICAgICAgICAgICAgICB3ZWlnaHQgPSBcInN1bVwiLCBvdXRwdXQgPSBcInRpYmJsZVwiLCBcbiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gYyhcIndoaXRlMDBcIiwgXCJibGFjazAwXCIpKSAtPiBuaG9vZDAwXG4jIHVuaXQgdGVzdHNcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsMDAsIHNvdXJjZVZhbHVlID0gd2hpdGUwMCwgcmVzdWx0ID0gbmhvb2QwMCwgcmVzdWx0VmFsdWUgPSB3aGl0ZTAwKSwgVFJVRSlcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsMDAsIHNvdXJjZVZhbHVlID0gYmxhY2swMCwgcmVzdWx0ID0gbmhvb2QwMCwgcmVzdWx0VmFsdWUgPSBibGFjazAwKSwgVFJVRSlcblxuIyByZW1vdmUgaW50ZXJtZWRpYXRlIG9iamVjdHNcbnJtKHdoaXRlMDAsIGJsYWNrMDAsIHN0bDAwKVxuYGBgIn0= -->
 <pre class="r"><code># combine
-stl00 &lt;- left_join(white00, black00, by = &quot;GEOID&quot;)</code></pre>
+stl00 &lt;- left_join(white00, black00, by = &quot;GEOID&quot;)
+
+# interpolate to neighborhoods
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = stl00, sid = GEOID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = c(&quot;white00&quot;, &quot;black00&quot;)) -&gt; nhood00
+# unit tests
+expect_equal(aw_verify(source = stl00, sourceValue = white00, result = nhood00, resultValue = white00), TRUE)
+expect_equal(aw_verify(source = stl00, sourceValue = black00, result = nhood00, resultValue = black00), TRUE)
+
+# remove intermediate objects
+rm(white00, black00, stl00)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -2262,9 +2292,10 @@ stl00 &lt;- left_join(white00, black00, by = &quot;GEOID&quot;)</code></pre>
 <p>These data are from the decennial census.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHZhcmlhYmxlcyA9IFwiUDAwMzAwMlwiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIHllYXIgPSAyMDEwLCBnZW9tZXRyeSA9IFRSVUUpICU+JSBcbiAgc2VsZWN0KEdFT0lELCBOQU1FLCB2YWx1ZSkgJT4lXG4gIHJlbmFtZSh3aGl0ZTEwID0gdmFsdWUpIC0+IHdoaXRlMTBcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHZhcmlhYmxlcyA9IFwiUDAwMzAwMlwiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIHllYXIgPSAyMDEwLCBnZW9tZXRyeSA9IFRSVUUpICU+JSBcbiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiVcbiAgc2VsZWN0KEdFT0lELCBOQU1FLCB2YWx1ZSkgJT4lXG4gIHJlbmFtZSh3aGl0ZTEwID0gdmFsdWUpIC0+IHdoaXRlMTBcbmBgYCJ9 -->
 <pre class="r"><code># white
 get_decennial(geography = &quot;tract&quot;, variables = &quot;P003002&quot;, state = 29, county = 510, year = 2010, geometry = TRUE) %&gt;% 
+  st_transform(crs = 26915) %&gt;%
   select(GEOID, NAME, value) %&gt;%
   rename(white10 = value) -&gt; white10</code></pre>
 <!-- rnb-source-end -->
@@ -2289,30 +2320,344 @@ rm(white10, black10)</code></pre>
 <p>These data are from the 2007-2011 5-year American Community Survey estimates.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDExLCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDJcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHdoaXRlMTEgPSBlc3RpbWF0ZSxcbiAgICAgICAgIHdoaXRlMTFfbSA9IG1vZSkgLT4gd2hpdGUxMVxuXG4jIGJsYWNrXG5nZXRfYWNzKGdlb2dyYXBoeSA9IFwidHJhY3RcIiwgeWVhciA9IDIwMTEsIHZhcmlhYmxlcyA9IFwiQjAyMDAxXzAwM1wiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JVxuICBzZWxlY3QoR0VPSUQsIGVzdGltYXRlLCBtb2UpICU+JVxuICByZW5hbWUoYmxhY2sxMSA9IGVzdGltYXRlLFxuICAgICAgICAgYmxhY2sxMV9tID0gbW9lKSAtPiBibGFjazExXG5cbiMgY29tYmluZVxuc3RsMTEgPC0gbGVmdF9qb2luKHdoaXRlMTEsIGJsYWNrMTEsIGJ5ID0gXCJHRU9JRFwiKVxuXG4jIHJlbW92ZSBpbnRlcm1lZGlhdGUgb2JqZWN0c1xucm0od2hpdGUxMSwgYmxhY2sxMSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDExLCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDJcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHdoaXRlMTEgPSBlc3RpbWF0ZSxcbiAgICAgICAgIHdoaXRlMTFfbSA9IG1vZSkgLT4gd2hpdGUxMVxuYGBgIn0= -->
 <pre class="r"><code># white
 get_acs(geography = &quot;tract&quot;, year = 2011, variables = &quot;B02001_002&quot;, state = 29, county = 510) %&gt;%
   select(GEOID, estimate, moe) %&gt;%
   rename(white11 = estimate,
-         white11_m = moe) -&gt; white11
-
-# black
+         white11_m = moe) -&gt; white11</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDctMjAxMSA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2007-2011 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBibGFja1xuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDExLCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDNcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKGJsYWNrMTEgPSBlc3RpbWF0ZSxcbiAgICAgICAgIGJsYWNrMTFfbSA9IG1vZSkgLT4gYmxhY2sxMVxuYGBgIn0= -->
+<pre class="r"><code># black
 get_acs(geography = &quot;tract&quot;, year = 2011, variables = &quot;B02001_003&quot;, state = 29, county = 510) %&gt;%
   select(GEOID, estimate, moe) %&gt;%
   rename(black11 = estimate,
-         black11_m = moe) -&gt; black11
-
-# combine
+         black11_m = moe) -&gt; black11</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDctMjAxMSA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2007-2011 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGwxMSA8LSBsZWZ0X2pvaW4od2hpdGUxMSwgYmxhY2sxMSwgYnkgPSBcIkdFT0lEXCIpXG5cbiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzXG5ybSh3aGl0ZTExLCBibGFjazExKVxuYGBgIn0= -->
+<pre class="r"><code># combine
 stl11 &lt;- left_join(white11, black11, by = &quot;GEOID&quot;)
 
 # remove intermediate objects
 rm(white11, black11)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 </div>
+<div id="section-9" class="section level3">
+<h3>2012</h3>
+<p>These data are from the 2008-2012 5-year American Community Survey estimates.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDEyLCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDJcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHdoaXRlMTIgPSBlc3RpbWF0ZSxcbiAgICAgICAgIHdoaXRlMTJfbSA9IG1vZSkgLT4gd2hpdGUxMlxuYGBgIn0= -->
+<pre class="r"><code># white
+get_acs(geography = &quot;tract&quot;, year = 2012, variables = &quot;B02001_002&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(white12 = estimate,
+         white12_m = moe) -&gt; white12</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDgtMjAxMiA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2008-2012 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBibGFja1xuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDEyLCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDNcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKGJsYWNrMTIgPSBlc3RpbWF0ZSxcbiAgICAgICAgIGJsYWNrMTJfbSA9IG1vZSkgLT4gYmxhY2sxMlxuYGBgIn0= -->
+<pre class="r"><code># black
+get_acs(geography = &quot;tract&quot;, year = 2012, variables = &quot;B02001_003&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(black12 = estimate,
+         black12_m = moe) -&gt; black12</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDgtMjAxMiA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2008-2012 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGwxMiA8LSBsZWZ0X2pvaW4od2hpdGUxMiwgYmxhY2sxMiwgYnkgPSBcIkdFT0lEXCIpXG5cbiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzXG5ybSh3aGl0ZTEyLCBibGFjazEyKVxuYGBgIn0= -->
+<pre class="r"><code># combine
+stl12 &lt;- left_join(white12, black12, by = &quot;GEOID&quot;)
+
+# remove intermediate objects
+rm(white12, black12)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="section-10" class="section level3">
+<h3>2013</h3>
+<p>These data are from the 2009-2013 5-year American Community Survey estimates.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDEzLCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDJcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHdoaXRlMTMgPSBlc3RpbWF0ZSxcbiAgICAgICAgIHdoaXRlMTNfbSA9IG1vZSkgLT4gd2hpdGUxM1xuYGBgIn0= -->
+<pre class="r"><code># white
+get_acs(geography = &quot;tract&quot;, year = 2013, variables = &quot;B02001_002&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(white13 = estimate,
+         white13_m = moe) -&gt; white13</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDktMjAxMyA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2009-2013 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBibGFja1xuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDEzLCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDNcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKGJsYWNrMTMgPSBlc3RpbWF0ZSxcbiAgICAgICAgIGJsYWNrMTNfbSA9IG1vZSkgLT4gYmxhY2sxM1xuYGBgIn0= -->
+<pre class="r"><code># black
+get_acs(geography = &quot;tract&quot;, year = 2013, variables = &quot;B02001_003&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(black13 = estimate,
+         black13_m = moe) -&gt; black13</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDktMjAxMyA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2009-2013 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGwxMyA8LSBsZWZ0X2pvaW4od2hpdGUxMywgYmxhY2sxMywgYnkgPSBcIkdFT0lEXCIpXG5cbiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzXG5ybSh3aGl0ZTEzLCBibGFjazEzKVxuYGBgIn0= -->
+<pre class="r"><code># combine
+stl13 &lt;- left_join(white13, black13, by = &quot;GEOID&quot;)
+
+# remove intermediate objects
+rm(white13, black13)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="section-11" class="section level3">
+<h3>2014</h3>
+<p>These data are from the 2010-2014 5-year American Community Survey estimates.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE0LCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDJcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHdoaXRlMTQgPSBlc3RpbWF0ZSxcbiAgICAgICAgIHdoaXRlMTRfbSA9IG1vZSkgLT4gd2hpdGUxNFxuYGBgIn0= -->
+<pre class="r"><code># white
+get_acs(geography = &quot;tract&quot;, year = 2014, variables = &quot;B02001_002&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(white14 = estimate,
+         white14_m = moe) -&gt; white14</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTAtMjAxNCA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2010-2014 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBibGFja1xuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE0LCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDNcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKGJsYWNrMTQgPSBlc3RpbWF0ZSxcbiAgICAgICAgIGJsYWNrMTRfbSA9IG1vZSkgLT4gYmxhY2sxNFxuYGBgIn0= -->
+<pre class="r"><code># black
+get_acs(geography = &quot;tract&quot;, year = 2014, variables = &quot;B02001_003&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(black14 = estimate,
+         black14_m = moe) -&gt; black14</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTAtMjAxNCA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2010-2014 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGwxNCA8LSBsZWZ0X2pvaW4od2hpdGUxNCwgYmxhY2sxNCwgYnkgPSBcIkdFT0lEXCIpXG5cbiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzXG5ybSh3aGl0ZTE0LCBibGFjazE0KVxuYGBgIn0= -->
+<pre class="r"><code># combine
+stl14 &lt;- left_join(white14, black14, by = &quot;GEOID&quot;)
+
+# remove intermediate objects
+rm(white14, black14)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="section-12" class="section level3">
+<h3>2015</h3>
+<p>These data are from the 2011-2015 5-year American Community Survey estimates.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE1LCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDJcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHdoaXRlMTUgPSBlc3RpbWF0ZSxcbiAgICAgICAgIHdoaXRlMTVfbSA9IG1vZSkgLT4gd2hpdGUxNVxuYGBgIn0= -->
+<pre class="r"><code># white
+get_acs(geography = &quot;tract&quot;, year = 2015, variables = &quot;B02001_002&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(white15 = estimate,
+         white15_m = moe) -&gt; white15</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTEtMjAxNSA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2011-2015 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBibGFja1xuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE1LCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDNcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKGJsYWNrMTUgPSBlc3RpbWF0ZSxcbiAgICAgICAgIGJsYWNrMTVfbSA9IG1vZSkgLT4gYmxhY2sxNVxuYGBgIn0= -->
+<pre class="r"><code># black
+get_acs(geography = &quot;tract&quot;, year = 2015, variables = &quot;B02001_003&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(black15 = estimate,
+         black15_m = moe) -&gt; black15</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTEtMjAxNSA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2011-2015 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGwxNSA8LSBsZWZ0X2pvaW4od2hpdGUxNSwgYmxhY2sxNSwgYnkgPSBcIkdFT0lEXCIpXG5cbiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzXG5ybSh3aGl0ZTE1LCBibGFjazE1KVxuYGBgIn0= -->
+<pre class="r"><code># combine
+stl15 &lt;- left_join(white15, black15, by = &quot;GEOID&quot;)
+
+# remove intermediate objects
+rm(white15, black15)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="section-13" class="section level3">
+<h3>2016</h3>
+<p>These data are from the 2012-2016 5-year American Community Survey estimates.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE2LCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDJcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHdoaXRlMTYgPSBlc3RpbWF0ZSxcbiAgICAgICAgIHdoaXRlMTZfbSA9IG1vZSkgLT4gd2hpdGUxNlxuYGBgIn0= -->
+<pre class="r"><code># white
+get_acs(geography = &quot;tract&quot;, year = 2016, variables = &quot;B02001_002&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(white16 = estimate,
+         white16_m = moe) -&gt; white16</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTItMjAxNiA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2012-2016 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBibGFja1xuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE2LCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDNcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKGJsYWNrMTYgPSBlc3RpbWF0ZSxcbiAgICAgICAgIGJsYWNrMTZfbSA9IG1vZSkgLT4gYmxhY2sxNlxuYGBgIn0= -->
+<pre class="r"><code># black
+get_acs(geography = &quot;tract&quot;, year = 2016, variables = &quot;B02001_003&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(black16 = estimate,
+         black16_m = moe) -&gt; black16</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTItMjAxNiA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2012-2016 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGwxNiA8LSBsZWZ0X2pvaW4od2hpdGUxNiwgYmxhY2sxNiwgYnkgPSBcIkdFT0lEXCIpXG5cbiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzXG5ybSh3aGl0ZTE2LCBibGFjazE2KVxuYGBgIn0= -->
+<pre class="r"><code># combine
+stl16 &lt;- left_join(white16, black16, by = &quot;GEOID&quot;)
+
+# remove intermediate objects
+rm(white16, black16)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="section-14" class="section level3">
+<h3>2017</h3>
+<p>These data are from the 2013-2017 5-year American Community Survey estimates.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGl0ZVxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE3LCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDJcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHdoaXRlMTcgPSBlc3RpbWF0ZSxcbiAgICAgICAgIHdoaXRlMTdfbSA9IG1vZSkgLT4gd2hpdGUxN1xuYGBgIn0= -->
+<pre class="r"><code># white
+get_acs(geography = &quot;tract&quot;, year = 2017, variables = &quot;B02001_002&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(white17 = estimate,
+         white17_m = moe) -&gt; white17</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTMtMjAxNyA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2013-2017 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBibGFja1xuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE3LCB2YXJpYWJsZXMgPSBcIkIwMjAwMV8wMDNcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKGJsYWNrMTcgPSBlc3RpbWF0ZSxcbiAgICAgICAgIGJsYWNrMTdfbSA9IG1vZSkgLT4gYmxhY2sxN1xuYGBgIn0= -->
+<pre class="r"><code># black
+get_acs(geography = &quot;tract&quot;, year = 2017, variables = &quot;B02001_003&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(black17 = estimate,
+         black17_m = moe) -&gt; black17</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTMtMjAxNyA1LXllYXIgQUNTXG4ifQ== -->
+<pre><code>Getting data from the 2013-2017 5-year ACS</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb21iaW5lXG5zdGwxNyA8LSBsZWZ0X2pvaW4od2hpdGUxNywgYmxhY2sxNywgYnkgPSBcIkdFT0lEXCIpXG5cbiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzXG5ybSh3aGl0ZTE3LCBibGFjazE3KVxuYGBgIn0= -->
+<pre class="r"><code># combine
+stl17 &lt;- left_join(white17, black17, by = &quot;GEOID&quot;)
+
+# remove intermediate objects
+rm(white17, black17)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="combine-data" class="section level3">
+<h3>Combine Data</h3>
+<p>We have these data in a number of different tables, so the next step is to join them together by <code>GEOID</code>.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGVmdF9qb2luKHN0bDEwLCBzdGwxMSwgYnkgPSBcIkdFT0lEXCIpICU+JVxuICBsZWZ0X2pvaW4oLiwgc3RsMTIsIGJ5ID0gXCJHRU9JRFwiKSAlPiVcbiAgbGVmdF9qb2luKC4sIHN0bDEzLCBieSA9IFwiR0VPSURcIikgJT4lXG4gIGxlZnRfam9pbiguLCBzdGwxNCwgYnkgPSBcIkdFT0lEXCIpICU+JVxuICBsZWZ0X2pvaW4oLiwgc3RsMTUsIGJ5ID0gXCJHRU9JRFwiKSAlPiVcbiAgbGVmdF9qb2luKC4sIHN0bDE2LCBieSA9IFwiR0VPSURcIikgJT4lXG4gIGxlZnRfam9pbiguLCBzdGwxNywgYnkgPSBcIkdFT0lEXCIpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHRyYWN0UmFjZVxuXG4jIGNsZWFuIHVwIGVudmlvcm5tZW50XG5ybShzdGwxMCwgc3RsMTEsIHN0bDEyLCBzdGwxMywgc3RsMTQsIHN0bDE1LCBzdGwxNiwgc3RsMTcpXG5gYGAifQ== -->
+<pre class="r"><code>left_join(stl10, stl11, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl12, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl13, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl14, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl15, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl16, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl17, by = &quot;GEOID&quot;) %&gt;%
+  st_transform(crs = 26915) -&gt; tractRace
+
+# clean up enviornment
+rm(stl10, stl11, stl12, stl13, stl14, stl15, stl16, stl17)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="interpolate-neighborhood-data" class="section level3">
+<h3>Interpolate Neighborhood Data</h3>
+<p>Next, we’ll use the same estimation process we used before on the 2010-2017 data:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIG5laWdoYm9yaG9vZCBkYXRhLCByZS1wcm9qZWN0LCBhbmQgaW50ZXJwb2xhdGVcbnN0X3JlYWQoaGVyZShcImRhdGFcIiwgXCJzcGF0aWFsXCIsIFwibmhvb2RcIiwgXCJCTkRfTmhkODhfY3cuc2hwXCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JVxuICBzZWxlY3QoTkhEX05VTSkgJT4lXG4gIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiVcbiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gdHJhY3RSYWNlLCBzaWQgPSBHRU9JRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFwic3VtXCIsIG91dHB1dCA9IFwidGliYmxlXCIsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBjKFwid2hpdGUxMFwiLCBcImJsYWNrMTBcIiwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXCJ3aGl0ZTExXCIsIFwiYmxhY2sxMVwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwid2hpdGUxMlwiLCBcImJsYWNrMTJcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcIndoaXRlMTNcIiwgXCJibGFjazEzXCIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXCJ3aGl0ZTE0XCIsIFwiYmxhY2sxNFwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwid2hpdGUxNVwiLCBcImJsYWNrMTVcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcIndoaXRlMTZcIiwgXCJibGFjazE2XCIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXCJ3aGl0ZTE3XCIsIFwiYmxhY2sxN1wiKVxuICAgICAgICAgICAgICAgICApIC0+IG5ob29kUmFjZV8xMF8xN1xuXG4jIHVuaXQgdGVzdFxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxMCwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTApLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxMCwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTApLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxMSwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTEpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxMSwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTEpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxMiwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTIpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxMiwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTIpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxMywgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTMpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxMywgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTMpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxNCwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTQpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxNCwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTQpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxNSwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxNSwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTUpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxNiwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTYpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxNiwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTYpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxNywgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTcpLCBUUlVFKVxuZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxNywgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTcpLCBUUlVFKVxuXG4jIGNsZWFuIHVwIGVudmlvcm5tZW50XG5ybSh0cmFjdFJhY2UpXG5gYGAifQ== -->
+<pre class="r"><code># read neighborhood data, re-project, and interpolate
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = tractRace, sid = GEOID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = c(&quot;white10&quot;, &quot;black10&quot;, 
+                               &quot;white11&quot;, &quot;black11&quot;,
+                               &quot;white12&quot;, &quot;black12&quot;,
+                               &quot;white13&quot;, &quot;black13&quot;,
+                               &quot;white14&quot;, &quot;black14&quot;,
+                               &quot;white15&quot;, &quot;black15&quot;,
+                               &quot;white16&quot;, &quot;black16&quot;,
+                               &quot;white17&quot;, &quot;black17&quot;)
+                 ) -&gt; nhoodRace_10_17
+
+# unit test
+expect_equal(aw_verify(source = tractRace, sourceValue = white10, result = nhoodRace_10_17, resultValue = white10), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black10, result = nhoodRace_10_17, resultValue = black10), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white11, result = nhoodRace_10_17, resultValue = white11), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black11, result = nhoodRace_10_17, resultValue = black11), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white12, result = nhoodRace_10_17, resultValue = white12), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black12, result = nhoodRace_10_17, resultValue = black12), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white13, result = nhoodRace_10_17, resultValue = white13), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black13, result = nhoodRace_10_17, resultValue = black13), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white14, result = nhoodRace_10_17, resultValue = white14), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black14, result = nhoodRace_10_17, resultValue = black14), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white15, result = nhoodRace_10_17, resultValue = white15), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black15, result = nhoodRace_10_17, resultValue = black15), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white16, result = nhoodRace_10_17, resultValue = white16), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black16, result = nhoodRace_10_17, resultValue = black16), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white17, result = nhoodRace_10_17, resultValue = white17), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black17, result = nhoodRace_10_17, resultValue = black17), TRUE)
+
+# clean up enviornment
+rm(tractRace)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+</div>
+<div id="combine-historical-and-modern-census-data" class="section level2">
+<h2>Combine Historical and Modern Census Data</h2>
+<p>Next, we’ll combine the two data objects to create a single table of census estimates:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmhvb2RSYWNlIDwtIGxlZnRfam9pbihuaG9vZFBvcF80MF84MCwgbmhvb2Q5MCwgYnkgPSBcIk5IRF9OVU1cIikgJT4lXG4gIGxlZnRfam9pbiguLCBuaG9vZDAwLCBieSA9IFwiTkhEX05VTVwiKSAlPiVcbiAgbGVmdF9qb2luKC4sIG5ob29kUmFjZV8xMF8xNywgYnkgPSBcIk5IRF9OVU1cIilcblxuIyBjbGVhbiB1cCBlbnZpb3JubWVudFxucm0obmhvb2RQb3BfNDBfODAsIG5ob29kOTAsIG5ob29kMDAsIG5ob29kUmFjZV8xMF8xNylcbmBgYCJ9 -->
+<pre class="r"><code>nhoodRace &lt;- left_join(nhoodPop_40_80, nhood90, by = &quot;NHD_NUM&quot;) %&gt;%
+  left_join(., nhood00, by = &quot;NHD_NUM&quot;) %&gt;%
+  left_join(., nhoodRace_10_17, by = &quot;NHD_NUM&quot;)
+
+# clean up enviornment
+rm(nhoodPop_40_80, nhood90, nhood00, nhoodRace_10_17)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="export" class="section level2">
+<h2>Export</h2>
+<p>Finally, we’ll write the data to a <code>.csv</code> file for future analysis.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3cml0ZSBvdXRwdXRcbndyaXRlX2NzdihuaG9vZFJhY2UsIGhlcmUoXCJkYXRhXCIsIFwiY2xlYW5cIiwgXCJTVExfUmFjZUJ5Tmhvb2QuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code># write output
+write_csv(nhoodRace, here(&quot;data&quot;, &quot;clean&quot;, &quot;STL_RaceByNhood.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQnVpbGQgUmFjZSBEYXRhIgphdXRob3I6ICJDaHJpc3RvcGhlciBQcmVuZXIsIFBoLkQuIgpkYXRlOiAnKGByIGZvcm1hdChTeXMudGltZSgpLCAiJUIgJWQsICVZIilgKScKb3V0cHV0OiAKICBnaXRodWJfZG9jdW1lbnQ6IGRlZmF1bHQKICBodG1sX25vdGVib29rOiBkZWZhdWx0IAotLS0KCiMjIEludHJvZHVjdGlvbgpUaGlzIG5vdGVib29rIGNyZWF0ZXMgbmVpZ2hib3Job29kIHBvcHVsYXRpb24gZXN0aW1hdGVzIGZvciBib3RoIHdoaXRlIGFuZCBBZnJpY2FuIEFtZXJpY2FuIHJlc2lkZW50cy4KCiMjIERlcGVuZGVuY2llcwpUaGlzIG5vdGVib29rIHJlcXVpcmVzIGEgbnVtYmVyIG9mIGRpZmZlcmVudCBgUmAgcGFja2FnZXM6CgpgYGB7ciBsb2FkLXBhY2thZ2VzfQojIHRpZHl2ZXJzZSBwYWNrYWdlcwpsaWJyYXJ5KGRwbHlyKSAgICAgICAgICMgZGF0YSB3cmFuZ2xpbmcKbGlicmFyeShyZWFkcikgICAgICAgICAjIHdvcmtpbmcgd2l0aCBjc3YgZGF0YQpsaWJyYXJ5KHN0cmluZ3IpICAgICAgICMgc3RyaW5nIHRvb2xzCgojIHNwYXRpYWwgcGFja2FnZXMKbGlicmFyeShhcmVhbCkgICAgICAgICAjIGludGVycG9sYXRpb24KbGlicmFyeShzZikgICAgICAgICAgICAjIHdvcmtpbmcgd2l0aCBzcGF0aWFsIGRhdGEKbGlicmFyeSh0aWR5Y2Vuc3VzKSAgICAjIGNlbnN1cyBhcGkgYWNjZXNzCmxpYnJhcnkodGlncmlzKSAgICAgICAgIyB0aWdlci9saW5lIGFwaSBhY2Nlc3MKCiMgb3RoZXIgcGFja2FnZXMKbGlicmFyeShoZXJlKSAgICAgICAgICAjIGZpbGUgcGF0aCBtYW5hZ2VtZW50CmxpYnJhcnkodGVzdHRoYXQpICAgICAgIyB1bml0IHRlc3RpbmcKYGBgCgpXZSBhbHNvIHVzZSBhIGZ1bmN0aW9uIGZvciB1bml0IHRlc3RpbmcgSUQgbnVtYmVyczoKCmBgYHtyIGxvYWQtZnVuY3Rpb25zfQpzb3VyY2UoaGVyZSgic291cmNlIiwgInVuaXF1ZV9pZC5SIikpCmBgYAoKIyMgQ3JlYXRlIERlbW9ncmFwaGljIERhdGEsIDE5NDAtMjAwMApUaGVzZSBkZWNlbm5pYWwgY2Vuc3VzIGRhdGEgd2VyZSBvYnRhaW5lZCBmcm9tIHR3byBzb3VyY2VzLiBUaGUgdHJhY3QtbGV2ZWwgc2hhcGVmaWxlcyB3ZXJlIG9idGFpbmVkIGZyb20gSVBVTVMnIFtOSEdJU10oaHR0cHM6Ly93d3cubmhnaXMub3JnKSBkYXRhYmFzZS4gVGhleSBjb21lIGZvciB0aGUgZW50aXJlIFUuUy4gKG9yIGFzIG11Y2ggb2YgdGhlIFUuUy4gYXMgd2FzIHRyYWN0ZWQgYXQgdGhhdCBwb2ludCAtIGZ1bGwgdHJhY3QgY292ZXJhZ2UgaXMgcmVsYXRpdmVseSByZWNlbnQpLiBUaGV5IHdlcmUgbWVyZ2VkIHdpdGggdHJhY3QtbGV2ZWwgZGF0YSBvYnRhaW5lZCBmcm9tIFtOSEdJU10oaHR0cDovL3NvY2lhbGV4cGxvcmVyLmNvbSkgdGhhdCB3YXMgYWxyZWFkeSBjbGVhbiBhbmQgcmVhZHkgdG8gdXNlIGZvciBlYWNoIGRlY2FkZS4KCiMjIyAxOTQwCkZpcnN0LCB3ZSBuZWVkIHRvIGxvYWQgdGhlIHNoYXBlZmlsZSBnZW9tZXRyeToKCmBgYHtyIGxvYWQtMTk0MC1zaGFwZWZpbGV9CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNDAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNDAKYGBgCgpOZXh0LCB3ZSBuZWVkIHRvIGxvYWQgdGhlIGNlbnN1cyBkYXRhIGFuZCBjb21iaW5lIGl0IHdpdGggdGhlIHNwYXRpYWwgZGF0YS4gV2UgbmVlZCB0byBjcmVhdGUgdGhlIGBUUkFDVElEYCB2YXJpYWJsZSBvdXQgb2YgYSBsYXJnZXIgdmFyaWFibGUgbmFtZWQgYEdlb19OYW1lYC4gQSB1bml0IHRlc3QgaXMgaW5jbHVkZWQgdG8gZW5zdXJlIHRoYXQgdGhlIGBUUkFDVElEYCB2YXJpYWJsZSB3ZSBhcmUgY3JlYXRpbmcgdW5pcXVlbHkgaWRlbnRpZmllcyBvYnNlcnZhdGlvbnM6CgpgYGB7ciBhZGQtMTk0MC1wb3B9CnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3JhY2U0MC5jc3YiKSkgJT4lCiAgc2VsZWN0KHRyYWN0SUQsIHdoaXRlLCBub253aGl0ZSkgJT4lCiAgbXV0YXRlKHRyYWN0SUQgPSBzdHJfcGFkKHN0cmluZyA9IHRyYWN0SUQsIHdpZHRoID0gNSwgc2lkZSA9ICJsZWZ0IiwgcGFkID0gIjAiKSkgLT4gcmFjZTQwCgojIHVuaXQgdGVzdApyYWNlNDAgJT4lIHVuaXF1ZV9pZCh0cmFjdElEKSAtPiBpZFVuaXF1ZQpleHBlY3RfZXF1YWwoaWRVbmlxdWUsIFRSVUUpCgojIGpvaW4gZGF0YQpzdGw0MCA8LSBsZWZ0X2pvaW4oc3RsNDAsIHJhY2U0MCwgYnkgPSBjKCJUUkFDVElEIiA9ICJ0cmFjdElEIikpCmBgYAoKRmluYWxseSwgd2UnbGwgdXNlIGEgdGVjaG5pcXVlIGNhbGxlZCBbYXJlYWwgd2VpZ2h0ZWQgaW50ZXJwb2xhdGlvbl0oaHR0cHM6Ly9zbHUtb3Blbmdpcy5naXRodWIuaW8vYXJlYWwvYXJ0aWNsZXMvYXJlYWwtd2VpZ2h0ZWQtaW50ZXJwb2xhdGlvbi5odG1sKSB0byBwcm9kdWNlIGVzdGltYXRlcyBhdCB0aGUgbmVpZ2hib3Job29kIGxldmVsLiBXZSdsbCBpbXBvcnQgdGhlIG5laWdoYm9yaG9vZCBkYXRhLCByZS1wcm9qZWN0IGl0IHNvIHRoYXQgaXQgbWF0Y2hlcyB0aGUgcHJvamVjdGlvbiB1c2VkIGZvciB0aGUgMTk0MCB0cmFjdCBib3VuZGFyaWVzLCBzdWJzZXQgaXQgc28gdGhhdCB3ZSBoYXZlIG9ubHkgdGhlIG5lZWRlZCBjb2x1bW5zIGFuZCBvbmx5IHJlc2lkZW50aWFsIG5laWdoYm9yaG9vZHMgKGxhcmdlIHBhcmtzIHJlbW92ZWQpLCBhbmQgdGhlbiBpbnRlcnBvbGF0ZSBhbGwgb2YgdGhlIHRyYWN0IGRhdGEgaW50byBuZWlnaGJvcmhvb2RzLgoKYGBge3IgaW50ZXJwb2xhdGUtMTk0MH0KIyBpbnRlcnBvbGF0ZQpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJuaG9vZCIsICJCTkRfTmhkODhfY3cuc2hwIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoTkhEX05BTUUsIE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw0MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBjKCJ3aGl0ZSIsICJub253aGl0ZSIpKSAtPiBuaG9vZDQwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDQwLCBzb3VyY2VWYWx1ZSA9IHdoaXRlLCByZXN1bHQgPSBuaG9vZDQwLCByZXN1bHRWYWx1ZSA9IHdoaXRlKSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw0MCwgc291cmNlVmFsdWUgPSBub253aGl0ZSwgcmVzdWx0ID0gbmhvb2Q0MCwgcmVzdWx0VmFsdWUgPSBub253aGl0ZSksIFRSVUUpCgojIHJlbmFtZSByYWNlIHZhcmlhYmxlcwpuaG9vZDQwIDwtIHJlbmFtZShuaG9vZDQwLCB3aGl0ZTQwID0gd2hpdGUsIG5vbndoaXRlNDAgPSBub253aGl0ZSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocmFjZTQwLCBzdGw0MCkKYGBgCgpGb3IgdHJhY3RzIHRoYXQgc3RyYWRkbGUgb25lIG9mIHRoZSBsYXJnZSBwYXJrcywgdGhlaXIgZW50aXJlIHBvcHVsYXRpb24gaXMgYWxsb2NhdGVkIGludG8gdGhlIGFwcHJvcHJpYXRlIGFkamFjZW50IG5laWdoYm9yaG9vZC4gV2UgY29uZmlybSB0aGF0IHRoZSBlbnRpcmUgY2l0eSdzIHBvcHVsYXRpb24gdXNpbmcgYSB1bml0IHRlc3Qgd2l0aCB0aGUgYGF3X3ZlcmlmeSgpYCBmdW5jdGlvbi4gQXMgbG9uZyBhcyBgYXdfdmVyaWZ5KClgIHJldHVybnMgYFRSVUVgLCB3ZSBrbm93IHRoYXQgZWFjaCByZXNpZGVudCBoYXMgYmVlbiBhbGxvY2F0ZWQuIFdlIHdyYXAgdGhpcyBpbiBhIHVuaXQgdGVzdCBzbyB0aGF0IHRoZSBjb2RlIGVycm9ycyBvdXQgaWYgdGhpcyBhc3N1bXB0aW9uIGlzIG5vdCBtZXQuCgojIyMgMTk1MApGb3IgdGhlIHJlbWFpbmRlciBvZiB0aGUgZGVjZW5uaWFsIGNlbnN1cyBkYXRhLCBJJ20gZ29pbmcgdG8gdXNlIHRoZSBzYW1lIHdvcmtmbG93IGJ1dCBjb25kZW5zZSB0aGUgY29kZS4KCmBgYHtyIGNyZWF0ZS0xOTUwLWVzdGltYXRlc30KIyByZWFkIGluIDE5NTAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3QKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czUwLnNocCIpLAogICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAtPiBzdGw1MAoKIyByZWFkIGluIDE5NTAgY2Vuc3VzIGNvdW50cywgY2xlYW4KcmVhZF9jc3YoaGVyZSgiZGF0YSIsICJ0YWJ1bGFyIiwgIlNUTF9ERU1PR1JBUEhJQ1NfcmFjZTUwLmNzdiIpKSAlPiUKICBzZWxlY3QodHJhY3RJRCwgd2hpdGUsIGJsYWNrKSAlPiUKICBtdXRhdGUodHJhY3RJRCA9IHN0cl9wYWQoc3RyaW5nID0gdHJhY3RJRCwgd2lkdGggPSA1LCBzaWRlID0gImxlZnQiLCBwYWQgPSAiMCIpKSAtPiByYWNlNTAKCiMgdW5pdCB0ZXN0CnJhY2U1MCAlPiUgdW5pcXVlX2lkKHRyYWN0SUQpIC0+IGlkVW5pcXVlCmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSkKCiMgam9pbiBkYXRhCnN0bDUwIDwtIGxlZnRfam9pbihzdGw1MCwgcmFjZTUwLCBieSA9IGMoIlRSQUNUSUQiID0gInRyYWN0SUQiKSkKCiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kcwpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJuaG9vZCIsICJCTkRfTmhkODhfY3cuc2hwIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoTkhEX05VTSkgJT4lCiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JQogIGF3X2ludGVycG9sYXRlKHRpZCA9IE5IRF9OVU0sIHNvdXJjZSA9IHN0bDUwLCBzaWQgPSBUUkFDVElELCAKICAgICAgICAgICAgICAgICB3ZWlnaHQgPSAic3VtIiwgb3V0cHV0ID0gInRpYmJsZSIsIAogICAgICAgICAgICAgICAgIGV4dGVuc2l2ZSA9IGMoIndoaXRlIiwgImJsYWNrIikpIC0+IG5ob29kNTAKCiMgdW5pdCB0ZXN0CmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNTAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNTAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDUwLCBzb3VyY2VWYWx1ZSA9IGJsYWNrLCByZXN1bHQgPSBuaG9vZDUwLCByZXN1bHRWYWx1ZSA9IGJsYWNrKSwgVFJVRSkKCiMgcmVuYW1lIHJhY2UgdmFyaWFibGVzCm5ob29kNTAgPC0gcmVuYW1lKG5ob29kNTAsIHdoaXRlNTAgPSB3aGl0ZSwgYmxhY2s1MCA9IGJsYWNrKQoKIyBjbGVhbi11cCBlbnZpb3JubWVudApybShyYWNlNTAsIHN0bDUwKQpgYGAKCiMjIyAxOTYwClRoZSAxOTYwIHByb2Nlc3MgaXMgdmVyeSBzaW1pbGFyIHRvIHRoZSAxOTUwIG9uZToKCmBgYHtyIGNyZWF0ZS0xOTYwLWVzdGltYXRlc30KIyByZWFkIGluIDE5NjAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3QKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czYwLnNocCIpLAogICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAtPiBzdGw2MAoKIyByZWFkIGluIDE5NjAgY2Vuc3VzIGNvdW50cywgY2xlYW4KcmVhZF9jc3YoaGVyZSgiZGF0YSIsICJ0YWJ1bGFyIiwgIlNUTF9ERU1PR1JBUEhJQ1NfcmFjZTYwLmNzdiIpKSAlPiUKICBzZWxlY3QodHJhY3RJRCwgd2hpdGUsIGJsYWNrKSAlPiUKICBtdXRhdGUodHJhY3RJRCA9IHN0cl9wYWQoc3RyaW5nID0gdHJhY3RJRCwgd2lkdGggPSA1LCBzaWRlID0gImxlZnQiLCBwYWQgPSAiMCIpKSAtPiByYWNlNjAKCiMgdW5pdCB0ZXN0CnJhY2U2MCAlPiUgdW5pcXVlX2lkKHRyYWN0SUQpIC0+IGlkVW5pcXVlCmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSkKCiMgam9pbiBkYXRhCnN0bDYwIDwtIGxlZnRfam9pbihzdGw2MCwgcmFjZTYwLCBieSA9IGMoIlRSQUNUSUQiID0gInRyYWN0SUQiKSkKCiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kcwpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJuaG9vZCIsICJCTkRfTmhkODhfY3cuc2hwIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoTkhEX05VTSkgJT4lCiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JQogIGF3X2ludGVycG9sYXRlKHRpZCA9IE5IRF9OVU0sIHNvdXJjZSA9IHN0bDYwLCBzaWQgPSBUUkFDVElELCAKICAgICAgICAgICAgICAgICB3ZWlnaHQgPSAic3VtIiwgb3V0cHV0ID0gInRpYmJsZSIsIAogICAgICAgICAgICAgICAgIGV4dGVuc2l2ZSA9IGMoIndoaXRlIiwgImJsYWNrIikpIC0+IG5ob29kNjAKCiMgdW5pdCB0ZXN0CmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNjAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNjAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDYwLCBzb3VyY2VWYWx1ZSA9IGJsYWNrLCByZXN1bHQgPSBuaG9vZDYwLCByZXN1bHRWYWx1ZSA9IGJsYWNrKSwgVFJVRSkKCiMgcmVuYW1lIHJhY2UgdmFyaWFibGVzCm5ob29kNjAgPC0gcmVuYW1lKG5ob29kNjAsIHdoaXRlNjAgPSB3aGl0ZSwgYmxhY2s2MCA9IGJsYWNrKQoKIyBjbGVhbi11cCBlbnZpb3JubWVudApybShyYWNlNjAsIHN0bDYwKQpgYGAKCiMjIyAxOTcwCkJlZ2lubmluZyBpbiAxOTcwLCB0aGUgdHJhY3QgSUQgbnVtYmVycyBjaGFuZ2VkLCBhbmQgc28gb3VyIHByb2Nlc3MgZm9yIGpvaW5pbmcgdGhlc2UgZGF0YSBkb2VzIGFzIHdlbGwuCgpgYGB7ciBjcmVhdGUtMTk3MC1lc3RpbWF0ZXN9CiMgcmVhZCBpbiAxOTcwIGVyYSB0cmFjdCBib3VuZGFyaWVzLCByZS1wcm9qZWN0CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNzAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNzAKCiMgcmVhZCBpbiAxOTcwIGNlbnN1cyBjb3VudHMsIGNsZWFuCnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3JhY2U3MC5jc3YiKSkgJT4lCiAgc2VsZWN0KHRyYWN0SUQsIHdoaXRlLCBibGFjaykgJT4lCiAgbXV0YXRlKHRyYWN0SUQgPSBhcy5pbnRlZ2VyKHN0cl9wYWQoc3RyaW5nID0gdHJhY3RJRCwgd2lkdGggPSA2LCBzaWRlID0gInJpZ2h0IiwgcGFkID0gIjAiKSkpIC0+IHJhY2U3MAoKIyB1bml0IHRlc3QKcmFjZTcwICU+JSB1bmlxdWVfaWQodHJhY3RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsNzAgPC0gbGVmdF9qb2luKHN0bDcwLCByYWNlNzAsIGJ5ID0gYygiVFJBQ1RJRCIgPSAidHJhY3RJRCIpKQoKIyBpbnRlcnBvbGF0ZSB0byBuZWlnaGJvcmhvb2RzCnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIm5ob29kIiwgIkJORF9OaGQ4OF9jdy5zaHAiKSwgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChOSERfTlVNKSAlPiUKICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lCiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gc3RsNzAsIHNpZCA9IFRSQUNUSUQsIAogICAgICAgICAgICAgICAgIHdlaWdodCA9ICJzdW0iLCBvdXRwdXQgPSAidGliYmxlIiwgCiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gYygid2hpdGUiLCAiYmxhY2siKSkgLT4gbmhvb2Q3MAoKIyB1bml0IHRlc3QKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw3MCwgc291cmNlVmFsdWUgPSB3aGl0ZSwgcmVzdWx0ID0gbmhvb2Q3MCwgcmVzdWx0VmFsdWUgPSB3aGl0ZSksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNzAsIHNvdXJjZVZhbHVlID0gYmxhY2ssIHJlc3VsdCA9IG5ob29kNzAsIHJlc3VsdFZhbHVlID0gYmxhY2spLCBUUlVFKQoKIyByZW5hbWUgcmFjZSB2YXJpYWJsZXMKbmhvb2Q3MCA8LSByZW5hbWUobmhvb2Q3MCwgd2hpdGU3MCA9IHdoaXRlLCBibGFjazcwID0gYmxhY2spCgojIGNsZWFuLXVwIGVudmlvcm5tZW50CnJtKHJhY2U3MCwgc3RsNzApCmBgYAoKIyMjIDE5ODAKVGhlIDE5ODAgd29ya2Zsb3cgbWlycm9ycyB0aGUgMTk3MCBvbmU6CgpgYGB7ciBjcmVhdGUtMTk4MC1lc3RpbWF0ZXN9CiMgcmVhZCBpbiAxOTgwIGVyYSB0cmFjdCBib3VuZGFyaWVzLCByZS1wcm9qZWN0CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzODAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsODAKCiMgcmVhZCBpbiAxOTgwIGNlbnN1cyBjb3VudHMsIGNsZWFuCnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3JhY2U4MC5jc3YiKSkgJT4lCiAgc2VsZWN0KHRyYWN0SUQsIHdoaXRlLCBibGFjaykgJT4lCiAgbXV0YXRlKHRyYWN0SUQgPSBhcy5pbnRlZ2VyKHN0cl9wYWQoc3RyaW5nID0gdHJhY3RJRCwgd2lkdGggPSA2LCBzaWRlID0gInJpZ2h0IiwgcGFkID0gIjAiKSkpIC0+IHJhY2U4MAoKIyB1bml0IHRlc3QKcmFjZTgwICU+JSB1bmlxdWVfaWQodHJhY3RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsODAgPC0gbGVmdF9qb2luKHN0bDgwLCByYWNlODAsIGJ5ID0gYygiVFJBQ1RJRCIgPSAidHJhY3RJRCIpKQoKIyBpbnRlcnBvbGF0ZSB0byBuZWlnaGJvcmhvb2RzCnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIm5ob29kIiwgIkJORF9OaGQ4OF9jdy5zaHAiKSwgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChOSERfTlVNKSAlPiUKICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lCiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gc3RsODAsIHNpZCA9IFRSQUNUSUQsIAogICAgICAgICAgICAgICAgIHdlaWdodCA9ICJzdW0iLCBvdXRwdXQgPSAidGliYmxlIiwgCiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gYygid2hpdGUiLCAiYmxhY2siKSkgLT4gbmhvb2Q4MAoKIyB1bml0IHRlc3QKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw4MCwgc291cmNlVmFsdWUgPSB3aGl0ZSwgcmVzdWx0ID0gbmhvb2Q4MCwgcmVzdWx0VmFsdWUgPSB3aGl0ZSksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsODAsIHNvdXJjZVZhbHVlID0gYmxhY2ssIHJlc3VsdCA9IG5ob29kODAsIHJlc3VsdFZhbHVlID0gYmxhY2spLCBUUlVFKQoKIyByZW5hbWUgcmFjZSB2YXJpYWJsZXMKbmhvb2Q4MCA8LSByZW5hbWUobmhvb2Q4MCwgd2hpdGU4MCA9IHdoaXRlLCBibGFjazgwID0gYmxhY2spCgojIGNsZWFuLXVwIGVudmlvcm5tZW50CnJtKHJhY2U4MCwgc3RsODApCmBgYAoKIyMjIENvbWJpbmUgMTk0MHMtMTk4MHMgRGF0YQpOZXh0LCB3ZSdsbCBqb2luIGFsbCBvZiB0aGUgbmVpZ2hib3Job29kIGVzdGltYXRlcyB3ZSd2ZSBjcmVhdGVkIHNvIGZhciB0b2dldGhlciBpbnRvIGEgc2luZ2xlIG9iamVjdDoKCmBgYHtyIGpvaW4tMTk0MC0xOTgwfQpsZWZ0X2pvaW4obmhvb2Q0MCwgbmhvb2Q1MCwgYnkgPSAiTkhEX05VTSIpICU+JQogIGxlZnRfam9pbiguLCBuaG9vZDYwLCBieSA9ICJOSERfTlVNIikgJT4lCiAgbGVmdF9qb2luKC4sIG5ob29kNzAsIGJ5ID0gIk5IRF9OVU0iKSAlPiUKICBsZWZ0X2pvaW4oLiwgbmhvb2Q4MCwgYnkgPSAiTkhEX05VTSIpIC0+IG5ob29kUG9wXzQwXzgwCgojIGNsZWFuIHVwIGVudmlvcm5tZW50CnJtKG5ob29kNDAsIG5ob29kNTAsIG5ob29kNjAsIG5ob29kNzAsIG5ob29kODAsIGlkVW5pcXVlLCB1bmlxdWVfaWQpCmBgYAoKIyMgRG93bmxvYWQgRGVtb2dyYXBoaWMgRGF0YSwgMTk5MC0yMDE3CkFsbCBkYXRhIGZvciB0aGlzIGVyYSBhcmUgZG93bmxvYWRlZCBmcm9tIHRoZSBDZW5zdXMgQnVyZWF1J3MgQVBJIHZpYSBgdGlkeWNlbnN1c2AuIAoKIyMjIDE5OTAKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgZGVjZW5uaWFsIGNlbnN1cy4KCmBgYHtyIGRvd25sb2FkLTE5OTAsIHJlc3VsdHM9J2hpZGUnfQojIHdoaXRlCmdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgdmFyaWFibGVzID0gIlAwMDYwMDAxIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCB5ZWFyID0gMTk5MCwgZ2VvbWV0cnkgPSBUUlVFKSAlPiUgCiAgc2VsZWN0KEdFT0lELCBOQU1FLCB2YWx1ZSkgJT4lCiAgcmVuYW1lKHdoaXRlOTAgPSB2YWx1ZSkgLT4gd2hpdGU5MAoKIyBibGFjayAKZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSAidHJhY3QiLCB2YXJpYWJsZXMgPSAiUDAwNjAwMDIiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIHllYXIgPSAxOTkwLCBnZW9tZXRyeSA9IEZBTFNFKSAlPiUgCiAgc2VsZWN0KEdFT0lELCB2YWx1ZSkgJT4lCiAgcmVuYW1lKGJsYWNrOTAgPSB2YWx1ZSkgLT4gYmxhY2s5MAoKIyBjb21iaW5lCnN0bDkwIDwtIGxlZnRfam9pbih3aGl0ZTkwLCBibGFjazkwLCBieSA9ICJHRU9JRCIpCgojIHJlbW92ZSBpbnRlcm1lZGlhdGUgb2JqZWN0cwpybSh3aGl0ZTkwLCBibGFjazkwKQpgYGAKCiMjIyAyMDAwClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIGRlY2VubmlhbCBjZW5zdXMuCgpgYGB7ciBkb3dubG9hZC0yMDAwLCByZXN1bHRzPSdoaWRlJ30KIyB3aGl0ZQpnZXRfZGVjZW5uaWFsKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHZhcmlhYmxlcyA9ICJQMDAzMDAzIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCB5ZWFyID0gMjAwMCwgZ2VvbWV0cnkgPSBUUlVFKSAlPiUgCiAgc2VsZWN0KEdFT0lELCBOQU1FLCB2YWx1ZSkgJT4lCiAgcmVuYW1lKHdoaXRlMDAgPSB2YWx1ZSkgLT4gd2hpdGUwMAoKIyBibGFjayAKZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSAidHJhY3QiLCB2YXJpYWJsZXMgPSAiUDAwMzAwNCIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCwgeWVhciA9IDIwMDAsIGdlb21ldHJ5ID0gRkFMU0UpICU+JSAKICBzZWxlY3QoR0VPSUQsIHZhbHVlKSAlPiUKICByZW5hbWUoYmxhY2swMCA9IHZhbHVlKSAtPiBibGFjazAwCgojIGNvbWJpbmUKc3RsMDAgPC0gbGVmdF9qb2luKHdoaXRlMDAsIGJsYWNrMDAsIGJ5ID0gIkdFT0lEIikKCiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzCnJtKHdoaXRlMDAsIGJsYWNrMDApCmBgYAoKIyMjIDIwMTAKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgZGVjZW5uaWFsIGNlbnN1cy4KCmBgYHtyIGRvd25sb2FkLTIwMTAsIHJlc3VsdHM9J2hpZGUnfQojIHdoaXRlCmdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgdmFyaWFibGVzID0gIlAwMDMwMDIiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIHllYXIgPSAyMDEwLCBnZW9tZXRyeSA9IFRSVUUpICU+JSAKICBzZWxlY3QoR0VPSUQsIE5BTUUsIHZhbHVlKSAlPiUKICByZW5hbWUod2hpdGUxMCA9IHZhbHVlKSAtPiB3aGl0ZTEwCgojIGJsYWNrIApnZXRfZGVjZW5uaWFsKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHZhcmlhYmxlcyA9ICJQMDAzMDAzIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCB5ZWFyID0gMjAxMCwgZ2VvbWV0cnkgPSBGQUxTRSkgJT4lIAogIHNlbGVjdChHRU9JRCwgdmFsdWUpICU+JQogIHJlbmFtZShibGFjazEwID0gdmFsdWUpIC0+IGJsYWNrMTAKCiMgY29tYmluZQpzdGwxMCA8LSBsZWZ0X2pvaW4od2hpdGUxMCwgYmxhY2sxMCwgYnkgPSAiR0VPSUQiKQoKIyByZW1vdmUgaW50ZXJtZWRpYXRlIG9iamVjdHMKcm0od2hpdGUxMCwgYmxhY2sxMCkKYGBgCgojIyMgMjAxMQpUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSAyMDA3LTIwMTEgNS15ZWFyIEFtZXJpY2FuIENvbW11bml0eSBTdXJ2ZXkgZXN0aW1hdGVzLgoKYGBge3IgZG93bmxvYWQtMjAxMX0KIyB3aGl0ZQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDExLCB2YXJpYWJsZXMgPSAiQjAyMDAxXzAwMiIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUod2hpdGUxMSA9IGVzdGltYXRlLAogICAgICAgICB3aGl0ZTExX20gPSBtb2UpIC0+IHdoaXRlMTEKCiMgYmxhY2sKZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxMSwgdmFyaWFibGVzID0gIkIwMjAwMV8wMDMiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKGJsYWNrMTEgPSBlc3RpbWF0ZSwKICAgICAgICAgYmxhY2sxMV9tID0gbW9lKSAtPiBibGFjazExCgojIGNvbWJpbmUKc3RsMTEgPC0gbGVmdF9qb2luKHdoaXRlMTEsIGJsYWNrMTEsIGJ5ID0gIkdFT0lEIikKCiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzCnJtKHdoaXRlMTEsIGJsYWNrMTEpCmBgYAo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQnVpbGQgUmFjZSBEYXRhIgphdXRob3I6ICJDaHJpc3RvcGhlciBQcmVuZXIsIFBoLkQuIgpkYXRlOiAnKGByIGZvcm1hdChTeXMudGltZSgpLCAiJUIgJWQsICVZIilgKScKb3V0cHV0OiAKICBnaXRodWJfZG9jdW1lbnQ6IGRlZmF1bHQKICBodG1sX25vdGVib29rOiBkZWZhdWx0IAotLS0KCiMjIEludHJvZHVjdGlvbgpUaGlzIG5vdGVib29rIGNyZWF0ZXMgbmVpZ2hib3Job29kIHBvcHVsYXRpb24gZXN0aW1hdGVzIGZvciBib3RoIHdoaXRlIGFuZCBBZnJpY2FuIEFtZXJpY2FuIHJlc2lkZW50cy4KCiMjIERlcGVuZGVuY2llcwpUaGlzIG5vdGVib29rIHJlcXVpcmVzIGEgbnVtYmVyIG9mIGRpZmZlcmVudCBgUmAgcGFja2FnZXM6CgpgYGB7ciBsb2FkLXBhY2thZ2VzfQojIHRpZHl2ZXJzZSBwYWNrYWdlcwpsaWJyYXJ5KGRwbHlyKSAgICAgICAgICMgZGF0YSB3cmFuZ2xpbmcKbGlicmFyeShyZWFkcikgICAgICAgICAjIHdvcmtpbmcgd2l0aCBjc3YgZGF0YQpsaWJyYXJ5KHN0cmluZ3IpICAgICAgICMgc3RyaW5nIHRvb2xzCgojIHNwYXRpYWwgcGFja2FnZXMKbGlicmFyeShhcmVhbCkgICAgICAgICAjIGludGVycG9sYXRpb24KbGlicmFyeShzZikgICAgICAgICAgICAjIHdvcmtpbmcgd2l0aCBzcGF0aWFsIGRhdGEKbGlicmFyeSh0aWR5Y2Vuc3VzKSAgICAjIGNlbnN1cyBhcGkgYWNjZXNzCmxpYnJhcnkodGlncmlzKSAgICAgICAgIyB0aWdlci9saW5lIGFwaSBhY2Nlc3MKCiMgb3RoZXIgcGFja2FnZXMKbGlicmFyeShoZXJlKSAgICAgICAgICAjIGZpbGUgcGF0aCBtYW5hZ2VtZW50CmxpYnJhcnkodGVzdHRoYXQpICAgICAgIyB1bml0IHRlc3RpbmcKYGBgCgpXZSBhbHNvIHVzZSBhIGZ1bmN0aW9uIGZvciB1bml0IHRlc3RpbmcgSUQgbnVtYmVyczoKCmBgYHtyIGxvYWQtZnVuY3Rpb25zfQpzb3VyY2UoaGVyZSgic291cmNlIiwgInVuaXF1ZV9pZC5SIikpCmBgYAoKIyMgQ3JlYXRlIERlbW9ncmFwaGljIERhdGEsIDE5NDAtMjAwMApUaGVzZSBkZWNlbm5pYWwgY2Vuc3VzIGRhdGEgd2VyZSBvYnRhaW5lZCBmcm9tIHR3byBzb3VyY2VzLiBUaGUgdHJhY3QtbGV2ZWwgc2hhcGVmaWxlcyB3ZXJlIG9idGFpbmVkIGZyb20gSVBVTVMnIFtOSEdJU10oaHR0cHM6Ly93d3cubmhnaXMub3JnKSBkYXRhYmFzZS4gVGhleSBjb21lIGZvciB0aGUgZW50aXJlIFUuUy4gKG9yIGFzIG11Y2ggb2YgdGhlIFUuUy4gYXMgd2FzIHRyYWN0ZWQgYXQgdGhhdCBwb2ludCAtIGZ1bGwgdHJhY3QgY292ZXJhZ2UgaXMgcmVsYXRpdmVseSByZWNlbnQpLiBUaGV5IHdlcmUgbWVyZ2VkIHdpdGggdHJhY3QtbGV2ZWwgZGF0YSBvYnRhaW5lZCBmcm9tIFtOSEdJU10oaHR0cDovL3NvY2lhbGV4cGxvcmVyLmNvbSkgdGhhdCB3YXMgYWxyZWFkeSBjbGVhbiBhbmQgcmVhZHkgdG8gdXNlIGZvciBlYWNoIGRlY2FkZS4KCiMjIyAxOTQwCkZpcnN0LCB3ZSBuZWVkIHRvIGxvYWQgdGhlIHNoYXBlZmlsZSBnZW9tZXRyeToKCmBgYHtyIGxvYWQtMTk0MC1zaGFwZWZpbGV9CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNDAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNDAKYGBgCgpOZXh0LCB3ZSBuZWVkIHRvIGxvYWQgdGhlIGNlbnN1cyBkYXRhIGFuZCBjb21iaW5lIGl0IHdpdGggdGhlIHNwYXRpYWwgZGF0YS4gV2UgbmVlZCB0byBjcmVhdGUgdGhlIGBUUkFDVElEYCB2YXJpYWJsZSBvdXQgb2YgYSBsYXJnZXIgdmFyaWFibGUgbmFtZWQgYEdlb19OYW1lYC4gQSB1bml0IHRlc3QgaXMgaW5jbHVkZWQgdG8gZW5zdXJlIHRoYXQgdGhlIGBUUkFDVElEYCB2YXJpYWJsZSB3ZSBhcmUgY3JlYXRpbmcgdW5pcXVlbHkgaWRlbnRpZmllcyBvYnNlcnZhdGlvbnM6CgpgYGB7ciBhZGQtMTk0MC1wb3B9CnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3JhY2U0MC5jc3YiKSkgJT4lCiAgc2VsZWN0KHRyYWN0SUQsIHdoaXRlLCBub253aGl0ZSkgJT4lCiAgbXV0YXRlKHRyYWN0SUQgPSBzdHJfcGFkKHN0cmluZyA9IHRyYWN0SUQsIHdpZHRoID0gNSwgc2lkZSA9ICJsZWZ0IiwgcGFkID0gIjAiKSkgLT4gcmFjZTQwCgojIHVuaXQgdGVzdApyYWNlNDAgJT4lIHVuaXF1ZV9pZCh0cmFjdElEKSAtPiBpZFVuaXF1ZQpleHBlY3RfZXF1YWwoaWRVbmlxdWUsIFRSVUUpCgojIGpvaW4gZGF0YQpzdGw0MCA8LSBsZWZ0X2pvaW4oc3RsNDAsIHJhY2U0MCwgYnkgPSBjKCJUUkFDVElEIiA9ICJ0cmFjdElEIikpCmBgYAoKRmluYWxseSwgd2UnbGwgdXNlIGEgdGVjaG5pcXVlIGNhbGxlZCBbYXJlYWwgd2VpZ2h0ZWQgaW50ZXJwb2xhdGlvbl0oaHR0cHM6Ly9zbHUtb3Blbmdpcy5naXRodWIuaW8vYXJlYWwvYXJ0aWNsZXMvYXJlYWwtd2VpZ2h0ZWQtaW50ZXJwb2xhdGlvbi5odG1sKSB0byBwcm9kdWNlIGVzdGltYXRlcyBhdCB0aGUgbmVpZ2hib3Job29kIGxldmVsLiBXZSdsbCBpbXBvcnQgdGhlIG5laWdoYm9yaG9vZCBkYXRhLCByZS1wcm9qZWN0IGl0IHNvIHRoYXQgaXQgbWF0Y2hlcyB0aGUgcHJvamVjdGlvbiB1c2VkIGZvciB0aGUgMTk0MCB0cmFjdCBib3VuZGFyaWVzLCBzdWJzZXQgaXQgc28gdGhhdCB3ZSBoYXZlIG9ubHkgdGhlIG5lZWRlZCBjb2x1bW5zIGFuZCBvbmx5IHJlc2lkZW50aWFsIG5laWdoYm9yaG9vZHMgKGxhcmdlIHBhcmtzIHJlbW92ZWQpLCBhbmQgdGhlbiBpbnRlcnBvbGF0ZSBhbGwgb2YgdGhlIHRyYWN0IGRhdGEgaW50byBuZWlnaGJvcmhvb2RzLgoKYGBge3IgaW50ZXJwb2xhdGUtMTk0MH0KIyBpbnRlcnBvbGF0ZQpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJuaG9vZCIsICJCTkRfTmhkODhfY3cuc2hwIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoTkhEX05BTUUsIE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw0MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBjKCJ3aGl0ZSIsICJub253aGl0ZSIpKSAtPiBuaG9vZDQwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDQwLCBzb3VyY2VWYWx1ZSA9IHdoaXRlLCByZXN1bHQgPSBuaG9vZDQwLCByZXN1bHRWYWx1ZSA9IHdoaXRlKSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw0MCwgc291cmNlVmFsdWUgPSBub253aGl0ZSwgcmVzdWx0ID0gbmhvb2Q0MCwgcmVzdWx0VmFsdWUgPSBub253aGl0ZSksIFRSVUUpCgojIHJlbmFtZSByYWNlIHZhcmlhYmxlcwpuaG9vZDQwIDwtIHJlbmFtZShuaG9vZDQwLCB3aGl0ZTQwID0gd2hpdGUsIG5vbndoaXRlNDAgPSBub253aGl0ZSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocmFjZTQwLCBzdGw0MCkKYGBgCgpGb3IgdHJhY3RzIHRoYXQgc3RyYWRkbGUgb25lIG9mIHRoZSBsYXJnZSBwYXJrcywgdGhlaXIgZW50aXJlIHBvcHVsYXRpb24gaXMgYWxsb2NhdGVkIGludG8gdGhlIGFwcHJvcHJpYXRlIGFkamFjZW50IG5laWdoYm9yaG9vZC4gV2UgY29uZmlybSB0aGF0IHRoZSBlbnRpcmUgY2l0eSdzIHBvcHVsYXRpb24gdXNpbmcgYSB1bml0IHRlc3Qgd2l0aCB0aGUgYGF3X3ZlcmlmeSgpYCBmdW5jdGlvbi4gQXMgbG9uZyBhcyBgYXdfdmVyaWZ5KClgIHJldHVybnMgYFRSVUVgLCB3ZSBrbm93IHRoYXQgZWFjaCByZXNpZGVudCBoYXMgYmVlbiBhbGxvY2F0ZWQuIFdlIHdyYXAgdGhpcyBpbiBhIHVuaXQgdGVzdCBzbyB0aGF0IHRoZSBjb2RlIGVycm9ycyBvdXQgaWYgdGhpcyBhc3N1bXB0aW9uIGlzIG5vdCBtZXQuCgojIyMgMTk1MApGb3IgdGhlIHJlbWFpbmRlciBvZiB0aGUgZGVjZW5uaWFsIGNlbnN1cyBkYXRhLCBJJ20gZ29pbmcgdG8gdXNlIHRoZSBzYW1lIHdvcmtmbG93IGJ1dCBjb25kZW5zZSB0aGUgY29kZS4KCmBgYHtyIGNyZWF0ZS0xOTUwLWVzdGltYXRlc30KIyByZWFkIGluIDE5NTAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3QKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czUwLnNocCIpLAogICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAtPiBzdGw1MAoKIyByZWFkIGluIDE5NTAgY2Vuc3VzIGNvdW50cywgY2xlYW4KcmVhZF9jc3YoaGVyZSgiZGF0YSIsICJ0YWJ1bGFyIiwgIlNUTF9ERU1PR1JBUEhJQ1NfcmFjZTUwLmNzdiIpKSAlPiUKICBzZWxlY3QodHJhY3RJRCwgd2hpdGUsIGJsYWNrKSAlPiUKICBtdXRhdGUodHJhY3RJRCA9IHN0cl9wYWQoc3RyaW5nID0gdHJhY3RJRCwgd2lkdGggPSA1LCBzaWRlID0gImxlZnQiLCBwYWQgPSAiMCIpKSAtPiByYWNlNTAKCiMgdW5pdCB0ZXN0CnJhY2U1MCAlPiUgdW5pcXVlX2lkKHRyYWN0SUQpIC0+IGlkVW5pcXVlCmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSkKCiMgam9pbiBkYXRhCnN0bDUwIDwtIGxlZnRfam9pbihzdGw1MCwgcmFjZTUwLCBieSA9IGMoIlRSQUNUSUQiID0gInRyYWN0SUQiKSkKCiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kcwpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJuaG9vZCIsICJCTkRfTmhkODhfY3cuc2hwIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoTkhEX05VTSkgJT4lCiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JQogIGF3X2ludGVycG9sYXRlKHRpZCA9IE5IRF9OVU0sIHNvdXJjZSA9IHN0bDUwLCBzaWQgPSBUUkFDVElELCAKICAgICAgICAgICAgICAgICB3ZWlnaHQgPSAic3VtIiwgb3V0cHV0ID0gInRpYmJsZSIsIAogICAgICAgICAgICAgICAgIGV4dGVuc2l2ZSA9IGMoIndoaXRlIiwgImJsYWNrIikpIC0+IG5ob29kNTAKCiMgdW5pdCB0ZXN0CmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNTAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNTAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDUwLCBzb3VyY2VWYWx1ZSA9IGJsYWNrLCByZXN1bHQgPSBuaG9vZDUwLCByZXN1bHRWYWx1ZSA9IGJsYWNrKSwgVFJVRSkKCiMgcmVuYW1lIHJhY2UgdmFyaWFibGVzCm5ob29kNTAgPC0gcmVuYW1lKG5ob29kNTAsIHdoaXRlNTAgPSB3aGl0ZSwgYmxhY2s1MCA9IGJsYWNrKQoKIyBjbGVhbi11cCBlbnZpb3JubWVudApybShyYWNlNTAsIHN0bDUwKQpgYGAKCiMjIyAxOTYwClRoZSAxOTYwIHByb2Nlc3MgaXMgdmVyeSBzaW1pbGFyIHRvIHRoZSAxOTUwIG9uZToKCmBgYHtyIGNyZWF0ZS0xOTYwLWVzdGltYXRlc30KIyByZWFkIGluIDE5NjAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3QKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czYwLnNocCIpLAogICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAtPiBzdGw2MAoKIyByZWFkIGluIDE5NjAgY2Vuc3VzIGNvdW50cywgY2xlYW4KcmVhZF9jc3YoaGVyZSgiZGF0YSIsICJ0YWJ1bGFyIiwgIlNUTF9ERU1PR1JBUEhJQ1NfcmFjZTYwLmNzdiIpKSAlPiUKICBzZWxlY3QodHJhY3RJRCwgd2hpdGUsIGJsYWNrKSAlPiUKICBtdXRhdGUodHJhY3RJRCA9IHN0cl9wYWQoc3RyaW5nID0gdHJhY3RJRCwgd2lkdGggPSA1LCBzaWRlID0gImxlZnQiLCBwYWQgPSAiMCIpKSAtPiByYWNlNjAKCiMgdW5pdCB0ZXN0CnJhY2U2MCAlPiUgdW5pcXVlX2lkKHRyYWN0SUQpIC0+IGlkVW5pcXVlCmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSkKCiMgam9pbiBkYXRhCnN0bDYwIDwtIGxlZnRfam9pbihzdGw2MCwgcmFjZTYwLCBieSA9IGMoIlRSQUNUSUQiID0gInRyYWN0SUQiKSkKCiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kcwpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJuaG9vZCIsICJCTkRfTmhkODhfY3cuc2hwIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoTkhEX05VTSkgJT4lCiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JQogIGF3X2ludGVycG9sYXRlKHRpZCA9IE5IRF9OVU0sIHNvdXJjZSA9IHN0bDYwLCBzaWQgPSBUUkFDVElELCAKICAgICAgICAgICAgICAgICB3ZWlnaHQgPSAic3VtIiwgb3V0cHV0ID0gInRpYmJsZSIsIAogICAgICAgICAgICAgICAgIGV4dGVuc2l2ZSA9IGMoIndoaXRlIiwgImJsYWNrIikpIC0+IG5ob29kNjAKCiMgdW5pdCB0ZXN0CmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNjAsIHNvdXJjZVZhbHVlID0gd2hpdGUsIHJlc3VsdCA9IG5ob29kNjAsIHJlc3VsdFZhbHVlID0gd2hpdGUpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDYwLCBzb3VyY2VWYWx1ZSA9IGJsYWNrLCByZXN1bHQgPSBuaG9vZDYwLCByZXN1bHRWYWx1ZSA9IGJsYWNrKSwgVFJVRSkKCiMgcmVuYW1lIHJhY2UgdmFyaWFibGVzCm5ob29kNjAgPC0gcmVuYW1lKG5ob29kNjAsIHdoaXRlNjAgPSB3aGl0ZSwgYmxhY2s2MCA9IGJsYWNrKQoKIyBjbGVhbi11cCBlbnZpb3JubWVudApybShyYWNlNjAsIHN0bDYwKQpgYGAKCiMjIyAxOTcwCkJlZ2lubmluZyBpbiAxOTcwLCB0aGUgdHJhY3QgSUQgbnVtYmVycyBjaGFuZ2VkLCBhbmQgc28gb3VyIHByb2Nlc3MgZm9yIGpvaW5pbmcgdGhlc2UgZGF0YSBkb2VzIGFzIHdlbGwuCgpgYGB7ciBjcmVhdGUtMTk3MC1lc3RpbWF0ZXN9CiMgcmVhZCBpbiAxOTcwIGVyYSB0cmFjdCBib3VuZGFyaWVzLCByZS1wcm9qZWN0CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNzAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNzAKCiMgcmVhZCBpbiAxOTcwIGNlbnN1cyBjb3VudHMsIGNsZWFuCnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3JhY2U3MC5jc3YiKSkgJT4lCiAgc2VsZWN0KHRyYWN0SUQsIHdoaXRlLCBibGFjaykgJT4lCiAgbXV0YXRlKHRyYWN0SUQgPSBhcy5pbnRlZ2VyKHN0cl9wYWQoc3RyaW5nID0gdHJhY3RJRCwgd2lkdGggPSA2LCBzaWRlID0gInJpZ2h0IiwgcGFkID0gIjAiKSkpIC0+IHJhY2U3MAoKIyB1bml0IHRlc3QKcmFjZTcwICU+JSB1bmlxdWVfaWQodHJhY3RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsNzAgPC0gbGVmdF9qb2luKHN0bDcwLCByYWNlNzAsIGJ5ID0gYygiVFJBQ1RJRCIgPSAidHJhY3RJRCIpKQoKIyBpbnRlcnBvbGF0ZSB0byBuZWlnaGJvcmhvb2RzCnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIm5ob29kIiwgIkJORF9OaGQ4OF9jdy5zaHAiKSwgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChOSERfTlVNKSAlPiUKICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lCiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gc3RsNzAsIHNpZCA9IFRSQUNUSUQsIAogICAgICAgICAgICAgICAgIHdlaWdodCA9ICJzdW0iLCBvdXRwdXQgPSAidGliYmxlIiwgCiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gYygid2hpdGUiLCAiYmxhY2siKSkgLT4gbmhvb2Q3MAoKIyB1bml0IHRlc3QKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw3MCwgc291cmNlVmFsdWUgPSB3aGl0ZSwgcmVzdWx0ID0gbmhvb2Q3MCwgcmVzdWx0VmFsdWUgPSB3aGl0ZSksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNzAsIHNvdXJjZVZhbHVlID0gYmxhY2ssIHJlc3VsdCA9IG5ob29kNzAsIHJlc3VsdFZhbHVlID0gYmxhY2spLCBUUlVFKQoKIyByZW5hbWUgcmFjZSB2YXJpYWJsZXMKbmhvb2Q3MCA8LSByZW5hbWUobmhvb2Q3MCwgd2hpdGU3MCA9IHdoaXRlLCBibGFjazcwID0gYmxhY2spCgojIGNsZWFuLXVwIGVudmlvcm5tZW50CnJtKHJhY2U3MCwgc3RsNzApCmBgYAoKIyMjIDE5ODAKVGhlIDE5ODAgd29ya2Zsb3cgbWlycm9ycyB0aGUgMTk3MCBvbmU6CgpgYGB7ciBjcmVhdGUtMTk4MC1lc3RpbWF0ZXN9CiMgcmVhZCBpbiAxOTgwIGVyYSB0cmFjdCBib3VuZGFyaWVzLCByZS1wcm9qZWN0CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzODAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsODAKCiMgcmVhZCBpbiAxOTgwIGNlbnN1cyBjb3VudHMsIGNsZWFuCnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3JhY2U4MC5jc3YiKSkgJT4lCiAgc2VsZWN0KHRyYWN0SUQsIHdoaXRlLCBibGFjaykgJT4lCiAgbXV0YXRlKHRyYWN0SUQgPSBhcy5pbnRlZ2VyKHN0cl9wYWQoc3RyaW5nID0gdHJhY3RJRCwgd2lkdGggPSA2LCBzaWRlID0gInJpZ2h0IiwgcGFkID0gIjAiKSkpIC0+IHJhY2U4MAoKIyB1bml0IHRlc3QKcmFjZTgwICU+JSB1bmlxdWVfaWQodHJhY3RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsODAgPC0gbGVmdF9qb2luKHN0bDgwLCByYWNlODAsIGJ5ID0gYygiVFJBQ1RJRCIgPSAidHJhY3RJRCIpKQoKIyBpbnRlcnBvbGF0ZSB0byBuZWlnaGJvcmhvb2RzCnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIm5ob29kIiwgIkJORF9OaGQ4OF9jdy5zaHAiKSwgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChOSERfTlVNKSAlPiUKICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lCiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gc3RsODAsIHNpZCA9IFRSQUNUSUQsIAogICAgICAgICAgICAgICAgIHdlaWdodCA9ICJzdW0iLCBvdXRwdXQgPSAidGliYmxlIiwgCiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gYygid2hpdGUiLCAiYmxhY2siKSkgLT4gbmhvb2Q4MAoKIyB1bml0IHRlc3QKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw4MCwgc291cmNlVmFsdWUgPSB3aGl0ZSwgcmVzdWx0ID0gbmhvb2Q4MCwgcmVzdWx0VmFsdWUgPSB3aGl0ZSksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsODAsIHNvdXJjZVZhbHVlID0gYmxhY2ssIHJlc3VsdCA9IG5ob29kODAsIHJlc3VsdFZhbHVlID0gYmxhY2spLCBUUlVFKQoKIyByZW5hbWUgcmFjZSB2YXJpYWJsZXMKbmhvb2Q4MCA8LSByZW5hbWUobmhvb2Q4MCwgd2hpdGU4MCA9IHdoaXRlLCBibGFjazgwID0gYmxhY2spCgojIGNsZWFuLXVwIGVudmlvcm5tZW50CnJtKHJhY2U4MCwgc3RsODApCmBgYAoKIyMjIENvbWJpbmUgMTk0MHMtMTk4MHMgRGF0YQpOZXh0LCB3ZSdsbCBqb2luIGFsbCBvZiB0aGUgbmVpZ2hib3Job29kIGVzdGltYXRlcyB3ZSd2ZSBjcmVhdGVkIHNvIGZhciB0b2dldGhlciBpbnRvIGEgc2luZ2xlIG9iamVjdDoKCmBgYHtyIGpvaW4tMTk0MC0xOTgwfQpsZWZ0X2pvaW4obmhvb2Q0MCwgbmhvb2Q1MCwgYnkgPSAiTkhEX05VTSIpICU+JQogIGxlZnRfam9pbiguLCBuaG9vZDYwLCBieSA9ICJOSERfTlVNIikgJT4lCiAgbGVmdF9qb2luKC4sIG5ob29kNzAsIGJ5ID0gIk5IRF9OVU0iKSAlPiUKICBsZWZ0X2pvaW4oLiwgbmhvb2Q4MCwgYnkgPSAiTkhEX05VTSIpIC0+IG5ob29kUG9wXzQwXzgwCgojIGNsZWFuIHVwIGVudmlvcm5tZW50CnJtKG5ob29kNDAsIG5ob29kNTAsIG5ob29kNjAsIG5ob29kNzAsIG5ob29kODAsIGlkVW5pcXVlLCB1bmlxdWVfaWQpCmBgYAoKIyMgRG93bmxvYWQgRGVtb2dyYXBoaWMgRGF0YSwgMTk5MC0yMDE3CkFsbCBkYXRhIGZvciB0aGlzIGVyYSBhcmUgZG93bmxvYWRlZCBmcm9tIHRoZSBDZW5zdXMgQnVyZWF1J3MgQVBJIHZpYSBgdGlkeWNlbnN1c2AuIAoKIyMjIDE5OTAKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgZGVjZW5uaWFsIGNlbnN1cy4gTm90ZSB0aGF0IHRoZSB3aGl0ZSBwb3B1bGF0aW9uIGlzIG5laWdoYm9yaG9vZHMgaXMgMTIgcGVvcGxlIGxlc3MgdGhhbiB0aGUgdG90YWwgd2hpdGUgcG9wdWxhdGlvbiwgYmVjYXVzZSBDZW5zdXMgVHJhY3QgMTAxOC45OSBkb2VzIG5vdCBoYXZlIGFueSBnZW9tZXRyeS4gVGhlIGJsYWNrIHBvcHVsYXRpb24gaXMgdW5hZmZlY3RlZC4KCmBgYHtyIGRvd25sb2FkLTE5OTAsIHJlc3VsdHM9J2hpZGUnfQojIHdoaXRlCmdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgdmFyaWFibGVzID0gIlAwMDYwMDAxIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCB5ZWFyID0gMTk5MCwgZ2VvbWV0cnkgPSBUUlVFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChHRU9JRCwgTkFNRSwgdmFsdWUpICU+JQogIHJlbmFtZSh3aGl0ZTkwID0gdmFsdWUpIC0+IHdoaXRlOTAKCiMgYmxhY2sgCmdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgdmFyaWFibGVzID0gIlAwMDYwMDAyIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCB5ZWFyID0gMTk5MCwgZ2VvbWV0cnkgPSBGQUxTRSkgJT4lIAogIHNlbGVjdChHRU9JRCwgdmFsdWUpICU+JQogIHJlbmFtZShibGFjazkwID0gdmFsdWUpIC0+IGJsYWNrOTAKCiMgY29tYmluZQpzdGw5MCA8LSBsZWZ0X2pvaW4od2hpdGU5MCwgYmxhY2s5MCwgYnkgPSAiR0VPSUQiKQoKIyBpbnRlcnBvbGF0ZSB0byBuZWlnaGJvcmhvb2RzCnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIm5ob29kIiwgIkJORF9OaGQ4OF9jdy5zaHAiKSwgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChOSERfTlVNKSAlPiUKICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lCiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gc3RsOTAsIHNpZCA9IEdFT0lELCAKICAgICAgICAgICAgICAgICB3ZWlnaHQgPSAic3VtIiwgb3V0cHV0ID0gInRpYmJsZSIsIAogICAgICAgICAgICAgICAgIGV4dGVuc2l2ZSA9IGMoIndoaXRlOTAiLCAiYmxhY2s5MCIpKSAtPiBuaG9vZDkwCgojIHVuaXQgdGVzdHMKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw5MCwgc291cmNlVmFsdWUgPSB3aGl0ZTkwLCByZXN1bHQgPSBuaG9vZDkwLCByZXN1bHRWYWx1ZSA9IHdoaXRlOTApLCBGQUxTRSkKZXhwZWN0X2VxdWFsKHN1bShuaG9vZDkwJHdoaXRlOTApLCBzdW0od2hpdGU5MCR3aGl0ZTkwKS0xMikKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw5MCwgc291cmNlVmFsdWUgPSBibGFjazkwLCByZXN1bHQgPSBuaG9vZDkwLCByZXN1bHRWYWx1ZSA9IGJsYWNrOTApLCBUUlVFKQoKIyByZW1vdmUgaW50ZXJtZWRpYXRlIG9iamVjdHMKcm0od2hpdGU5MCwgYmxhY2s5MCwgc3RsOTApCmBgYAoKIyMjIDIwMDAKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgZGVjZW5uaWFsIGNlbnN1cy4KCmBgYHtyIGRvd25sb2FkLTIwMDAsIHJlc3VsdHM9J2hpZGUnfQojIHdoaXRlCmdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgdmFyaWFibGVzID0gIlAwMDMwMDMiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIHllYXIgPSAyMDAwLCBnZW9tZXRyeSA9IFRSVUUpICU+JSAKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChHRU9JRCwgTkFNRSwgdmFsdWUpICU+JQogIHJlbmFtZSh3aGl0ZTAwID0gdmFsdWUpIC0+IHdoaXRlMDAKCiMgYmxhY2sgCmdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgdmFyaWFibGVzID0gIlAwMDMwMDQiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIHllYXIgPSAyMDAwLCBnZW9tZXRyeSA9IEZBTFNFKSAlPiUgCiAgc2VsZWN0KEdFT0lELCB2YWx1ZSkgJT4lCiAgcmVuYW1lKGJsYWNrMDAgPSB2YWx1ZSkgLT4gYmxhY2swMAoKIyBjb21iaW5lCnN0bDAwIDwtIGxlZnRfam9pbih3aGl0ZTAwLCBibGFjazAwLCBieSA9ICJHRU9JRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGwwMCwgc2lkID0gR0VPSUQsIAogICAgICAgICAgICAgICAgIHdlaWdodCA9ICJzdW0iLCBvdXRwdXQgPSAidGliYmxlIiwgCiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gYygid2hpdGUwMCIsICJibGFjazAwIikpIC0+IG5ob29kMDAKCiMgdW5pdCB0ZXN0cwpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDAwLCBzb3VyY2VWYWx1ZSA9IHdoaXRlMDAsIHJlc3VsdCA9IG5ob29kMDAsIHJlc3VsdFZhbHVlID0gd2hpdGUwMCksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsMDAsIHNvdXJjZVZhbHVlID0gYmxhY2swMCwgcmVzdWx0ID0gbmhvb2QwMCwgcmVzdWx0VmFsdWUgPSBibGFjazAwKSwgVFJVRSkKCiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzCnJtKHdoaXRlMDAsIGJsYWNrMDAsIHN0bDAwKQpgYGAKCiMjIyAyMDEwClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIGRlY2VubmlhbCBjZW5zdXMuCgpgYGB7ciBkb3dubG9hZC0yMDEwLCByZXN1bHRzPSdoaWRlJ30KIyB3aGl0ZQpnZXRfZGVjZW5uaWFsKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHZhcmlhYmxlcyA9ICJQMDAzMDAyIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCB5ZWFyID0gMjAxMCwgZ2VvbWV0cnkgPSBUUlVFKSAlPiUgCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoR0VPSUQsIE5BTUUsIHZhbHVlKSAlPiUKICByZW5hbWUod2hpdGUxMCA9IHZhbHVlKSAtPiB3aGl0ZTEwCgojIGJsYWNrIApnZXRfZGVjZW5uaWFsKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHZhcmlhYmxlcyA9ICJQMDAzMDAzIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCB5ZWFyID0gMjAxMCwgZ2VvbWV0cnkgPSBGQUxTRSkgJT4lIAogIHNlbGVjdChHRU9JRCwgdmFsdWUpICU+JQogIHJlbmFtZShibGFjazEwID0gdmFsdWUpIC0+IGJsYWNrMTAKCiMgY29tYmluZQpzdGwxMCA8LSBsZWZ0X2pvaW4od2hpdGUxMCwgYmxhY2sxMCwgYnkgPSAiR0VPSUQiKQoKIyByZW1vdmUgaW50ZXJtZWRpYXRlIG9iamVjdHMKcm0od2hpdGUxMCwgYmxhY2sxMCkKYGBgCgojIyMgMjAxMQpUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSAyMDA3LTIwMTEgNS15ZWFyIEFtZXJpY2FuIENvbW11bml0eSBTdXJ2ZXkgZXN0aW1hdGVzLgoKYGBge3IgZG93bmxvYWQtMjAxMX0KIyB3aGl0ZQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDExLCB2YXJpYWJsZXMgPSAiQjAyMDAxXzAwMiIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUod2hpdGUxMSA9IGVzdGltYXRlLAogICAgICAgICB3aGl0ZTExX20gPSBtb2UpIC0+IHdoaXRlMTEKCiMgYmxhY2sKZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxMSwgdmFyaWFibGVzID0gIkIwMjAwMV8wMDMiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKGJsYWNrMTEgPSBlc3RpbWF0ZSwKICAgICAgICAgYmxhY2sxMV9tID0gbW9lKSAtPiBibGFjazExCgojIGNvbWJpbmUKc3RsMTEgPC0gbGVmdF9qb2luKHdoaXRlMTEsIGJsYWNrMTEsIGJ5ID0gIkdFT0lEIikKCiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzCnJtKHdoaXRlMTEsIGJsYWNrMTEpCmBgYAoKIyMjIDIwMTIKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgMjAwOC0yMDEyIDUteWVhciBBbWVyaWNhbiBDb21tdW5pdHkgU3VydmV5IGVzdGltYXRlcy4KCmBgYHtyIGRvd25sb2FkLTIwMTJ9CiMgd2hpdGUKZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxMiwgdmFyaWFibGVzID0gIkIwMjAwMV8wMDIiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKHdoaXRlMTIgPSBlc3RpbWF0ZSwKICAgICAgICAgd2hpdGUxMl9tID0gbW9lKSAtPiB3aGl0ZTEyCgojIGJsYWNrCmdldF9hY3MoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgeWVhciA9IDIwMTIsIHZhcmlhYmxlcyA9ICJCMDIwMDFfMDAzIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiUKICBzZWxlY3QoR0VPSUQsIGVzdGltYXRlLCBtb2UpICU+JQogIHJlbmFtZShibGFjazEyID0gZXN0aW1hdGUsCiAgICAgICAgIGJsYWNrMTJfbSA9IG1vZSkgLT4gYmxhY2sxMgoKIyBjb21iaW5lCnN0bDEyIDwtIGxlZnRfam9pbih3aGl0ZTEyLCBibGFjazEyLCBieSA9ICJHRU9JRCIpCgojIHJlbW92ZSBpbnRlcm1lZGlhdGUgb2JqZWN0cwpybSh3aGl0ZTEyLCBibGFjazEyKQpgYGAKCiMjIyAyMDEzClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIDIwMDktMjAxMyA1LXllYXIgQW1lcmljYW4gQ29tbXVuaXR5IFN1cnZleSBlc3RpbWF0ZXMuCgpgYGB7ciBkb3dubG9hZC0yMDEzfQojIHdoaXRlCmdldF9hY3MoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgeWVhciA9IDIwMTMsIHZhcmlhYmxlcyA9ICJCMDIwMDFfMDAyIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiUKICBzZWxlY3QoR0VPSUQsIGVzdGltYXRlLCBtb2UpICU+JQogIHJlbmFtZSh3aGl0ZTEzID0gZXN0aW1hdGUsCiAgICAgICAgIHdoaXRlMTNfbSA9IG1vZSkgLT4gd2hpdGUxMwoKIyBibGFjawpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDEzLCB2YXJpYWJsZXMgPSAiQjAyMDAxXzAwMyIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUoYmxhY2sxMyA9IGVzdGltYXRlLAogICAgICAgICBibGFjazEzX20gPSBtb2UpIC0+IGJsYWNrMTMKCiMgY29tYmluZQpzdGwxMyA8LSBsZWZ0X2pvaW4od2hpdGUxMywgYmxhY2sxMywgYnkgPSAiR0VPSUQiKQoKIyByZW1vdmUgaW50ZXJtZWRpYXRlIG9iamVjdHMKcm0od2hpdGUxMywgYmxhY2sxMykKYGBgCgojIyMgMjAxNApUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSAyMDEwLTIwMTQgNS15ZWFyIEFtZXJpY2FuIENvbW11bml0eSBTdXJ2ZXkgZXN0aW1hdGVzLgoKYGBge3IgZG93bmxvYWQtMjAxNH0KIyB3aGl0ZQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDE0LCB2YXJpYWJsZXMgPSAiQjAyMDAxXzAwMiIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUod2hpdGUxNCA9IGVzdGltYXRlLAogICAgICAgICB3aGl0ZTE0X20gPSBtb2UpIC0+IHdoaXRlMTQKCiMgYmxhY2sKZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxNCwgdmFyaWFibGVzID0gIkIwMjAwMV8wMDMiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKGJsYWNrMTQgPSBlc3RpbWF0ZSwKICAgICAgICAgYmxhY2sxNF9tID0gbW9lKSAtPiBibGFjazE0CgojIGNvbWJpbmUKc3RsMTQgPC0gbGVmdF9qb2luKHdoaXRlMTQsIGJsYWNrMTQsIGJ5ID0gIkdFT0lEIikKCiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzCnJtKHdoaXRlMTQsIGJsYWNrMTQpCmBgYAoKIyMjIDIwMTUKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgMjAxMS0yMDE1IDUteWVhciBBbWVyaWNhbiBDb21tdW5pdHkgU3VydmV5IGVzdGltYXRlcy4KCmBgYHtyIGRvd25sb2FkLTIwMTV9CiMgd2hpdGUKZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxNSwgdmFyaWFibGVzID0gIkIwMjAwMV8wMDIiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKHdoaXRlMTUgPSBlc3RpbWF0ZSwKICAgICAgICAgd2hpdGUxNV9tID0gbW9lKSAtPiB3aGl0ZTE1CgojIGJsYWNrCmdldF9hY3MoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgeWVhciA9IDIwMTUsIHZhcmlhYmxlcyA9ICJCMDIwMDFfMDAzIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiUKICBzZWxlY3QoR0VPSUQsIGVzdGltYXRlLCBtb2UpICU+JQogIHJlbmFtZShibGFjazE1ID0gZXN0aW1hdGUsCiAgICAgICAgIGJsYWNrMTVfbSA9IG1vZSkgLT4gYmxhY2sxNQoKIyBjb21iaW5lCnN0bDE1IDwtIGxlZnRfam9pbih3aGl0ZTE1LCBibGFjazE1LCBieSA9ICJHRU9JRCIpCgojIHJlbW92ZSBpbnRlcm1lZGlhdGUgb2JqZWN0cwpybSh3aGl0ZTE1LCBibGFjazE1KQpgYGAKCiMjIyAyMDE2ClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIDIwMTItMjAxNiA1LXllYXIgQW1lcmljYW4gQ29tbXVuaXR5IFN1cnZleSBlc3RpbWF0ZXMuCgpgYGB7ciBkb3dubG9hZC0yMDE2fQojIHdoaXRlCmdldF9hY3MoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgeWVhciA9IDIwMTYsIHZhcmlhYmxlcyA9ICJCMDIwMDFfMDAyIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiUKICBzZWxlY3QoR0VPSUQsIGVzdGltYXRlLCBtb2UpICU+JQogIHJlbmFtZSh3aGl0ZTE2ID0gZXN0aW1hdGUsCiAgICAgICAgIHdoaXRlMTZfbSA9IG1vZSkgLT4gd2hpdGUxNgoKIyBibGFjawpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDE2LCB2YXJpYWJsZXMgPSAiQjAyMDAxXzAwMyIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUoYmxhY2sxNiA9IGVzdGltYXRlLAogICAgICAgICBibGFjazE2X20gPSBtb2UpIC0+IGJsYWNrMTYKCiMgY29tYmluZQpzdGwxNiA8LSBsZWZ0X2pvaW4od2hpdGUxNiwgYmxhY2sxNiwgYnkgPSAiR0VPSUQiKQoKIyByZW1vdmUgaW50ZXJtZWRpYXRlIG9iamVjdHMKcm0od2hpdGUxNiwgYmxhY2sxNikKYGBgCgojIyMgMjAxNwpUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSAyMDEzLTIwMTcgNS15ZWFyIEFtZXJpY2FuIENvbW11bml0eSBTdXJ2ZXkgZXN0aW1hdGVzLgoKYGBge3IgZG93bmxvYWQtMjAxN30KIyB3aGl0ZQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDE3LCB2YXJpYWJsZXMgPSAiQjAyMDAxXzAwMiIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUod2hpdGUxNyA9IGVzdGltYXRlLAogICAgICAgICB3aGl0ZTE3X20gPSBtb2UpIC0+IHdoaXRlMTcKCiMgYmxhY2sKZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxNywgdmFyaWFibGVzID0gIkIwMjAwMV8wMDMiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKGJsYWNrMTcgPSBlc3RpbWF0ZSwKICAgICAgICAgYmxhY2sxN19tID0gbW9lKSAtPiBibGFjazE3CgojIGNvbWJpbmUKc3RsMTcgPC0gbGVmdF9qb2luKHdoaXRlMTcsIGJsYWNrMTcsIGJ5ID0gIkdFT0lEIikKCiMgcmVtb3ZlIGludGVybWVkaWF0ZSBvYmplY3RzCnJtKHdoaXRlMTcsIGJsYWNrMTcpCmBgYAoKIyMjIENvbWJpbmUgRGF0YQpXZSBoYXZlIHRoZXNlIGRhdGEgaW4gYSBudW1iZXIgb2YgZGlmZmVyZW50IHRhYmxlcywgc28gdGhlIG5leHQgc3RlcCBpcyB0byBqb2luIHRoZW0gdG9nZXRoZXIgYnkgYEdFT0lEYC4KCmBgYHtyIGNvbWJpbmUtZGF0YX0KbGVmdF9qb2luKHN0bDEwLCBzdGwxMSwgYnkgPSAiR0VPSUQiKSAlPiUKICBsZWZ0X2pvaW4oLiwgc3RsMTIsIGJ5ID0gIkdFT0lEIikgJT4lCiAgbGVmdF9qb2luKC4sIHN0bDEzLCBieSA9ICJHRU9JRCIpICU+JQogIGxlZnRfam9pbiguLCBzdGwxNCwgYnkgPSAiR0VPSUQiKSAlPiUKICBsZWZ0X2pvaW4oLiwgc3RsMTUsIGJ5ID0gIkdFT0lEIikgJT4lCiAgbGVmdF9qb2luKC4sIHN0bDE2LCBieSA9ICJHRU9JRCIpICU+JQogIGxlZnRfam9pbiguLCBzdGwxNywgYnkgPSAiR0VPSUQiKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHRyYWN0UmFjZQoKIyBjbGVhbiB1cCBlbnZpb3JubWVudApybShzdGwxMCwgc3RsMTEsIHN0bDEyLCBzdGwxMywgc3RsMTQsIHN0bDE1LCBzdGwxNiwgc3RsMTcpCmBgYAoKIyMjIEludGVycG9sYXRlIE5laWdoYm9yaG9vZCBEYXRhCk5leHQsIHdlJ2xsIHVzZSB0aGUgc2FtZSBlc3RpbWF0aW9uIHByb2Nlc3Mgd2UgdXNlZCBiZWZvcmUgb24gdGhlIDIwMTAtMjAxNyBkYXRhOgoKYGBge3IgaW50ZXJwb2xhdGV9CiMgcmVhZCBuZWlnaGJvcmhvb2QgZGF0YSwgcmUtcHJvamVjdCwgYW5kIGludGVycG9sYXRlCnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIm5ob29kIiwgIkJORF9OaGQ4OF9jdy5zaHAiKSwgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChOSERfTlVNKSAlPiUKICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lCiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gdHJhY3RSYWNlLCBzaWQgPSBHRU9JRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBjKCJ3aGl0ZTEwIiwgImJsYWNrMTAiLCAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJ3aGl0ZTExIiwgImJsYWNrMTEiLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIndoaXRlMTIiLCAiYmxhY2sxMiIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAid2hpdGUxMyIsICJibGFjazEzIiwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJ3aGl0ZTE0IiwgImJsYWNrMTQiLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIndoaXRlMTUiLCAiYmxhY2sxNSIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAid2hpdGUxNiIsICJibGFjazE2IiwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJ3aGl0ZTE3IiwgImJsYWNrMTciKQogICAgICAgICAgICAgICAgICkgLT4gbmhvb2RSYWNlXzEwXzE3CgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UmFjZSwgc291cmNlVmFsdWUgPSB3aGl0ZTEwLCByZXN1bHQgPSBuaG9vZFJhY2VfMTBfMTcsIHJlc3VsdFZhbHVlID0gd2hpdGUxMCksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RSYWNlLCBzb3VyY2VWYWx1ZSA9IGJsYWNrMTAsIHJlc3VsdCA9IG5ob29kUmFjZV8xMF8xNywgcmVzdWx0VmFsdWUgPSBibGFjazEwKSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxMSwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTEpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UmFjZSwgc291cmNlVmFsdWUgPSBibGFjazExLCByZXN1bHQgPSBuaG9vZFJhY2VfMTBfMTcsIHJlc3VsdFZhbHVlID0gYmxhY2sxMSksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RSYWNlLCBzb3VyY2VWYWx1ZSA9IHdoaXRlMTIsIHJlc3VsdCA9IG5ob29kUmFjZV8xMF8xNywgcmVzdWx0VmFsdWUgPSB3aGl0ZTEyKSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxMiwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTIpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UmFjZSwgc291cmNlVmFsdWUgPSB3aGl0ZTEzLCByZXN1bHQgPSBuaG9vZFJhY2VfMTBfMTcsIHJlc3VsdFZhbHVlID0gd2hpdGUxMyksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RSYWNlLCBzb3VyY2VWYWx1ZSA9IGJsYWNrMTMsIHJlc3VsdCA9IG5ob29kUmFjZV8xMF8xNywgcmVzdWx0VmFsdWUgPSBibGFjazEzKSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxNCwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTQpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UmFjZSwgc291cmNlVmFsdWUgPSBibGFjazE0LCByZXN1bHQgPSBuaG9vZFJhY2VfMTBfMTcsIHJlc3VsdFZhbHVlID0gYmxhY2sxNCksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RSYWNlLCBzb3VyY2VWYWx1ZSA9IHdoaXRlMTUsIHJlc3VsdCA9IG5ob29kUmFjZV8xMF8xNywgcmVzdWx0VmFsdWUgPSB3aGl0ZTE1KSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gYmxhY2sxNSwgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IGJsYWNrMTUpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UmFjZSwgc291cmNlVmFsdWUgPSB3aGl0ZTE2LCByZXN1bHQgPSBuaG9vZFJhY2VfMTBfMTcsIHJlc3VsdFZhbHVlID0gd2hpdGUxNiksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RSYWNlLCBzb3VyY2VWYWx1ZSA9IGJsYWNrMTYsIHJlc3VsdCA9IG5ob29kUmFjZV8xMF8xNywgcmVzdWx0VmFsdWUgPSBibGFjazE2KSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFJhY2UsIHNvdXJjZVZhbHVlID0gd2hpdGUxNywgcmVzdWx0ID0gbmhvb2RSYWNlXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHdoaXRlMTcpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UmFjZSwgc291cmNlVmFsdWUgPSBibGFjazE3LCByZXN1bHQgPSBuaG9vZFJhY2VfMTBfMTcsIHJlc3VsdFZhbHVlID0gYmxhY2sxNyksIFRSVUUpCgojIGNsZWFuIHVwIGVudmlvcm5tZW50CnJtKHRyYWN0UmFjZSkKYGBgCgojIyBDb21iaW5lIEhpc3RvcmljYWwgYW5kIE1vZGVybiBDZW5zdXMgRGF0YQpOZXh0LCB3ZSdsbCBjb21iaW5lIHRoZSB0d28gZGF0YSBvYmplY3RzIHRvIGNyZWF0ZSBhIHNpbmdsZSB0YWJsZSBvZiBjZW5zdXMgZXN0aW1hdGVzOgoKYGBge3Igam9pbi1hbGwtZGF0YX0Kbmhvb2RSYWNlIDwtIGxlZnRfam9pbihuaG9vZFBvcF80MF84MCwgbmhvb2Q5MCwgYnkgPSAiTkhEX05VTSIpICU+JQogIGxlZnRfam9pbiguLCBuaG9vZDAwLCBieSA9ICJOSERfTlVNIikgJT4lCiAgbGVmdF9qb2luKC4sIG5ob29kUmFjZV8xMF8xNywgYnkgPSAiTkhEX05VTSIpCgojIGNsZWFuIHVwIGVudmlvcm5tZW50CnJtKG5ob29kUG9wXzQwXzgwLCBuaG9vZDkwLCBuaG9vZDAwLCBuaG9vZFJhY2VfMTBfMTcpCmBgYAoKIyMgRXhwb3J0CkZpbmFsbHksIHdlJ2xsIHdyaXRlIHRoZSBkYXRhIHRvIGEgYC5jc3ZgIGZpbGUgZm9yIGZ1dHVyZSBhbmFseXNpcy4KCmBgYHtyfQojIHdyaXRlIG91dHB1dAp3cml0ZV9jc3Yobmhvb2RSYWNlLCBoZXJlKCJkYXRhIiwgImNsZWFuIiwgIlNUTF9SYWNlQnlOaG9vZC5jc3YiKSkKYGBgCg==</div>
 
 
 
@@ -2341,6 +2686,29 @@ $(document).ready(function () {
 });
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("buildRace.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

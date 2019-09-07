@@ -269,11 +269,12 @@ rm(nhood40, nhood50, nhood60, nhood70, nhood80, idUnique, unique_id)
 All data for this era are downloaded from the Census Bureau's API via `tidycensus`. 
 
 ### 1990
-These data are from the decennial census.
+These data are from the decennial census. Note that the white population is neighborhoods is 12 people less than the total white population, because Census Tract 1018.99 does not have any geometry. The black population is unaffected.
 
 ```{r download-1990, results='hide'}
 # white
-get_decennial(geography = "tract", variables = "P0060001", state = 29, county = 510, year = 1990, geometry = TRUE) %>% 
+get_decennial(geography = "tract", variables = "P0060001", state = 29, county = 510, year = 1990, geometry = TRUE) %>%
+  st_transform(crs = 26915) %>%
   select(GEOID, NAME, value) %>%
   rename(white90 = value) -> white90
 
@@ -285,8 +286,22 @@ get_decennial(geography = "tract", variables = "P0060002", state = 29, county = 
 # combine
 stl90 <- left_join(white90, black90, by = "GEOID")
 
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = stl90, sid = GEOID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = c("white90", "black90")) -> nhood90
+
+# unit tests
+expect_equal(aw_verify(source = stl90, sourceValue = white90, result = nhood90, resultValue = white90), FALSE)
+expect_equal(sum(nhood90$white90), sum(white90$white90)-12)
+expect_equal(aw_verify(source = stl90, sourceValue = black90, result = nhood90, resultValue = black90), TRUE)
+
 # remove intermediate objects
-rm(white90, black90)
+rm(white90, black90, stl90)
 ```
 
 ### 2000
@@ -295,6 +310,7 @@ These data are from the decennial census.
 ```{r download-2000, results='hide'}
 # white
 get_decennial(geography = "tract", variables = "P003003", state = 29, county = 510, year = 2000, geometry = TRUE) %>% 
+  st_transform(crs = 26915) %>%
   select(GEOID, NAME, value) %>%
   rename(white00 = value) -> white00
 
@@ -306,8 +322,21 @@ get_decennial(geography = "tract", variables = "P003004", state = 29, county = 5
 # combine
 stl00 <- left_join(white00, black00, by = "GEOID")
 
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = stl00, sid = GEOID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = c("white00", "black00")) -> nhood00
+
+# unit tests
+expect_equal(aw_verify(source = stl00, sourceValue = white00, result = nhood00, resultValue = white00), TRUE)
+expect_equal(aw_verify(source = stl00, sourceValue = black00, result = nhood00, resultValue = black00), TRUE)
+
 # remove intermediate objects
-rm(white00, black00)
+rm(white00, black00, stl00)
 ```
 
 ### 2010
@@ -316,6 +345,7 @@ These data are from the decennial census.
 ```{r download-2010, results='hide'}
 # white
 get_decennial(geography = "tract", variables = "P003002", state = 29, county = 510, year = 2010, geometry = TRUE) %>% 
+  st_transform(crs = 26915) %>%
   select(GEOID, NAME, value) %>%
   rename(white10 = value) -> white10
 
@@ -352,4 +382,222 @@ stl11 <- left_join(white11, black11, by = "GEOID")
 
 # remove intermediate objects
 rm(white11, black11)
+```
+
+### 2012
+These data are from the 2008-2012 5-year American Community Survey estimates.
+
+```{r download-2012}
+# white
+get_acs(geography = "tract", year = 2012, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white12 = estimate,
+         white12_m = moe) -> white12
+
+# black
+get_acs(geography = "tract", year = 2012, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black12 = estimate,
+         black12_m = moe) -> black12
+
+# combine
+stl12 <- left_join(white12, black12, by = "GEOID")
+
+# remove intermediate objects
+rm(white12, black12)
+```
+
+### 2013
+These data are from the 2009-2013 5-year American Community Survey estimates.
+
+```{r download-2013}
+# white
+get_acs(geography = "tract", year = 2013, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white13 = estimate,
+         white13_m = moe) -> white13
+
+# black
+get_acs(geography = "tract", year = 2013, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black13 = estimate,
+         black13_m = moe) -> black13
+
+# combine
+stl13 <- left_join(white13, black13, by = "GEOID")
+
+# remove intermediate objects
+rm(white13, black13)
+```
+
+### 2014
+These data are from the 2010-2014 5-year American Community Survey estimates.
+
+```{r download-2014}
+# white
+get_acs(geography = "tract", year = 2014, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white14 = estimate,
+         white14_m = moe) -> white14
+
+# black
+get_acs(geography = "tract", year = 2014, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black14 = estimate,
+         black14_m = moe) -> black14
+
+# combine
+stl14 <- left_join(white14, black14, by = "GEOID")
+
+# remove intermediate objects
+rm(white14, black14)
+```
+
+### 2015
+These data are from the 2011-2015 5-year American Community Survey estimates.
+
+```{r download-2015}
+# white
+get_acs(geography = "tract", year = 2015, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white15 = estimate,
+         white15_m = moe) -> white15
+
+# black
+get_acs(geography = "tract", year = 2015, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black15 = estimate,
+         black15_m = moe) -> black15
+
+# combine
+stl15 <- left_join(white15, black15, by = "GEOID")
+
+# remove intermediate objects
+rm(white15, black15)
+```
+
+### 2016
+These data are from the 2012-2016 5-year American Community Survey estimates.
+
+```{r download-2016}
+# white
+get_acs(geography = "tract", year = 2016, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white16 = estimate,
+         white16_m = moe) -> white16
+
+# black
+get_acs(geography = "tract", year = 2016, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black16 = estimate,
+         black16_m = moe) -> black16
+
+# combine
+stl16 <- left_join(white16, black16, by = "GEOID")
+
+# remove intermediate objects
+rm(white16, black16)
+```
+
+### 2017
+These data are from the 2013-2017 5-year American Community Survey estimates.
+
+```{r download-2017}
+# white
+get_acs(geography = "tract", year = 2017, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white17 = estimate,
+         white17_m = moe) -> white17
+
+# black
+get_acs(geography = "tract", year = 2017, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black17 = estimate,
+         black17_m = moe) -> black17
+
+# combine
+stl17 <- left_join(white17, black17, by = "GEOID")
+
+# remove intermediate objects
+rm(white17, black17)
+```
+
+### Combine Data
+We have these data in a number of different tables, so the next step is to join them together by `GEOID`.
+
+```{r combine-data}
+left_join(stl10, stl11, by = "GEOID") %>%
+  left_join(., stl12, by = "GEOID") %>%
+  left_join(., stl13, by = "GEOID") %>%
+  left_join(., stl14, by = "GEOID") %>%
+  left_join(., stl15, by = "GEOID") %>%
+  left_join(., stl16, by = "GEOID") %>%
+  left_join(., stl17, by = "GEOID") %>%
+  st_transform(crs = 26915) -> tractRace
+
+# clean up enviornment
+rm(stl10, stl11, stl12, stl13, stl14, stl15, stl16, stl17)
+```
+
+### Interpolate Neighborhood Data
+Next, we'll use the same estimation process we used before on the 2010-2017 data:
+
+```{r interpolate}
+# read neighborhood data, re-project, and interpolate
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = tractRace, sid = GEOID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = c("white10", "black10", 
+                               "white11", "black11",
+                               "white12", "black12",
+                               "white13", "black13",
+                               "white14", "black14",
+                               "white15", "black15",
+                               "white16", "black16",
+                               "white17", "black17")
+                 ) -> nhoodRace_10_17
+
+# unit test
+expect_equal(aw_verify(source = tractRace, sourceValue = white10, result = nhoodRace_10_17, resultValue = white10), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black10, result = nhoodRace_10_17, resultValue = black10), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white11, result = nhoodRace_10_17, resultValue = white11), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black11, result = nhoodRace_10_17, resultValue = black11), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white12, result = nhoodRace_10_17, resultValue = white12), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black12, result = nhoodRace_10_17, resultValue = black12), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white13, result = nhoodRace_10_17, resultValue = white13), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black13, result = nhoodRace_10_17, resultValue = black13), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white14, result = nhoodRace_10_17, resultValue = white14), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black14, result = nhoodRace_10_17, resultValue = black14), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white15, result = nhoodRace_10_17, resultValue = white15), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black15, result = nhoodRace_10_17, resultValue = black15), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white16, result = nhoodRace_10_17, resultValue = white16), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black16, result = nhoodRace_10_17, resultValue = black16), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = white17, result = nhoodRace_10_17, resultValue = white17), TRUE)
+expect_equal(aw_verify(source = tractRace, sourceValue = black17, result = nhoodRace_10_17, resultValue = black17), TRUE)
+
+# clean up enviornment
+rm(tractRace)
+```
+
+## Combine Historical and Modern Census Data
+Next, we'll combine the two data objects to create a single table of census estimates:
+
+```{r join-all-data}
+nhoodRace <- left_join(nhoodPop_40_80, nhood90, by = "NHD_NUM") %>%
+  left_join(., nhood00, by = "NHD_NUM") %>%
+  left_join(., nhoodRace_10_17, by = "NHD_NUM")
+
+# clean up enviornment
+rm(nhoodPop_40_80, nhood90, nhood00, nhoodRace_10_17)
+```
+
+## Export
+Finally, we'll write the data to a `.csv` file for future analysis.
+
+```{r}
+# write output
+write_csv(nhoodRace, here("data", "clean", "STL_RaceByNhood.csv"))
 ```
