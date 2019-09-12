@@ -1,0 +1,224 @@
+---
+title: "Build Tract Maps"
+author: "Christopher Prener, Ph.D., Carter Hanford"
+date: '(`r format(Sys.time(), "%B %d, %Y")`)'
+output: 
+  github_document: default
+  html_notebook: default 
+---
+
+## Introduction
+This notebook generates census tract-level maps by decennial year to 2010, then from years 2011-2017.
+
+## Dependencies
+This notebook requires a number of different `R` packages:
+
+```{r load-packages}
+# tidyverse packages
+library(dplyr)         # data wrangling
+library(readr)         # working with csv data
+library(stringr)       # string tools
+library(ggplot2)       # mapping
+library(ggthemes)      # base color
+
+# spatial packages
+library(sf)            # working with spatial data
+library(areal)         # interpolation
+library(tidycensus)    # census api access
+library(tigris)        # tiger/line api access
+
+# other packages
+library(here)          # file path management
+library(testthat)      # unit testing
+library(measurements)  # unit converting
+library(RColorBrewer)  # colors
+library(viridis)       # more colors
+```
+
+## Load Source
+Here we will load necessary functions for formatting the tract maps and saving them into our results folder.
+
+```{r source}
+source(here("source", "cp_sequoiaTheme.R"))
+source(here("source", "cp_plotSave.R"))
+```
+
+## Load Data
+This section loads the necessary population and race data that we need for our tract maps. We will also join the two together so that we can use one dataset.
+
+```{r data}
+STL_Pop <- read_csv(here("data", "clean", "STL_PopByNhood.csv"))
+STL_Race <- read_csv(here("data", "clean", "STL_RaceByNhood.csv"))
+STL_PopRace <- left_join(STL_Pop, STL_Race, by = "NHD_NUM")
+```
+
+## Load Tract Shapefiles
+Next we will load in the necessary shapefiles for the census tracts in STL. This allows us to attach the census tracts to our maps.
+
+```{r shapefiles}
+tractGEO1940 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_tracts40.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) 
+
+tractGEO1950 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts50", "STL_DEMOGRAPHICS_tracts50.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915)
+
+tractGEO1960 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts60", "STL_DEMOGRAPHICS_tracts60.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915)
+
+tractGEO1970 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts70", "STL_DEMOGRAPHICS_tracts70.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915)
+
+tractGEO1980 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts80", "STL_DEMOGRAPHICS_tracts80.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915)
+
+tractGEO1990 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts90", "STL_DEMOGRAPHICS_tracts90.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915)
+
+tractGEO2000 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts00", "STL_DEMOGRAPHICS_tracts00.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915)
+```
+
+## Build Tract Maps
+In this section we will be building our tract level maps of STL. We will be mapping the racial makeup and then adding the census tract shapefiles to show them on the map. This section will be long and will recycle the same cide from the first code chunk, so we'll refrain from narrative after the first block.
+
+### 1940
+Note - in 1940 there is no `black` variable, so we use `non-white` instead.
+
+```{r tract1940}
+tract1940 <- ggplot() +
+  geom_sf(data = nhoods, mapping = aes(fill = (nonwhite40/pop40)*100), color = NA) +
+  geom_sf(data = tractGEO1940, fill = NA, color = "#A3A3A3") +
+  scale_fill_distiller(palette = "Greens", name = "% Non-white", trans = "reverse") +
+  labs(
+    title = "% Nonwhite",
+    subtitle = "St. Louis City - 1940",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(background = "white", map = TRUE)
+
+print(tract1940)
+```
+
+```{r save1940}
+cp_plotSave(here("results", "tract1940.png"), tract1940, preset = "lg", dpi = 500)
+```
+
+### 1950
+
+```{r tract1950}
+tract1950 <- ggplot() +
+  geom_sf(data = nhoods, mapping = aes(fill = (black50/pop50)*100), color = NA) +
+  geom_sf(data = tractGEO1950, fill = NA, color = "#A3A3A3") +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black",
+    subtitle = "St. Louis City - 1950",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(background = "white", map = TRUE)
+
+print(tract1950)
+```
+
+```{r save1950}
+cp_plotSave(here("results", "tract1950.png"), tract1950, preset = "lg", dpi = 500)
+```
+
+### 1960
+
+```{r tract1960}
+tract1960 <- ggplot() +
+  geom_sf(data = nhoods, mapping = aes(fill = (black60/pop60)*100), color = NA) +
+  geom_sf(data = tractGEO1960, fill = NA, color = "#A3A3A3") +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black",
+    subtitle = "St. Louis City - 1960",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(background = "white", map = TRUE)
+
+print(tract1960)
+```
+
+```{r save1960}
+cp_plotSave(here("results", "tract1960.png"), tract1960, preset = "lg", dpi = 500)
+```
+
+### 1970
+
+```{r tract1970}
+tract1970 <- ggplot() +
+  geom_sf(data = nhoods, mapping = aes(fill = (black70/pop70)*100), color = NA) +
+  geom_sf(data = tractGEO1970, fill = NA, color = "#A3A3A3") +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black",
+    subtitle = "St. Louis City - 1970",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(background = "white", map = TRUE)
+
+print(tract1970)
+```
+
+```{r save1970}
+cp_plotSave(here("results", "tract1970.png"), tract1970, preset = "lg", dpi = 500)
+```
+
+### 1980
+
+```{r tract1980}
+tract1980 <- ggplot() +
+  geom_sf(data = nhoods, mapping = aes(fill = (black80/pop80)*100), color = NA) +
+  geom_sf(data = tractGEO1980, fill = NA, color = "#A3A3A3") +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black",
+    subtitle = "St. Louis City - 1980",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(background = "white", map = TRUE)
+
+print(tract1980)
+```
+
+```{r save1980}
+cp_plotSave(here("results", "tract1980.png"), tract1980, preset = "lg", dpi = 500)
+```
+
+### 1990
+
+```{r tract1990}
+tract1990 <- ggplot() +
+  geom_sf(data = nhoods, mapping = aes(fill = (black90/pop90)*100), color = NA) +
+  geom_sf(data = tractGEO1990, fill = NA, color = "#A3A3A3") +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black",
+    subtitle = "St. Louis City - 1990",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(background = "white", map = TRUE)
+
+print(tract1990)
+```
+
+```{r save1990}
+cp_plotSave(here("results", "tract1990.png"), tract1990, preset = "lg", dpi = 500)
+```
+
+### 2000
+
+```{r tract2000}
+tract2000 <- ggplot() +
+  geom_sf(data = nhoods, mapping = aes(fill = (black00/pop00)*100), color = NA) +
+  geom_sf(data = tractGEO2000, fill = NA, color = "#A3A3A3") +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black",
+    subtitle = "St. Louis City - 2000",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(background = "white", map = TRUE)
+
+print(tract2000)
+```
+
+```{r save2000}
+cp_plotSave(here("results", "tract2000.png"), tract2000, preset = "lg", dpi = 500)
+```
+
