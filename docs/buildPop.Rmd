@@ -1,0 +1,241 @@
+ ---
+title: "Population Research Data"
+author: "Carter Hanford"
+date: '(`r format(Sys.time(), "%B %d, %Y")`)'
+output: 
+  github_document: default
+  html_notebook: default 
+---
+
+## Introduction
+This R notebook is for looking at decennial census population data from 1940-1980 for a research project on redlining in the city of St. Louis.
+
+## Dependencies
+This notebook requires the following packages:
+
+```{r packages, message=FALSE, warning=FALSE}
+library(here)       # directory
+library(readr)      # read .csv files
+library(dplyr)      # data manipulation
+library(tidyverse)  # data cleaning 
+library(knitr)      # knit to documents
+library(ggplot2)    # data plotting
+```
+
+## Load Data
+The following code chunk will load each decennial census data year into our global environment.
+
+```{r data-load}
+pop1940 <- read.csv(here("data", "raw", "pop1940.csv"))
+pop1950 <- read.csv(here("data", "raw", "pop1950.csv"))
+pop1960 <- read.csv(here("data", "raw", "pop1960.csv"))
+pop1970 <- read.csv(here("data", "raw", "pop1970.csv"))
+pop1980 <- read.csv(here("data", "raw", "pop1980.csv"))
+```
+
+## Select Census Tracts
+For this project we only want the St. Louis City and St. Louis County census tracts, so we will need to filter the data by state and by census tract so that we only have Missouri, and the correct tracts.
+
+### 1940
+We will start with the year 1940.
+
+```{r filter-state-1940}
+pop1940 %>%
+  filter(STATE == "Missouri") -> pop1940
+```
+
+Now we will filter so we only have the correct census tracts.
+
+```{r filter-tracts-1940}
+pop1940 %>%
+  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1940
+```
+
+Now 'pop1940' is properly filtered.
+
+Since i'll be repeating the same code in the following lines, I won't add narration.
+
+### 1950
+
+```{r filter-state-1950}
+pop1950 %>%
+  filter(STATE == "Missouri") -> pop1950
+```
+
+```{r filter-tracts-1950}
+pop1950 %>%
+  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1950
+```
+
+### 1960
+
+```{r filter-state-1960}
+pop1960 %>%
+  filter(STATE == "Missouri") -> pop1960
+```
+
+```{r filter-tracts-1960}
+pop1960 %>%
+  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1960
+```
+
+### 1970
+
+```{r filter-state-1970}
+pop1970 %>%
+  filter(STATE == "Missouri") -> pop1970
+```
+
+```{r filter-tracts-1970}
+pop1970 %>%
+  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1970
+```
+
+### 1980
+
+```{r filter-state-1980}
+pop1980 %>%
+  filter(STATE == "Missouri") -> pop1980
+```
+
+```{r filter-tracts-1980}
+pop1980 %>%
+  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1980
+```
+
+## Select/Rename Variables
+It is unclear by the current distinction which variables represent `Population`, but for example we know `BUB001` represents population count in the `race1940` data set. I will know change the variable names for each data set, starting with 1940, to represent the correct population variables we are looking for. The code gets repetive for this section as well, so I will leave out narrative in between sections.
+
+```{r rename1940}
+pop1940 %>%
+  rename(pop40 = BUB001) -> pop1940
+```
+
+```{r rename1950}
+pop1950 %>%
+  rename(pop50 = BZ8001) -> pop1950
+```
+
+```{r rename1960}
+pop1960 %>%
+  rename(pop60 = CA4001) -> pop1960
+```
+
+```{r rename1970}
+pop1970 %>%
+  rename(pop70 = C1I001) -> pop1970
+```
+
+```{r rename1980}
+pop1980 %>%
+  rename(pop80 = C6W001) -> pop1980
+```
+
+Now that I have the population variables characterized intuitively, we can clean up the data sets by removing unnecessary variables.  The only variables we want to keep are: `YEAR`, `COUNTYA`, `TRACTA`, `POSTTRACTA`, and the population variables.
+
+Similar to above, the code gets repetive so I'll refrain from narrative after the first section.
+
+```{r select1940}
+pop1940 %>%
+  select(-STATE, -COUNTY, -STATEA, -PRETRACTA, -AREANAME, -GISJOIN) -> pop1940
+```
+
+```{r select1950}
+pop1950 %>%
+  select(-STATE, -COUNTY, -STATEA, -PRETRACTA, -AREANAME, -GISJOIN) -> pop1950
+```
+
+```{r select1960}
+pop1960 %>%
+  select(-STATE, -COUNTY, -STATEA, -PRETRACTA, -AREANAME, -GISJOIN) -> pop1960
+```
+
+```{r select1970}
+pop1970 %>%
+  select(-STATE, -COUNTY, -STATEA, -CTY_SUBA, -PLACEA, -SCSAA, -SMSAA, -URB_AREAA, -BLOCKA, -CDA, -GISJOIN, -AREANAME) -> pop1970
+```
+
+```{r select1980}
+pop1980 %>%
+  select(-STATE, -COUNTY, -STATEA, -CTY_SUBA, -PLACEA, -ELECPRCTA, -BLOCKA, -BLCK_GRPA, -ENUMDISTA, -GISJOIN, -AREANAME) -> pop1980
+```
+
+## Join Variables
+Now we want to join `TRACTA` and `POSTTRCTA` together into one single variable. We can do this for the years 1940, 1950, and 1960, however 1970 does not have a `POSTTRACTA`. For this reason, I've left the tract information the data set and will not be joining any variables.
+
+```{r join1940}
+pop1940 %>%
+  unite("tractID", c("TRACTA", "POSTTRCTA")) -> pop1940
+```
+
+```{r join1950}
+pop1950 %>%
+  unite("tractID", c("TRACTA", "POSTTRCTA")) -> pop1950
+```
+
+```{r join1960}
+pop1960 %>%
+  unite("tractID", c("TRACTA", "POSTTRCTA")) -> pop1960
+```
+
+Now, for organizational purposes I want to get rid of the underscores in the new joined variable for tracts. This only applies for the years 1940-1960.
+
+```{r spaces1940}
+pop1940 %>%
+  mutate(tractID=str_replace(tractID, pattern = "_", replacement = "")) -> pop1940
+```
+
+```{r spaces1950}
+pop1950 %>%
+  mutate(tractID=str_replace(tractID, pattern = "_", replacement = "")) -> pop1950
+```
+
+```{r spaces1960}
+pop1960 %>%
+  mutate(tractID=str_replace(tractID, pattern = "_", replacement = "")) -> pop1960
+```
+
+Now that those are joined, the last thing I want to do is to convert all variables to lowercase and specific names for organizational purposes.
+
+```{r case1940}
+pop1940 %>%
+  rename(year = YEAR) %>%
+  rename(countyID = COUNTYA) -> pop1940
+```
+
+```{r case1950}
+pop1950 %>%
+  rename(year = YEAR) %>%
+  rename(countyID = COUNTYA) -> pop1950
+```
+
+```{r case1960}
+pop1960 %>%
+  rename(year = YEAR) %>%
+  rename(countyID = COUNTYA) -> pop1960
+```
+
+```{r case1970}
+pop1970 %>%
+  rename(year = YEAR) %>%
+  rename(countyID = COUNTYA) %>%
+  rename(tractID = TRACTA) -> pop1970
+```
+
+```{r case1980}
+pop1980 %>%
+  rename(year = YEAR) %>%
+  rename(countyID = COUNTYA) %>%
+  rename(tractID = TRACTA) -> pop1980
+```
+
+## Data Export
+Finally, we can export the cleaned census population data into our clean data folder in the project directory.
+
+```{r}
+write_csv(pop1940, here("data", "clean", "pop1940clean.csv"))
+write_csv(pop1950, here("data", "clean", "pop1950clean.csv"))
+write_csv(pop1960, here("data", "clean", "pop1960clean.csv"))
+write_csv(pop1970, here("data", "clean", "pop1970clean.csv"))
+write_csv(pop1980, here("data", "clean", "pop1980clean.csv"))
+```
