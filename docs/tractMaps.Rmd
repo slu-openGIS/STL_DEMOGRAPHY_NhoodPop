@@ -41,6 +41,7 @@ Here we will load necessary functions for formatting the tract maps and saving t
 ```{r source}
 source(here("source", "cp_sequoiaTheme.R"))
 source(here("source", "cp_plotSave.R"))
+source(here("source", "unique_id.R"))
 ```
 
 ## Load Data
@@ -52,173 +53,687 @@ STL_Race <- read_csv(here("data", "clean", "STL_RaceByNhood.csv"))
 STL_PopRace <- left_join(STL_Pop, STL_Race, by = "NHD_NUM")
 ```
 
-## Load Tract Shapefiles
-Next we will load in the necessary shapefiles for the census tracts in STL. This allows us to attach the census tracts to our maps.
-
-```{r shapefiles}
-tractGEO1940 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_tracts40.shp"), stringsAsFactors = FALSE) %>%
-  st_transform(crs = 26915) 
-
-tractGEO1950 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts50", "STL_DEMOGRAPHICS_tracts50.shp"), stringsAsFactors = FALSE) %>%
-  st_transform(crs = 26915)
-
-tractGEO1960 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts60", "STL_DEMOGRAPHICS_tracts60.shp"), stringsAsFactors = FALSE) %>%
-  st_transform(crs = 26915)
-
-tractGEO1970 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts70", "STL_DEMOGRAPHICS_tracts70.shp"), stringsAsFactors = FALSE) %>%
-  st_transform(crs = 26915)
-
-tractGEO1980 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts80", "STL_DEMOGRAPHICS_tracts80.shp"), stringsAsFactors = FALSE) %>%
-  st_transform(crs = 26915)
-
-tractGEO1990 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts90", "STL_DEMOGRAPHICS_tracts90.shp"), stringsAsFactors = FALSE) %>%
-  st_transform(crs = 26915)
-
-tractGEO2000 <- st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts00", "STL_DEMOGRAPHICS_tracts00.shp"), stringsAsFactors = FALSE) %>%
-  st_transform(crs = 26915)
-```
-
-## Build Tract Maps
+## Build Tract Maps - Race
 In this section we will be building our tract level maps of STL. We will be mapping the racial makeup and then adding the census tract shapefiles to show them on the map. This section will be long and will recycle the same cide from the first code chunk, so we'll refrain from narrative after the first block.
 
 ### 1940
 Note - in 1940 there is no `black` variable, so we use `non-white` instead.
 
-```{r tract1940}
-tract1940 <- ggplot() +
-  geom_sf(data = nhoods, mapping = aes(fill = (nonwhite40/pop40)*100), color = NA) +
-  geom_sf(data = tractGEO1940, fill = NA, color = "#A3A3A3") +
-  scale_fill_distiller(palette = "Greens", name = "% Non-white", trans = "reverse") +
-  labs(
-    title = "% Nonwhite",
-    subtitle = "St. Louis City - 1940",
-    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
-  cp_sequoiaTheme(background = "white", map = TRUE)
+```{r trat1940-race}
+# load 1940 shapefile
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_tracts40.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl40
 
-print(tract1940)
+# load 1940 race file
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_race40.csv")) %>%
+  select(tractID, white, nonwhite) %>%
+  mutate(tractID = str_pad(string = tractID, width = 5, side = "left", pad = "0")) -> race40
+
+# unit test
+race40 %>% unique_id(tractID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl40 <- left_join(stl40, race40, by = c("TRACTID" = "tractID"))
 ```
 
-```{r save1940}
-cp_plotSave(here("results", "tract1940.png"), tract1940, preset = "lg", dpi = 500)
+```{r tract1940}
+tractrace1940 <- ggplot() +
+  geom_sf(data = stl40, mapping = aes(fill = ((nonwhite/(white+nonwhite))*100))) +
+  scale_fill_distiller(palette = "Greens", name = "% Non-white", trans = "reverse") +
+  labs(
+    title = "% Nonwhite - Census Tract",
+    subtitle = "St. Louis City - 1940",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
+
+print(tractrace1940)
+```
+
+```{r savetractrace1940}
+cp_plotSave(here("results", "tractrace1940.png"), tractrace1940, preset = "lg", dpi = 500)
 ```
 
 ### 1950
 
+```{r tract1950-race}
+# load 1950 shapefile
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts50", "STL_DEMOGRAPHICS_tracts50.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl50
+
+# load 1950 race file
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_race50.csv")) %>%
+  select(tractID, white, black, other) %>%
+  mutate(tractID = str_pad(string = tractID, width = 5, side = "left", pad = "0")) -> race50
+
+# unit test
+race50 %>% unique_id(tractID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl50 <- left_join(stl50, race50, by = c("TRACTID" = "tractID"))
+```
+
 ```{r tract1950}
-tract1950 <- ggplot() +
-  geom_sf(data = nhoods, mapping = aes(fill = (black50/pop50)*100), color = NA) +
-  geom_sf(data = tractGEO1950, fill = NA, color = "#A3A3A3") +
+tractrace1950 <- ggplot() +
+  geom_sf(data = stl50, mapping = aes(fill = ((black/(white+black+other))*100))) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
   labs(
-    title = "% Black",
+    title = "% Black - Census Tract",
     subtitle = "St. Louis City - 1950",
     caption = "Map by Christopher Prener, PhD., Carter Hanford") +
-  cp_sequoiaTheme(background = "white", map = TRUE)
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
 
-print(tract1950)
+print(tractrace1950)
 ```
 
 ```{r save1950}
-cp_plotSave(here("results", "tract1950.png"), tract1950, preset = "lg", dpi = 500)
+cp_plotSave(here("results", "tractrace1950.png"), tractrace1950, preset = "lg", dpi = 500)
 ```
 
 ### 1960
 
+```{r tract1960-race}
+# load 1960 shapefile
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts60", "STL_DEMOGRAPHICS_tracts60.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl60
+
+# load 1960 race file
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_race60.csv")) %>%
+  select(tractID, white, black, other) %>%
+  mutate(tractID = str_pad(string = tractID, width = 5, side = "left", pad = "0")) -> race60
+
+# unit test
+race60 %>% unique_id(tractID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl60 <- left_join(stl60, race60, by = c("TRACTID" = "tractID"))
+```
+
 ```{r tract1960}
-tract1960 <- ggplot() +
-  geom_sf(data = nhoods, mapping = aes(fill = (black60/pop60)*100), color = NA) +
-  geom_sf(data = tractGEO1960, fill = NA, color = "#A3A3A3") +
+tractrace1960 <- ggplot() +
+  geom_sf(data = stl60, mapping = aes(fill = ((black/(white+black+other))*100))) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
   labs(
-    title = "% Black",
+    title = "% Black - Census Tract",
     subtitle = "St. Louis City - 1960",
     caption = "Map by Christopher Prener, PhD., Carter Hanford") +
-  cp_sequoiaTheme(background = "white", map = TRUE)
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
 
-print(tract1960)
+print(tractrace1960)
 ```
 
 ```{r save1960}
-cp_plotSave(here("results", "tract1960.png"), tract1960, preset = "lg", dpi = 500)
+cp_plotSave(here("results", "tractrace1960.png"), tractrace1960, preset = "lg", dpi = 500)
 ```
 
 ### 1970
 
+```{r tract1970-race}
+# read in 1970 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts70", "STL_DEMOGRAPHICS_tracts70.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl70
+
+# read in 1970 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_race70.csv")) %>%
+  select(tractID, white, black, other) %>%
+  mutate(tractID = as.integer(str_pad(string = tractID, width = 6, side = "right", pad = "0"))) -> race70
+
+# unit test
+race70 %>% unique_id(tractID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl70 <- left_join(stl70, race70, by = c("TRACTID" = "tractID"))
+```
+
 ```{r tract1970}
-tract1970 <- ggplot() +
-  geom_sf(data = nhoods, mapping = aes(fill = (black70/pop70)*100), color = NA) +
-  geom_sf(data = tractGEO1970, fill = NA, color = "#A3A3A3") +
+tractrace1970 <- ggplot() +
+  geom_sf(data = stl70, mapping = aes(fill = ((black/(white+black+other))*100))) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
   labs(
-    title = "% Black",
+    title = "% Black - Census Tract",
     subtitle = "St. Louis City - 1970",
     caption = "Map by Christopher Prener, PhD., Carter Hanford") +
-  cp_sequoiaTheme(background = "white", map = TRUE)
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
 
-print(tract1970)
+print(tractrace1970)
 ```
 
 ```{r save1970}
-cp_plotSave(here("results", "tract1970.png"), tract1970, preset = "lg", dpi = 500)
+cp_plotSave(here("results", "tractrace1970.png"), tractrace1970, preset = "lg", dpi = 500)
 ```
 
 ### 1980
 
+```{r tract1980-race}
+# read in 1980 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts80", "STL_DEMOGRAPHICS_tracts80.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl80
+
+# read in 1980 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_race80.csv")) %>%
+  select(tractID, white, black, other) %>%
+  mutate(tractID = as.integer(str_pad(string = tractID, width = 6, side = "right", pad = "0"))) -> race80
+
+# unit test
+race80 %>% unique_id(tractID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl80 <- left_join(stl80, race80, by = c("TRACTID" = "tractID"))
+```
+
 ```{r tract1980}
-tract1980 <- ggplot() +
-  geom_sf(data = nhoods, mapping = aes(fill = (black80/pop80)*100), color = NA) +
-  geom_sf(data = tractGEO1980, fill = NA, color = "#A3A3A3") +
+tractrace1980 <- ggplot() +
+  geom_sf(data = stl80, mapping = aes(fill = ((black/(white+black+other))*100))) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
   labs(
-    title = "% Black",
+    title = "% Black - Census Tract",
     subtitle = "St. Louis City - 1980",
     caption = "Map by Christopher Prener, PhD., Carter Hanford") +
-  cp_sequoiaTheme(background = "white", map = TRUE)
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
 
-print(tract1980)
+print(tractrace1980)
 ```
 
 ```{r save1980}
-cp_plotSave(here("results", "tract1980.png"), tract1980, preset = "lg", dpi = 500)
+cp_plotSave(here("results", "tractrace1980.png"), tractrace1980, preset = "lg", dpi = 500)
 ```
 
 ### 1990
+For years 1990, 2000, and from 2010-2017, we will download census data from `tidycensus`. Note that the white population is neighborhoods is 12 people less than the total white population, because Census Tract 1018.99 does not have any geometry. The black population is unaffected.
+
+```{r download-1990}
+# white
+get_decennial(geography = "tract", variables = "P0060001", state = 29, county = 510, year = 1990, geometry = TRUE) %>%
+  st_transform(crs = 26915) %>%
+  select(GEOID, NAME, value) %>%
+  rename(white90 = value) -> white90
+
+# black 
+get_decennial(geography = "tract", variables = "P0060002", state = 29, county = 510, year = 1990, geometry = FALSE) %>% 
+  select(GEOID, value) %>%
+  rename(black90 = value) -> black90
+
+# total pop
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop90.csv")) %>%
+  select(Geo_FIPS, SE_T001_001) %>%
+  rename(GEOID = Geo_FIPS, 
+         pop90 = SE_T001_001) %>%
+  mutate(GEOID = str_pad(string = GEOID, width = 5, side = "left", pad = "0")) -> pop90
+
+# census tract
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts90", "STL_DEMOGRAPHICS_tracts90.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> tract90
+
+# unit test
+pop90 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl90 <- left_join(white90, black90, pop90, by = "GEOID")
+stl90 <- left_join(stl90, pop90, by = "GEOID")
+```
 
 ```{r tract1990}
-tract1990 <- ggplot() +
-  geom_sf(data = nhoods, mapping = aes(fill = (black90/pop90)*100), color = NA) +
-  geom_sf(data = tractGEO1990, fill = NA, color = "#A3A3A3") +
+tractrace1990 <- ggplot() +
+  geom_sf(data = stl90, mapping = aes(fill = (black90/pop90)*100)) +
+  geom_sf(data = tract90, fill = NA) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
   labs(
-    title = "% Black",
+    title = "% Black - Census Tract",
     subtitle = "St. Louis City - 1990",
     caption = "Map by Christopher Prener, PhD., Carter Hanford") +
-  cp_sequoiaTheme(background = "white", map = TRUE)
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
 
-print(tract1990)
+print(tractrace1990)
 ```
 
 ```{r save1990}
-cp_plotSave(here("results", "tract1990.png"), tract1990, preset = "lg", dpi = 500)
+cp_plotSave(here("results", "tractrace1990.png"), tractrace1990, preset = "lg", dpi = 500)
 ```
 
 ### 2000
 
+```{r download-2000}
+# white
+get_decennial(geography = "tract", variables = "P003003", state = 29, county = 510, year = 2000, geometry = TRUE) %>% 
+  st_transform(crs = 26915) %>%
+  select(GEOID, NAME, value) %>%
+  rename(white00 = value) -> white00
+
+# black 
+get_decennial(geography = "tract", variables = "P003004", state = 29, county = 510, year = 2000, geometry = FALSE) %>% 
+  select(GEOID, value) %>%
+  rename(black00 = value) -> black00
+
+# total pop
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop00.csv")) %>%
+  select(Geo_FIPS, SE_T001_001) %>%
+  rename(GEOID = Geo_FIPS, 
+         pop00 = SE_T001_001) %>%
+  mutate(GEOID = str_pad(string = GEOID, width = 5, side = "left", pad = "0")) -> pop00
+
+# census tract
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts00", "STL_DEMOGRAPHICS_tracts00.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> tract00
+
+# unit test
+pop00 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl00 <- left_join(white00, black00, pop00, by = "GEOID")
+stl00 <- left_join(stl00, pop00, by = "GEOID")
+```
+
 ```{r tract2000}
-tract2000 <- ggplot() +
-  geom_sf(data = nhoods, mapping = aes(fill = (black00/pop00)*100), color = NA) +
-  geom_sf(data = tractGEO2000, fill = NA, color = "#A3A3A3") +
+tractrace2000 <- ggplot() +
+  geom_sf(data = stl00, mapping = aes(fill = (black00/pop00)*100)) +
+  geom_sf(data = tract00, fill = NA) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
   labs(
-    title = "% Black",
+    title = "% Black - Census Tract",
     subtitle = "St. Louis City - 2000",
     caption = "Map by Christopher Prener, PhD., Carter Hanford") +
-  cp_sequoiaTheme(background = "white", map = TRUE)
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
 
-print(tract2000)
+print(tractrace2000)
 ```
 
 ```{r save2000}
-cp_plotSave(here("results", "tract2000.png"), tract2000, preset = "lg", dpi = 500)
+cp_plotSave(here("results", "tractrace2000.png"), tractrace2000, preset = "lg", dpi = 500)
+```
+
+### 2010
+The year 2000 was the last shapefile that we have in our data folder, so now we can download the rest of the shapefiles from `tigris`.
+
+```{r}
+tract10 <- tracts(29, county = "St. Louis city", cb = FALSE)
+```
+
+```{r download-2010}
+# white
+get_decennial(geography = "tract", variables = "P003002", state = 29, county = 510, year = 2010, geometry = TRUE) %>% 
+  st_transform(crs = 26915) %>%
+  select(GEOID, NAME, value) %>%
+  rename(white10 = value) -> white10
+
+# black 
+get_decennial(geography = "tract", variables = "P003003", state = 29, county = 510, year = 2010, geometry = FALSE) %>% 
+  select(GEOID, value) %>%
+  rename(black10 = value) -> black10
+
+# total pop
+get_decennial(geography = "tract", variables = "P001001", state = 29, county = 510, geometry = TRUE) %>% 
+  select(GEOID, value) %>%
+  rename(pop10 = value) -> pop2010
+
+# unit test
+pop2010 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl10 <- left_join(white10, black10, pop2010, by = "GEOID")
+stl10 <- left_join(stl10, as.data.frame(pop2010), by = "GEOID") # 
+```
+
+```{r tract2010}
+tractrace2010 <- ggplot() +
+  geom_sf(data = stl10, mapping = aes(fill = (black10/pop10)*100)) +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black - Census Tract",
+    subtitle = "St. Louis City - 2010",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
+
+print(tractrace2010)
+```
+
+```{r save2010}
+cp_plotSave(here("results", "tractrace2010.png"), tractrace2010, preset = "lg", dpi = 500)
+```
+
+### 2011
+The following data are from the 2007-2011 5-year American Community Survey estimates.
+
+```{r tract2011}
+# white
+get_acs(geography = "tract", year = 2011, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white11 = estimate,
+         white11_m = moe) -> white11
+
+# black
+get_acs(geography = "tract", year = 2011, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black11 = estimate,
+         black11_m = moe) -> black11
+
+# population
+get_acs(geography = "tract", year = 2011, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop11 = estimate,
+         pop11_m = moe) -> pop2011
+
+# tract
+tract11 <- tracts(29, county = "510", year = 2011, cb = FALSE) # not sure how to join this to stl11
+
+# unit test
+pop2011 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl11 <- left_join(white11, black11, pop2011, by = "GEOID") # white11, black11, and pop2011 have no geometry
+stl11 <- left_join(stl11, as.data.frame(pop2011), by = "GEOID")
+```
+
+### 2012
+
+
+
+### 2013
+
+
+
+### 2014
+
+
+
+### 2015
+
+
+
+### 2016
+
+
+
+### 2017
+
+
+
+## Build Tract Maps - Population
+In this section we will be building more tract level maps of STL. We will be mapping the population makeup and then adding the census tract shapefiles. This section will be long and will recycle the same cide from the first code chunk, so we'll refrain from narrative after the first block.
+
+### 1940 Pop
+
+```{r tract1940-pop}
+# read in 1940 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_tracts40.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stltract40
+
+# read in 1940 population data
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop40.csv")) %>%
+  select(Geo_Name, SE_T001_001) %>%
+  rename(TRACTID = Geo_Name, 
+         pop40 = SE_T001_001) %>%
+  mutate(TRACTID = str_pad(string = TRACTID, width = 5, side = "left", pad = "0")) -> popstl40
+
+# unit test
+popstl40 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stlpop40 <- left_join(stltract40, popstl40, by = "TRACTID")
+
+# generate map
+tractpop1940 <- ggplot() +
+  geom_sf(data = stlpop40, mapping = aes(fill = (pop40))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 1940",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+# print map
+print(tractpop1940)
+```
+
+```{r savetractpop1940}
+cp_plotSave(here("results", "tractpop1940.png"), tractpop1940, preset = "lg", dpi = 500)
+```
+
+### 1950
+
+```{r tract1950-pop}
+# read in 1950 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts50", "STL_DEMOGRAPHICS_tracts50.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stltract50
+
+# read in 1950 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop50.csv")) %>%
+  select(Geo_Name, SE_T001_001) %>%
+  rename(TRACTID = Geo_Name, 
+         pop50 = SE_T001_001) -> popstl50
+
+# unit test
+popstl50 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stlpop50 <- left_join(stltract50, popstl50, by = "TRACTID")
+
+# generate map
+tractpop1950 <- ggplot() +
+  geom_sf(data = stlpop50, mapping = aes(fill = (pop50))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 1950",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+# print map
+print(tractpop1950)
+```
+
+```{r savetractpop1950}
+cp_plotSave(here("results", "tractpop1950.png"), tractpop1950, preset = "lg", dpi = 500)
+```
+
+### 1960
+
+```{r tract1960-pop}
+# read in 1960 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts60", "STL_DEMOGRAPHICS_tracts60.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stltract60
+
+# read in 1960 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop60.csv")) %>%
+  select(Geo_FIPS, SE_T001_001) %>%
+  rename(TRACTID = Geo_FIPS, 
+         pop60 = SE_T001_001) %>%
+  mutate(TRACTID = str_sub(TRACTID, 7, 11)) -> popstl60
+
+# unit test
+popstl60 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stlpop60 <- left_join(stltract60, popstl60, by = "TRACTID")
+
+# generate map
+tractpop1960 <- ggplot() +
+  geom_sf(data = stlpop60, mapping = aes(fill = (pop60))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 1960",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+# print map
+print(tractpop1960)
+```
+
+```{r savetractpop1960}
+cp_plotSave(here("results", "tractpop1960.png"), tractpop1960, preset = "lg", dpi = 500)
+```
+
+### 1970
+
+```{r tract1970-pop}
+# read in 1970 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts70", "STL_DEMOGRAPHICS_tracts70.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stltract70
+
+# read in 1970 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop70.csv")) %>%
+  select(Geo_TractCode, SE_T001_001) %>%
+  rename(TRACTID = Geo_TractCode, 
+         pop70 = SE_T001_001) -> popstl70
+
+# unit test
+popstl70 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stlpop70 <- left_join(stltract70, popstl70, by = "TRACTID")
+
+# generate map
+tractpop1970 <- ggplot() +
+  geom_sf(data = stlpop70, mapping = aes(fill = (pop70))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 1970",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+# print map
+print(tractpop1970)
+```
+
+```{r savetractpop1970}
+cp_plotSave(here("results", "tractpop1970.png"), tractpop1970, preset = "lg", dpi = 500)
+```
+
+### 1980
+
+```{r tract1980-pop}
+# read in 1980 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts80", "STL_DEMOGRAPHICS_tracts80.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stltract80
+
+# read in 1980 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop80.csv")) %>%
+  select(Geo_TRACT6, SE_T001_001) %>%
+  rename(TRACTID = Geo_TRACT6, 
+         pop80 = SE_T001_001) -> popstl80
+
+# unit test
+popstl80 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stlpop80 <- left_join(stltract80, popstl80, by = "TRACTID")
+
+# generate map
+tractpop1980 <- ggplot() +
+  geom_sf(data = stlpop80, mapping = aes(fill = (pop80))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 1980",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop1980)
+```
+
+```{r savetractpop1980}
+cp_plotSave(here("results", "tractpop1980.png"), tractpop1980, preset = "lg", dpi = 500)
+```
+
+### 1990
+
+```{r tract1990-pop}
+# read in 1990 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts90", "STL_DEMOGRAPHICS_tracts90.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stltract90
+
+# read in 1990 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop90.csv")) %>%
+  select(Geo_TRACT, SE_T001_001) %>%
+  rename(TRACTID = Geo_TRACT, 
+         pop90 = SE_T001_001) -> popstl90
+
+# unit test
+popstl90 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stlpop90 <- left_join(stltract90, popstl90, by = "TRACTID")
+
+# generate map
+tractpop1990 <- ggplot() +
+  geom_sf(data = stlpop90, mapping = aes(fill = (pop90))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 1990",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop1990)
+```
+
+```{r savetractpop1990}
+cp_plotSave(here("results", "tractpop1990.png"), tractpop1990, preset = "lg", dpi = 500)
+```
+
+### 2000
+
+```{r tract2000-pop}
+# read in 2000 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts00", "STL_DEMOGRAPHICS_tracts00.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stltract00
+
+# read in 2000 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop00.csv")) %>%
+  select(Geo_TRACT, SE_T001_001) %>%
+  rename(TRACTID = Geo_TRACT, 
+         pop00 = SE_T001_001) -> popstl00
+
+# unit test
+popstl00 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stlpop00 <- left_join(stltract00, popstl00, by = "TRACTID")
+
+# generate map
+tractpop2000 <- ggplot() +
+  geom_sf(data = stlpop00, mapping = aes(fill = (pop00))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 2000",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop2000)
+```
+
+```{r savetractpop2000}
+cp_plotSave(here("results", "tractpop2000.png"), tractpop2000, preset = "lg", dpi = 500)
 ```
 
