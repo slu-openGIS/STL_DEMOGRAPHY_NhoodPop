@@ -8,7 +8,7 @@ output:
 ---
 
 ## Introduction
-This notebook generates census tract-level maps by decennial year to 2010, then from years 2011-2017.
+This notebook generates census tract-level maps by decennial year to 2010, then from years 2011-2017. The data was obtained from a variety of different ways.  Demographic data [1940-2000] was obtained through [NHGIS](https://www.nhgis.org), and tract-level data from [NHGIS](http://socialexplorer.com). These two data sets were then merged to give the demographic data a geometry, which allowed us to map them to St. Louis City.  
 
 ## Dependencies
 This notebook requires a number of different `R` packages:
@@ -54,10 +54,14 @@ STL_PopRace <- left_join(STL_Pop, STL_Race, by = "NHD_NUM")
 ```
 
 ## Build Tract Maps - Race
-In this section we will be building our tract level maps of STL. We will be mapping the racial makeup and then adding the census tract shapefiles to show them on the map. This section will be long and will recycle the same cide from the first code chunk, so we'll refrain from narrative after the first block.
+In this section we will be building our tract level maps of STL. We will be mapping the racial makeup and then adding the census tract shapefiles to show them on the map. This section will be long and will recycle the same code from the first code chunk, so we'll refrain from narrative after the first block.
 
 ### 1940
-Note - in 1940 there is no `black` variable, so we use `non-white` instead.
+Note - in 1940 there is no `black` variable, so we use `non-white` instead. For each year, we will follow the workflow of:
+
+* `Loading the tract shapefile`
+* `Loading the corresponding demographic .csv file`
+* `Merge the data via left_join with existing tract variable`
 
 ```{r trat1940-race}
 # load 1940 shapefile
@@ -79,6 +83,7 @@ stl40 <- left_join(stl40, race40, by = c("TRACTID" = "tractID"))
 ```
 
 ```{r tract1940}
+# generate plot
 tractrace1940 <- ggplot() +
   geom_sf(data = stl40, mapping = aes(fill = ((nonwhite/(white+nonwhite))*100))) +
   scale_fill_distiller(palette = "Greens", name = "% Non-white", trans = "reverse") +
@@ -117,6 +122,7 @@ stl50 <- left_join(stl50, race50, by = c("TRACTID" = "tractID"))
 ```
 
 ```{r tract1950}
+# generate plot
 tractrace1950 <- ggplot() +
   geom_sf(data = stl50, mapping = aes(fill = ((black/(white+black+other))*100))) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
@@ -155,6 +161,7 @@ stl60 <- left_join(stl60, race60, by = c("TRACTID" = "tractID"))
 ```
 
 ```{r tract1960}
+# generate plot
 tractrace1960 <- ggplot() +
   geom_sf(data = stl60, mapping = aes(fill = ((black/(white+black+other))*100))) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
@@ -193,6 +200,7 @@ stl70 <- left_join(stl70, race70, by = c("TRACTID" = "tractID"))
 ```
 
 ```{r tract1970}
+# generate plot
 tractrace1970 <- ggplot() +
   geom_sf(data = stl70, mapping = aes(fill = ((black/(white+black+other))*100))) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
@@ -231,6 +239,7 @@ stl80 <- left_join(stl80, race80, by = c("TRACTID" = "tractID"))
 ```
 
 ```{r tract1980}
+# generate plot
 tractrace1980 <- ggplot() +
   geom_sf(data = stl80, mapping = aes(fill = ((black/(white+black+other))*100))) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
@@ -284,6 +293,7 @@ stl90 <- left_join(stl90, pop90, by = "GEOID")
 ```
 
 ```{r tract1990}
+# generate plot
 tractrace1990 <- ggplot() +
   geom_sf(data = stl90, mapping = aes(fill = (black90/pop90)*100)) +
   geom_sf(data = tract90, fill = NA) +
@@ -337,6 +347,7 @@ stl00 <- left_join(stl00, pop00, by = "GEOID")
 ```
 
 ```{r tract2000}
+# generate plot
 tractrace2000 <- ggplot() +
   geom_sf(data = stl00, mapping = aes(fill = (black00/pop00)*100)) +
   geom_sf(data = tract00, fill = NA) +
@@ -355,10 +366,13 @@ cp_plotSave(here("results", "tractrace2000.png"), tractrace2000, preset = "lg", 
 ```
 
 ### 2010
-The year 2000 was the last shapefile that we have in our data folder, so now we can download the rest of the shapefiles from `tigris`.
+The year 2000 was the last shapefile that we have in our data folder, so now we can download the 2010 shapefile from `tigris`, which we will use for the remainder of the maps.
 
 ```{r}
-tract10 <- tracts(29, county = "St. Louis city", cb = FALSE)
+tract10 <- tracts(29, county = "St. Louis city", class = "sf", cb = FALSE, year = 2010)
+tract10 %>%
+  rename(GEOID = GEOID10) %>%
+  select(GEOID) -> tract10
 ```
 
 ```{r download-2010}
@@ -388,6 +402,7 @@ stl10 <- left_join(stl10, as.data.frame(pop2010), by = "GEOID") #
 ```
 
 ```{r tract2010}
+# generate plot
 tractrace2010 <- ggplot() +
   geom_sf(data = stl10, mapping = aes(fill = (black10/pop10)*100)) +
   scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
@@ -426,44 +441,330 @@ get_acs(geography = "tract", year = 2011, variables = "B01003_001", state = 29, 
   rename(pop11 = estimate,
          pop11_m = moe) -> pop2011
 
-# tract
-tract11 <- tracts(29, county = "510", year = 2011, cb = FALSE) # not sure how to join this to stl11
-
 # unit test
 pop2011 %>% unique_id(GEOID) -> idUnique
 expect_equal(idUnique, TRUE)
 
 # combine
 stl11 <- left_join(white11, black11, pop2011, by = "GEOID") # white11, black11, and pop2011 have no geometry
-stl11 <- left_join(stl11, as.data.frame(pop2011), by = "GEOID")
+stl11 <- left_join(stl11, tract10, by = "GEOID")
+stl11 <- left_join(stl11, pop2011, by = "GEOID")
+```
+
+```{r tract2011-plot}
+# generate plot
+tractrace2011 <- ggplot() +
+  geom_sf(data = stl11, mapping = aes(fill = (black11/pop11)*100)) +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black - Census Tract",
+    subtitle = "St. Louis City - 2011",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
+
+print(tractrace2011)
+```
+
+```{r save2011}
+cp_plotSave(here("results", "tractrace2011.png"), tractrace2011, preset = "lg", dpi = 500)
 ```
 
 ### 2012
 
+```{r tract2012}
+# white
+get_acs(geography = "tract", year = 2012, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white12 = estimate,
+         white12_m = moe) -> white12
 
+# black
+get_acs(geography = "tract", year = 2012, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black12 = estimate,
+         black12_m = moe) -> black12
+
+# population
+get_acs(geography = "tract", year = 2012, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop12 = estimate,
+         pop12_m = moe) -> pop2012
+
+# unit test
+pop2012 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl12 <- left_join(white12, black12, pop2012, by = "GEOID")
+stl12 <- left_join(stl12, tract10, by = "GEOID")
+stl12 <- left_join(stl12, pop2012, by = "GEOID")
+```
+
+```{r tract2012-plot}
+# generate plot
+tractrace2012 <- ggplot() +
+  geom_sf(data = stl12, mapping = aes(fill = (black12/pop12)*100)) +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black - Census Tract",
+    subtitle = "St. Louis City - 2012",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
+
+print(tractrace2012)
+```
+
+```{r save2012}
+cp_plotSave(here("results", "tractrace2012.png"), tractrace2012, preset = "lg", dpi = 500)
+```
 
 ### 2013
 
+```{r tract2013}
+# white
+get_acs(geography = "tract", year = 2013, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white13 = estimate,
+         white13_m = moe) -> white13
 
+# black
+get_acs(geography = "tract", year = 2013, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black13 = estimate,
+         black13_m = moe) -> black13
+
+# population
+get_acs(geography = "tract", year = 2013, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop13 = estimate,
+         pop13_m = moe) -> pop2013
+
+# unit test
+pop2013 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl13 <- left_join(white13, black13, pop2013, by = "GEOID")
+stl13 <- left_join(stl13, tract10, by = "GEOID")
+stl13 <- left_join(stl13, pop2013, by = "GEOID")
+```
+
+```{r tract2013-plot}
+# general plot
+tractrace2013 <- ggplot() +
+  geom_sf(data = stl13, mapping = aes(fill = (black13/pop13)*100)) +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black - Census Tract",
+    subtitle = "St. Louis City - 2013",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
+
+print(tractrace2013)
+```
+
+```{r save2013}
+cp_plotSave(here("results", "tractrace2013.png"), tractrace2013, preset = "lg", dpi = 500)
+```
 
 ### 2014
 
+```{r tract2014}
+# white
+get_acs(geography = "tract", year = 2014, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white14 = estimate,
+         white14_m = moe) -> white14
 
+# black
+get_acs(geography = "tract", year = 2014, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black14 = estimate,
+         black14_m = moe) -> black14
+
+# population
+get_acs(geography = "tract", year = 2014, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop14 = estimate,
+         pop14_m = moe) -> pop2014
+
+# unit test
+pop2014 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl14 <- left_join(white14, black14, pop2014, by = "GEOID")
+stl14 <- left_join(stl14, tract10, by = "GEOID")
+stl14 <- left_join(stl14, pop2014, by = "GEOID")
+```
+
+```{r tract2014-plot}
+# generate plot
+tractrace2014 <- ggplot() +
+  geom_sf(data = stl14, mapping = aes(fill = (black14/pop14)*100)) +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black - Census Tract",
+    subtitle = "St. Louis City - 2014",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
+
+print(tractrace2014)
+```
+
+```{r save2014}
+cp_plotSave(here("results", "tractrace2014.png"), tractrace2014, preset = "lg", dpi = 500)
+```
 
 ### 2015
 
+```{r tract2015}
+# white
+get_acs(geography = "tract", year = 2015, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white15 = estimate,
+         white15_m = moe) -> white15
 
+# black
+get_acs(geography = "tract", year = 2015, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black15 = estimate,
+         black15_m = moe) -> black15
+
+# population
+get_acs(geography = "tract", year = 2015, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop15 = estimate,
+         pop15_m = moe) -> pop2015
+
+# unit test
+pop2015 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl15 <- left_join(white15, black15, pop2015, by = "GEOID")
+stl15 <- left_join(stl15, tract10, by = "GEOID")
+stl15 <- left_join(stl15, pop2015, by = "GEOID")
+```
+
+```{r tract2015-plot}
+# generate plot
+tractrace2015 <- ggplot() +
+  geom_sf(data = stl15, mapping = aes(fill = (black15/pop15)*100)) +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black - Census Tract",
+    subtitle = "St. Louis City - 2015",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
+
+print(tractrace2015)
+```
+
+```{r save2015}
+cp_plotSave(here("results", "tractrace2015.png"), tractrace2015, preset = "lg", dpi = 500)
+```
 
 ### 2016
 
+```{r tract2016}
+# white
+get_acs(geography = "tract", year = 2016, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white16 = estimate,
+         white16_m = moe) -> white16
 
+# black
+get_acs(geography = "tract", year = 2016, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black16 = estimate,
+         black16_m = moe) -> black16
+
+# population
+get_acs(geography = "tract", year = 2016, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop16 = estimate,
+         pop16_m = moe) -> pop2016
+
+# unit test
+pop2016 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl16 <- left_join(white16, black16, pop2016, by = "GEOID")
+stl16 <- left_join(stl16, tract10, by = "GEOID")
+stl16 <- left_join(stl16, pop2016, by = "GEOID")
+```
+
+```{r tract2016-plot}
+# generate plot
+tractrace2016 <- ggplot() +
+  geom_sf(data = stl16, mapping = aes(fill = (black16/pop16)*100)) +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black - Census Tract",
+    subtitle = "St. Louis City - 2016",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
+
+print(tractrace2016)
+```
+
+```{r save2016}
+cp_plotSave(here("results", "tractrace2016.png"), tractrace2016, preset = "lg", dpi = 500)
+```
 
 ### 2017
 
+```{r tract2017}
+# white
+get_acs(geography = "tract", year = 2017, variables = "B02001_002", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(white17 = estimate,
+         white17_m = moe) -> white17
 
+# black
+get_acs(geography = "tract", year = 2017, variables = "B02001_003", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(black17 = estimate,
+         black17_m = moe) -> black17
+
+# population
+get_acs(geography = "tract", year = 2017, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop17 = estimate,
+         pop17_m = moe) -> pop2017
+
+# unit test
+pop2017 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# combine
+stl17 <- left_join(white17, black17, pop2017, by = "GEOID")
+stl17 <- left_join(stl17, tract10, by = "GEOID")
+stl17 <- left_join(stl17, pop2017, by = "GEOID")
+```
+
+```{r tract2017-plot}
+# general plot
+tractrace2017 <- ggplot() +
+  geom_sf(data = stl17, mapping = aes(fill = (black17/pop17)*100)) +
+  scale_fill_distiller(palette = "Greens", name = "% Black", trans = "reverse") +
+  labs(
+    title = "% Black - Census Tract",
+    subtitle = "St. Louis City - 2017",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
+
+print(tractrace2017)
+```
+
+```{r save2017}
+cp_plotSave(here("results", "tractrace2017.png"), tractrace2017, preset = "lg", dpi = 500)
+```
 
 ## Build Tract Maps - Population
-In this section we will be building more tract level maps of STL. We will be mapping the population makeup and then adding the census tract shapefiles. This section will be long and will recycle the same cide from the first code chunk, so we'll refrain from narrative after the first block.
+In this section we will build more tract level maps of STL. We will map the population makeup and then add the census tract shapefiles. This section will be long and will recycle the same code from the first code chunk, so we'll refrain from narrative after the first block.
 
 ### 1940 Pop
 
@@ -737,3 +1038,259 @@ print(tractpop2000)
 cp_plotSave(here("results", "tractpop2000.png"), tractpop2000, preset = "lg", dpi = 500)
 ```
 
+### 2010
+For year 2010, we can use the `pop2010` data frame that was previously loaded from `tidycensus`.  Then, to eliminate unnecessary code, we will reuse the 2010 census tract that we loaded earlier.
+
+```{r tract2010-pop}
+# total pop
+get_decennial(geography = "tract", variables = "P001001", state = 29, county = 510, geometry = TRUE) %>% 
+  select(GEOID, value) %>%
+  rename(pop10 = value) -> pop2010
+
+# unit test
+pop2010 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+stlpop10 <- left_join(pop2010, as.data.frame(tract10), by = "GEOID")
+
+# generate map
+tractpop2010 <- ggplot() +
+  geom_sf(data = stlpop10, mapping = aes(fill = (pop10))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 2010",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop2010)
+```
+
+```{r savetractpop2010}
+cp_plotSave(here("results", "tractpop2010.png"), tractpop2010, preset = "lg", dpi = 500)
+```
+
+### 2011
+Now, from 2011-2017, we will get each year from its corresponding ACS database.
+
+```{r tractpop2011-pop}
+# population
+get_acs(geography = "tract", year = 2011, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop11 = estimate,
+         pop11_m = moe) -> pop2011
+
+# unit test
+pop2011 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+stlpop11 <- left_join(pop2011, as.data.frame(tract10), by = "GEOID")
+
+# generate map
+tractpop2011 <- ggplot() +
+  geom_sf(data = stlpop11, mapping = aes(fill = (pop11))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 2011",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop2011)
+```
+
+```{r savetractpop2011}
+cp_plotSave(here("results", "tractpop2011.png"), tractpop2011, preset = "lg", dpi = 500)
+```
+
+### 2012
+
+```{r tractpop2012-pop}
+# population
+get_acs(geography = "tract", year = 2012, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop12 = estimate,
+         pop12_m = moe) -> pop2012
+
+# unit test
+pop2012 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+stlpop12 <- left_join(pop2012, as.data.frame(tract10), by = "GEOID")
+
+# generate map
+tractpop2012 <- ggplot() +
+  geom_sf(data = stlpop12, mapping = aes(fill = (pop12))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 2012",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop2012)
+```
+
+```{r savetractpop2012}
+cp_plotSave(here("results", "tractpop2012.png"), tractpop2012, preset = "lg", dpi = 500)
+```
+
+### 2013
+
+```{r tractpop2013-pop}
+# population
+get_acs(geography = "tract", year = 2013, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop13 = estimate,
+         pop13_m = moe) -> pop2013
+
+# unit test
+pop2013 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+stlpop13 <- left_join(pop2013, as.data.frame(tract10), by = "GEOID")
+
+# generate map
+tractpop2013 <- ggplot() +
+  geom_sf(data = stlpop13, mapping = aes(fill = (pop13))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 2013",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop2013)
+```
+
+```{r savetractpop2013}
+cp_plotSave(here("results", "tractpop2013.png"), tractpop2013, preset = "lg", dpi = 500)
+```
+
+### 2014
+
+```{r tractpop2014-pop}
+# population
+get_acs(geography = "tract", year = 2014, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop14 = estimate,
+         pop14_m = moe) -> pop2014
+
+# unit test
+pop2014 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+stlpop14 <- left_join(pop2014, as.data.frame(tract10), by = "GEOID")
+
+# generate map
+tractpop2014 <- ggplot() +
+  geom_sf(data = stlpop14, mapping = aes(fill = (pop14))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 2014",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop2014)
+```
+
+```{r savetractpop2014}
+cp_plotSave(here("results", "tractpop2014.png"), tractpop2014, preset = "lg", dpi = 500)
+```
+
+### 2015
+
+```{r tractpop2015-pop}
+# population
+get_acs(geography = "tract", year = 2015, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop15 = estimate,
+         pop15_m = moe) -> pop2015
+
+# unit test
+pop2015 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+stlpop15 <- left_join(pop2015, as.data.frame(tract10), by = "GEOID")
+
+# generate map
+tractpop2015 <- ggplot() +
+  geom_sf(data = stlpop15, mapping = aes(fill = (pop15))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 2015",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop2015)
+```
+
+```{r savetractpop2015}
+cp_plotSave(here("results", "tractpop2015.png"), tractpop2015, preset = "lg", dpi = 500)
+```
+
+### 2016
+
+```{r tractpop2016-pop}
+# population
+get_acs(geography = "tract", year = 2016, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop16 = estimate,
+         pop16_m = moe) -> pop2016
+
+# unit test
+pop2016 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+stlpop16 <- left_join(pop2016, as.data.frame(tract10), by = "GEOID")
+
+# generate map
+tractpop2016 <- ggplot() +
+  geom_sf(data = stlpop16, mapping = aes(fill = (pop16))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 2016",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop2016)
+```
+
+```{r savetractpop2016}
+cp_plotSave(here("results", "tractpop2016.png"), tractpop2016, preset = "lg", dpi = 500)
+```
+
+### 2017
+
+```{r tractpop2017-pop}
+# population
+get_acs(geography = "tract", year = 2017, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop17 = estimate,
+         pop17_m = moe) -> pop2017
+
+# unit test
+pop2017 %>% unique_id(GEOID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+stlpop17 <- left_join(pop2017, as.data.frame(tract10), by = "GEOID")
+
+# generate map
+tractpop2017 <- ggplot() +
+  geom_sf(data = stlpop17, mapping = aes(fill = (pop17))) +
+  scale_fill_distiller(palette = "PuBu", name = "Total Pop", trans = "reverse") +
+  labs(
+    title = "Total Population - Census Tract",
+    subtitle = "St. Louis City - 2017",
+    caption = "Map by Christopher Prener, PhD., Carter Hanford") +
+  cp_sequoiaTheme(base_size = 17, background = "white", map = TRUE)
+
+print(tractpop2017)
+```
+
+```{r savetractpop2017}
+cp_plotSave(here("results", "tractpop2017.png"), tractpop2017, preset = "lg", dpi = 500)
+```
