@@ -253,10 +253,10 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts90", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl90
 
 # read in 1990 census counts, clean
-read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop90.csv")) %>%
-  select(Geo_TRACT, SE_T001_001) %>%
-  rename(TRACTID = Geo_TRACT, 
-         pop90 = SE_T001_001) -> pop90
+get_decennial(geography = "tract", variable = "P0010001", year = 1990, state = 29, county = 510) %>%
+  select(GEOID, value) %>%
+  rename(TRACTID = GEOID, 
+         pop90 = value) -> pop90
 
 # unit test
 pop90 %>% unique_id(TRACTID) -> idUnique
