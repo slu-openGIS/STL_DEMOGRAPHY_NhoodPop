@@ -1,6 +1,11 @@
 # STL_DEMOGRAPHY_NhoodPop
 
-This repository contains code for creating a data set originally requested by Janelle O'Day at the St. Louis Post-Dispatch. The original request was for population estimates similar to those found [here](https://chris-prener.github.io/dataviz/project/stl-pop-change/) but for each year between 2010 and 2017. This repository contains data for the original request as well as estimates derived from each decennial census between 1940 and 2000. 
+This repository contains code for creating a data set originally requested by Janelle O'Day at the St. Louis Post-Dispatch, containing both total population and race by neighborhood in St. Louis between 1940 and 2017. These use the "modern" neighborhood boundaries, which have only been in use for the last few decades.
+
+## Background
+Census tracts, which are commonly used units geographic entities in demography and other social sciences, are often used as proxies for "neighborhoods" despite the fact that they rarely map onto real-world neighborhood boundaries (either as they are subjectively understood or objectively delineated). They also change each decade when the U.S. Census Bureau administers the decennial census. 
+
+As part of a [larger pilot project](https://chris-prener.github.io/project/redlining/) to understand the impact of racial residential segregation, I have obtained census data, with the help of my research assistant Carter Hanford, for the City of St. Louis. In order to clearly communicate how these changes have progressed over time in geographic units that make sense to most St. Louis residents, I have used these tract-level population counts as the basis for producing neighborhood population estimates. Each year's estimate was produced using `R` and a technique called [areal weighted interpolation](https://slu-opengis.github.io/areal/articles/areal-weighted-interpolation.html). This is typically used for population data (like what we have here) that are overlapping but whose boundaries are incongruent. 
 
 ## Sources
 
@@ -10,11 +15,11 @@ This repository contains code for creating a data set originally requested by Ja
 * Neighborhood geometry were obtained from the [City of St. Louis](https://www.stlouis-mo.gov/data/boundaries/ward-neighborhood-boundaries.cfm)
 
 ## Methods
-The original census tract geometry for 1940-2000 were cleaned prior to inclusion in this repository to remove tracts outside of the City of St. Louis (they were nationwide files). Each year's estimate was produced using `R` and a technique called [areal weighted interpolation](https://slu-opengis.github.io/areal/articles/areal-weighted-interpolation.html). This is typically used for population data (like what we have here) that are overlapping but whose boundaries are incongruent. 
+The original census tract geometry for 1940-2000 were cleaned prior to inclusion in this repository to remove tracts outside of the City of St. Louis (they were nationwide files). Data for 1940 through 2000 were imported one year at a time, cleaned, and interpolated to the neighborhood boundaries. These neighborhood estimates were then collapsed into a single data frame. Unit tests were used to verify identification variables uniquely identified each historical census tract (since identification numbers changed each decade). Unit tests were also used to verify that each individual counted in a given census year had been redistributed into a neighborhood - the sum of all census tracts for a given year should equal the sum of all neighborhood populations for that same year.
 
-Data for 1940 through 2000 were imported one year at a time, cleaned, and interpolated to the neighborhood boundaries. These neighborhood estimates were then collapsed into a single data frame. Unit tests were used to verify identification variables uniquely identified each historical census tract (since identification numbers changed each decade). Unit tests were also used to verify that each individual counted in a given census year had been redistributed into a neighborhood - the sum of all census tracts for a given year should equal the sum of all neighborhood populations for that same year.
+Data for 2010 through 2017 were downloaded and cleaned one at a time, and then combined into a single data frame. That single data frame was then interpolated to the neighborhood boundaries. As before, unit tests were also used to verify that each individual counted in a given census year had been redistributed into a neighborhood. 
 
-Data for 2010 through 2017 were downloaded and cleaned one at a time, and then combined into a single data frame. That single data frame was then interpolated to the neighborhood boundaries. As before, unit tests were also used to verify that each individual counted in a given census year had been redistributed into a neighborhood. The same process was used to create counts for white and black residents by neighborhood. Note that, in 1940, the Census counted only white and non-white residents.
+The same process was used to create counts for white and black residents by neighborhood. Note that, in 1940, the Census counted only white and non-white residents.
 
 The two data frames, one for the historical data (1940-2000) and one for the modern data (2010-2017) were then combined and written to the file found at `data/clean/STL_PopByNhood.csv`. All `R` code is found in `docs/buildPop.Rmd` and `docs/buildRace.Rmd`. All original source data can be found in `data/spatial/` and `data/tabular`.
 
