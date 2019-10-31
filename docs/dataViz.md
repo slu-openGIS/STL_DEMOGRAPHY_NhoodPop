@@ -5,8 +5,8 @@ Christopher Prener, Ph.D., Carter Hanford, B.A.
 
 ## Introduction
 
-This notebook generates a number of data visualizations - primarily maps
-- based on the neighborhood population and race estimates.
+This notebook generates a number of data visualizations, primarily maps,
+based on the neighborhood population and race estimates.
 
 ## Dependencies
 
@@ -70,7 +70,7 @@ source(here("source", "cp_plotSave.R"))
 ## Load Data
 
 In this section, we’ll be using the STL Population and Race data by
-neighborhod located in the clean folder under data.
+neighborhood located in the clean folder under data.
 
 ``` r
 # total population
@@ -190,7 +190,7 @@ plot_race <- ggplot() +
   scale_fill_distiller(palette = "RdPu", name = "% Non-white", trans = "reverse",
                        breaks = breaks) +
   labs(
-    title = "Percent Nonwhite, 1940",
+    title = "Percent Non-white, 1940",
     subtitle = "City of St. Louis Modern Neighborhoods",
     caption = "Map by Christopher Prener, PhD. and Carter Hanford, B.A.\nData via NHGIS and the City of St. Louis") +
   cp_sequoiaTheme(base_size = 20, background = "white", map = TRUE)
