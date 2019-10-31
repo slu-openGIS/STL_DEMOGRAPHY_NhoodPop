@@ -4,10 +4,9 @@ This repository contains code for creating a data set originally requested by Ja
 
 ## Sources
 
-* Underlying decennial census data for 1940-2000 were obtained from [Social Explorer](http://socialexplorer.com)
-* Underlying census tract geometry for 1940-2000 were obtained from the [IPUMS](https://www.ipums.org) [National Historical Geographic Information System (NHGIS)](https://www.nhgis.org).
-* Underlying decennial census data for 2010 and ACS data 5-year estimates for periods ending in 2011 through 2017 were obtained from the Census Bureau via API (using the `tidycensus` package for `R`)
-* Underlying census tract geometry for 2010 were obtained from the Census Bureau via API (using the `tidycensus` package for `R`)
+* Underlying census tract geometry and census data for 1940-1980 were obtained from the [IPUMS](https://www.ipums.org) [National Historical Geographic Information System (NHGIS)](https://www.nhgis.org).
+* Underlying decennial census data for 1990-2010 and ACS data 5-year estimates for periods ending in 2011 through 2017 were obtained from the Census Bureau via API (using the `tidycensus` package for `R`)
+* Underlying census tract geometry for 1990-2010 were obtained from the Census Bureau via API (using the `tidycensus` package for `R`); all 2011 through 2017 ACS data use the 2010 tract boundaries
 * Neighborhood geometry were obtained from the [City of St. Louis](https://www.stlouis-mo.gov/data/boundaries/ward-neighborhood-boundaries.cfm)
 
 ## Methods
@@ -15,9 +14,9 @@ The original census tract geometry for 1940-2000 were cleaned prior to inclusion
 
 Data for 1940 through 2000 were imported one year at a time, cleaned, and interpolated to the neighborhood boundaries. These neighborhood estimates were then collapsed into a single data frame. Unit tests were used to verify identification variables uniquely identified each historical census tract (since identification numbers changed each decade). Unit tests were also used to verify that each individual counted in a given census year had been redistributed into a neighborhood - the sum of all census tracts for a given year should equal the sum of all neighborhood populations for that same year.
 
-Data for 2010 through 2017 were downloaded and cleaned one at a time, and then combined into a single data frame. That single data frame was then interpolated to the neighborhood boundaries. As before, unit tests were also used to verify that each individual counted in a given census year had been redistributed into a neighborhood.
+Data for 2010 through 2017 were downloaded and cleaned one at a time, and then combined into a single data frame. That single data frame was then interpolated to the neighborhood boundaries. As before, unit tests were also used to verify that each individual counted in a given census year had been redistributed into a neighborhood. The same process was used to create counts for white and black residents by neighborhood. Note that, in 1940, the Census counted only white and non-white residents.
 
-The two data frames, one for the historical data (1940-2000) and one for the modern data (2010-2017) were then combined and written to the file found at `data/clean/STL_PopByNhood.csv`. All `R` code is found in `docs/buildData.Rmd` along with `.md` and `.nb.html` output files. All original source data can be found in `data/spatial/` and `data/tabular`.
+The two data frames, one for the historical data (1940-2000) and one for the modern data (2010-2017) were then combined and written to the file found at `data/clean/STL_PopByNhood.csv`. All `R` code is found in `docs/buildPop.Rmd` and `docs/buildRace.Rmd`. All original source data can be found in `data/spatial/` and `data/tabular`.
 
 ## Notes
 
