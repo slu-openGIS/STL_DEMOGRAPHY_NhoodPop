@@ -30,7 +30,7 @@ This repository contains two clean neighborhood-level data sets - one for popula
 ### Data Visualizations
 This repository also contains maps of both population density and percent African American by year for 1950-2010 as well as 2017. These are found in `results/`. This is an example map, showing the percentage of non-white residents by neighborhood in 1940:
 
-![](https://raw.githubusercontent.com/chris-prener/STL_DEMOGRAPHY_NhoodPop/master/results/Map_PctBlack/map_1940_nonwhite.png?token=ADHXHOREPJBGPH6PT7KAKFC5XM6W6)
+![](/results/Map_PctBlack/map_1940_nonwhite.png)
 
 ## Notes
 
