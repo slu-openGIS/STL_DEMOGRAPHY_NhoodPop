@@ -1730,7 +1730,7 @@ $(document).ready(function () {
 </style>
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("buildData.Rmd");
+  window.initializeSourceEmbed("buildPop.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
@@ -1764,7 +1764,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Build Population Estimate Data</h1>
 <h4 class="author">Christopher Prener, Ph.D.</h4>
-<h4 class="date">(October 29, 2019)</h4>
+<h4 class="date">(October 31, 2019)</h4>
 
 </div>
 
@@ -1779,29 +1779,33 @@ $(document).ready(function () {
 <p>This notebook requires a number of different <code>R</code> packages:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB0aWR5dmVyc2UgcGFja2FnZXNcbmxpYnJhcnkoZHBseXIpICAgICAgICAgIyBkYXRhIHdyYW5nbGluZ1xubGlicmFyeShyZWFkcikgICAgICAgICAjIHdvcmtpbmcgd2l0aCBjc3YgZGF0YVxubGlicmFyeShzdHJpbmdyKSAgICAgICAjIHN0cmluZyB0b29sc1xuXG4jIHNwYXRpYWwgcGFja2FnZXNcbmxpYnJhcnkoYXJlYWwpICAgICAgICAgIyBpbnRlcnBvbGF0aW9uXG5saWJyYXJ5KHNmKSAgICAgICAgICAgICMgd29ya2luZyB3aXRoIHNwYXRpYWwgZGF0YVxubGlicmFyeSh0aWR5Y2Vuc3VzKSAgICAjIGNlbnN1cyBhcGkgYWNjZXNzXG5saWJyYXJ5KHRpZ3JpcykgICAgICAgICMgdGlnZXIvbGluZSBhcGkgYWNjZXNzXG5cbiMgb3RoZXIgcGFja2FnZXNcbmxpYnJhcnkoaGVyZSkgICAgICAgICAgIyBmaWxlIHBhdGggbWFuYWdlbWVudFxubGlicmFyeSh0ZXN0dGhhdCkgICAgICAjIHVuaXQgdGVzdGluZ1xuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r # tidyverse packages library(dplyr) # data wrangling library(readr) # working with csv data library(stringr) # string tools</p>
-</div>
-<div id="spatial-packages" class="section level1">
-<h1>spatial packages</h1>
-<p>library(areal) # interpolation library(sf) # working with spatial data library(tidycensus) # census api access library(tigris) # tiger/line api access</p>
-</div>
-<div id="other-packages" class="section level1">
-<h1>other packages</h1>
-<p>library(here) # file path management library(testthat) # unit testing</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB0aWR5dmVyc2UgcGFja2FnZXNcbmxpYnJhcnkoZHBseXIpICAgICAgICAgIyBkYXRhIHdyYW5nbGluZ1xubGlicmFyeShyZWFkcikgICAgICAgICAjIHdvcmtpbmcgd2l0aCBjc3YgZGF0YVxubGlicmFyeShzdHJpbmdyKSAgICAgICAjIHN0cmluZyB0b29sc1xuXG4jIHNwYXRpYWwgcGFja2FnZXNcbmxpYnJhcnkoYXJlYWwpICAgICAgICAgIyBpbnRlcnBvbGF0aW9uXG5saWJyYXJ5KHNmKSAgICAgICAgICAgICMgd29ya2luZyB3aXRoIHNwYXRpYWwgZGF0YVxubGlicmFyeSh0aWR5Y2Vuc3VzKSAgICAjIGNlbnN1cyBhcGkgYWNjZXNzXG5saWJyYXJ5KHRpZ3JpcykgICAgICAgICMgdGlnZXIvbGluZSBhcGkgYWNjZXNzXG5cbiMgb3RoZXIgcGFja2FnZXNcbmxpYnJhcnkoaGVyZSkgICAgICAgICAgIyBmaWxlIHBhdGggbWFuYWdlbWVudFxubGlicmFyeSh0ZXN0dGhhdCkgICAgICAjIHVuaXQgdGVzdGluZ1xuYGBgIn0= -->
+<pre class="r"><code># tidyverse packages
+library(dplyr)         # data wrangling
+library(readr)         # working with csv data
+library(stringr)       # string tools
+
+# spatial packages
+library(areal)         # interpolation
+library(sf)            # working with spatial data
+library(tidycensus)    # census api access
+library(tigris)        # tiger/line api access
+
+# other packages
+library(here)          # file path management
+library(testthat)      # unit testing</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>We also use a function for unit testing ID numbers:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc291cmNlKGhlcmUoXFxzb3VyY2VcXCwgXFx1bmlxdWVfaWQuUlxcKSlcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r source(here(, _id.R))</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc291cmNlKGhlcmUoXCJzb3VyY2VcIiwgXCJ1bmlxdWVfaWQuUlwiKSlcbmBgYCJ9 -->
+<pre class="r"><code>source(here(&quot;source&quot;, &quot;unique_id.R&quot;))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="create-demographic-data-1940-2000" class="section level2">
 <h2>Create Demographic Data, 1940-2000</h2>
 <p>These decennial census data were obtained from two sources. The tract-level shapefiles were obtained from IPUMS’ <a href="https://www.nhgis.org">NHGIS</a> database. They come for the entire U.S. (or as much of the U.S. as was tracted at that point - full tract coverage is relatively recent). They were merged with tract-level data obtained from <a href="http://socialexplorer.com">Social Explorer</a> that was already clean and ready to use for each decade.</p>
@@ -1810,12 +1814,13 @@ $(document).ready(function () {
 <p>First, we need to load the shapefile geometry:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc3RfcmVhZChoZXJlKFxcZGF0YVxcLCBcXHNwYXRpYWxcXCwgXFxTVExfREVNT0dSQVBISUNTX3RyYWN0czQwXFwsIFxcU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MC5zaHBcXCksXG4gICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNDBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r st_read(here(, , _DEMOGRAPHICS_tracts40, _DEMOGRAPHICS_tracts40.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) -&gt; stl40</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJTVExfREVNT0dSQVBISUNTX3RyYWN0czQwXCIsIFwiU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MC5zaHBcIiksXG4gICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNDBcbmBgYCJ9 -->
+<pre class="r"><code>st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tracts40&quot;, &quot;STL_DEMOGRAPHICS_tracts40.shp&quot;),
+        stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) -&gt; stl40</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9QZXJzb25hbC9QRF9uaG9vZENoYW5nZS9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czQwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjggZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTIgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts40' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM0MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czQwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjggZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTIgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts40' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp' using driver `ESRI Shapefile'
 Simple feature collection with 128 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -1828,9 +1833,12 @@ proj4string:    +proj=longlat +ellps=GRS80 +no_defs</code></pre>
 <p>Next, we need to load the census data and combine it with the spatial data. We need to create the <code>TRACTID</code> variable out of a larger variable named <code>Geo_Name</code>. A unit test is included to ensure that the <code>TRACTID</code> variable we are creating uniquely identifies observations:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucmVhZF9jc3YoaGVyZShcXGRhdGFcXCwgXFx0YWJ1bGFyXFwsIFxcU1RMX0RFTU9HUkFQSElDU19wb3A0MC5jc3ZcXCkpICU+JVxuICBzZWxlY3QoR2VvX05hbWUsIFNFX1QwMDFfMDAxKSAlPiVcbiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fTmFtZSwgXG4gICAgICAgICBwb3A0MCA9IFNFX1QwMDFfMDAxKSAlPiVcbiAgbXV0YXRlKFRSQUNUSUQgPSBzdHJfcGFkKHN0cmluZyA9IFRSQUNUSUQsIHdpZHRoID0gNSwgc2lkZSA9IFxcbGVmdFxcLCBwYWQgPSBcXDBcXCkpIC0+IHBvcDQwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r read_csv(here(, , _DEMOGRAPHICS_pop40.csv)) %&gt;% select(Geo_Name, SE_T001_001) %&gt;% rename(TRACTID = Geo_Name, pop40 = SE_T001_001) %&gt;% mutate(TRACTID = str_pad(string = TRACTID, width = 5, side = , pad = \0)) -&gt; pop40</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVhZF9jc3YoaGVyZShcImRhdGFcIiwgXCJ0YWJ1bGFyXCIsIFwiU1RMX0RFTU9HUkFQSElDU19wb3A0MC5jc3ZcIikpICU+JVxuICBzZWxlY3QoR2VvX05hbWUsIFNFX1QwMDFfMDAxKSAlPiVcbiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fTmFtZSwgXG4gICAgICAgICBwb3A0MCA9IFNFX1QwMDFfMDAxKSAlPiVcbiAgbXV0YXRlKFRSQUNUSUQgPSBzdHJfcGFkKHN0cmluZyA9IFRSQUNUSUQsIHdpZHRoID0gNSwgc2lkZSA9IFwibGVmdFwiLCBwYWQgPSBcIjBcIikpIC0+IHBvcDQwXG5gYGAifQ== -->
+<pre class="r"><code>read_csv(here(&quot;data&quot;, &quot;tabular&quot;, &quot;STL_DEMOGRAPHICS_pop40.csv&quot;)) %&gt;%
+  select(Geo_Name, SE_T001_001) %&gt;%
+  rename(TRACTID = Geo_Name, 
+         pop40 = SE_T001_001) %&gt;%
+  mutate(TRACTID = str_pad(string = TRACTID, width = 5, side = &quot;left&quot;, pad = &quot;0&quot;)) -&gt; pop40</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiUGFyc2VkIHdpdGggY29sdW1uIHNwZWNpZmljYXRpb246XG5jb2xzKFxuICBHZW9fTmFtZSA9IFx1MDAxYlszMW1jb2xfY2hhcmFjdGVyKClcdTAwMWJbMzltLFxuICBHZW9fUU5hbWUgPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bSxcbiAgR2VvX1NVTUxFViA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fRklQUyA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fc3RhdGUgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX2NvdW50eSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBTRV9UMDAxXzAwMSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltXG4pXG4ifQ== -->
 <pre><code>Parsed with column specification:
@@ -1844,27 +1852,31 @@ cols(
   SE_T001_001 = [32mcol_double()[39m
 )</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbnBvcDQwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDQwIDwtIGxlZnRfam9pbihzdGw0MCwgcG9wNDAsIGJ5ID0gXFxUUkFDVElEXFwpXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # unit test pop40 %&gt;% unique_id(TRACTID) -&gt; idUnique expect_equal(idUnique, TRUE)</p>
-</div>
-</div>
-</div>
-<div id="join-data" class="section level1">
-<h1>join data</h1>
-<p>stl40 &lt;- left_join(stl40, pop40, by = )</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbnBvcDQwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDQwIDwtIGxlZnRfam9pbihzdGw0MCwgcG9wNDAsIGJ5ID0gXCJUUkFDVElEXCIpXG5gYGAifQ== -->
+<pre class="r"><code># unit test
+pop40 %&gt;% unique_id(TRACTID) -&gt; idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl40 &lt;- left_join(stl40, pop40, by = &quot;TRACTID&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Finally, we’ll use a technique called <a href="https://slu-opengis.github.io/areal/articles/areal-weighted-interpolation.html">areal weighted interpolation</a> to produce estimates at the neighborhood level. We’ll import the neighborhood data, re-project it so that it matches the projection used for the 1940 tract boundaries, subset it so that we have only the needed columns and only residential neighborhoods (large parks removed), and then interpolate all of the tract data into neighborhoods.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBpbnRlcnBvbGF0ZVxuc3RfcmVhZChoZXJlKFxcZGF0YVxcLCBcXHNwYXRpYWxcXCwgXFxuaG9vZFxcLCBcXEJORF9OaGQ4OF9jdy5zaHBcXCksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTkFNRSwgTkhEX05VTSkgJT4lXG4gIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiVcbiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gc3RsNDAsIHNpZCA9IFRSQUNUSUQsIFxuICAgICAgICAgICAgICAgICB3ZWlnaHQgPSBcXHN1bVxcLCBvdXRwdXQgPSBcXHRpYmJsZVxcLCBcbiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gXFxwb3A0MFxcKSAtPiBuaG9vZDQwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # interpolate st_read(here(, , , _Nhd88_cw.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) %&gt;% select(NHD_NAME, NHD_NUM) %&gt;% filter(NHD_NUM &lt;= 79) %&gt;% aw_interpolate(tid = NHD_NUM, source = stl40, sid = TRACTID, weight = , output = , extensive = 40) -&gt; nhood40</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBpbnRlcnBvbGF0ZVxuc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJuaG9vZFwiLCBcIkJORF9OaGQ4OF9jdy5zaHBcIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTkFNRSwgTkhEX05VTSkgJT4lXG4gIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiVcbiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gc3RsNDAsIHNpZCA9IFRSQUNUSUQsIFxuICAgICAgICAgICAgICAgICB3ZWlnaHQgPSBcInN1bVwiLCBvdXRwdXQgPSBcInRpYmJsZVwiLCBcbiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gXCJwb3A0MFwiKSAtPiBuaG9vZDQwXG5gYGAifQ== -->
+<pre class="r"><code># interpolate
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NAME, NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = stl40, sid = TRACTID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = &quot;pop40&quot;) -&gt; nhood40</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL1BlcnNvbmFsL1BEX25ob29kQ2hhbmdlL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -1872,29 +1884,31 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNDAsIHNvdXJjZVZhbHVlID0gcG9wNDAsIHJlc3VsdCA9IG5ob29kNDAsIHJlc3VsdFZhbHVlID0gcG9wNDApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A0MCwgc3RsNDApXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # unit test expect_equal(aw_verify(source = stl40, sourceValue = pop40, result = nhood40, resultValue = pop40), TRUE)</p>
-</div>
-<div id="clean-up-enviornment" class="section level1">
-<h1>clean-up enviornment</h1>
-<p>rm(pop40, stl40)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNDAsIHNvdXJjZVZhbHVlID0gcG9wNDAsIHJlc3VsdCA9IG5ob29kNDAsIHJlc3VsdFZhbHVlID0gcG9wNDApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A0MCwgc3RsNDApXG5gYGAifQ== -->
+<pre class="r"><code># unit test
+expect_equal(aw_verify(source = stl40, sourceValue = pop40, result = nhood40, resultValue = pop40), TRUE)
+
+# clean-up enviornment
+rm(pop40, stl40)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>For tracts that straddle one of the large parks, their entire population is allocated into the appropriate adjacent neighborhood. We confirm that the entire city’s population using a unit test with the <code>aw_verify()</code> function. As long as <code>aw_verify()</code> returns <code>TRUE</code>, we know that each resident has been allocated. We wrap this in a unit test so that the code errors out if this assumption is not met.</p>
+</div>
 <div id="section-1" class="section level3">
 <h3>1950</h3>
 <p>For the remainder of the decennial census data, I’m going to use the same workflow but condense the code.</p>
 <p>The only major change with this decade is that the tract ID numbers already have the appropriate number of leading zeros, so the code to add them can be omitted.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5NTAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcXGRhdGFcXCwgXFxzcGF0aWFsXFwsIFxcU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MFxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNTAuc2hwXFwpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDUwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read in 1950 era tract boundaries, re-project st_read(here(, , _DEMOGRAPHICS_tracts50, _DEMOGRAPHICS_tracts50.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) -&gt; stl50</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDE5NTAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcImRhdGFcIiwgXCJzcGF0aWFsXCIsIFwiU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MFwiLCBcIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNTAuc2hwXCIpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDUwXG5gYGAifQ== -->
+<pre class="r"><code># read in 1950 era tract boundaries, re-project
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tracts50&quot;, &quot;STL_DEMOGRAPHICS_tracts50.shp&quot;),
+        stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) -&gt; stl50</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9QZXJzb25hbC9QRF9uaG9vZENoYW5nZS9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czUwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjggZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts50' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czUwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjggZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts50' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp' using driver `ESRI Shapefile'
 Simple feature collection with 128 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -1902,9 +1916,12 @@ bbox:           xmin: -90.32051 ymin: 38.53185 xmax: -90.16641 ymax: 38.77435
 epsg (SRID):    NA
 proj4string:    +proj=longlat +ellps=GRS80 +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5NTAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXFxkYXRhXFwsIFxcdGFidWxhclxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfcG9wNTAuY3N2XFwpKSAlPiVcbiAgc2VsZWN0KEdlb19OYW1lLCBTRV9UMDAxXzAwMSkgJT4lXG4gIHJlbmFtZShUUkFDVElEID0gR2VvX05hbWUsIFxuICAgICAgICAgcG9wNTAgPSBTRV9UMDAxXzAwMSkgLT4gcG9wNTBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r # read in 1950 census counts, clean read_csv(here(, , _DEMOGRAPHICS_pop50.csv)) %&gt;% select(Geo_Name, SE_T001_001) %&gt;% rename(TRACTID = Geo_Name, pop50 = SE_T001_001) -&gt; pop50</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDE5NTAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXCJkYXRhXCIsIFwidGFidWxhclwiLCBcIlNUTF9ERU1PR1JBUEhJQ1NfcG9wNTAuY3N2XCIpKSAlPiVcbiAgc2VsZWN0KEdlb19OYW1lLCBTRV9UMDAxXzAwMSkgJT4lXG4gIHJlbmFtZShUUkFDVElEID0gR2VvX05hbWUsIFxuICAgICAgICAgcG9wNTAgPSBTRV9UMDAxXzAwMSkgLT4gcG9wNTBcbmBgYCJ9 -->
+<pre class="r"><code># read in 1950 census counts, clean
+read_csv(here(&quot;data&quot;, &quot;tabular&quot;, &quot;STL_DEMOGRAPHICS_pop50.csv&quot;)) %&gt;%
+  select(Geo_Name, SE_T001_001) %&gt;%
+  rename(TRACTID = Geo_Name, 
+         pop50 = SE_T001_001) -&gt; pop50</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiUGFyc2VkIHdpdGggY29sdW1uIHNwZWNpZmljYXRpb246XG5jb2xzKFxuICBHZW9fTmFtZSA9IFx1MDAxYlszMW1jb2xfY2hhcmFjdGVyKClcdTAwMWJbMzltLFxuICBHZW9fUU5hbWUgPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bSxcbiAgR2VvX1NVTUxFViA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fRklQUyA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fc3RhdGUgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX2NvdW50eSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBTRV9UMDAxXzAwMSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltXG4pXG4ifQ== -->
 <pre><code>Parsed with column specification:
@@ -1918,21 +1935,25 @@ cols(
   SE_T001_001 = [32mcol_double()[39m
 )</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbnBvcDUwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDUwIDwtIGxlZnRfam9pbihzdGw1MCwgcG9wNTAsIGJ5ID0gXFxUUkFDVElEXFwpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFxcZGF0YVxcLCBcXHNwYXRpYWxcXCwgXFxuaG9vZFxcLCBcXEJORF9OaGQ4OF9jdy5zaHBcXCksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw1MCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFxcc3VtXFwsIG91dHB1dCA9IFxcdGliYmxlXFwsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcXHBvcDUwXFwpIC0+IG5ob29kNTBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r # unit test pop50 %&gt;% unique_id(TRACTID) -&gt; idUnique expect_equal(idUnique, TRUE)</p>
-</div>
-</div>
-<div id="join-data-1" class="section level1">
-<h1>join data</h1>
-<p>stl50 &lt;- left_join(stl50, pop50, by = )</p>
-</div>
-<div id="interpolate-to-neighborhoods" class="section level1">
-<h1>interpolate to neighborhoods</h1>
-<p>st_read(here(, , , _Nhd88_cw.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) %&gt;% select(NHD_NUM) %&gt;% filter(NHD_NUM &lt;= 79) %&gt;% aw_interpolate(tid = NHD_NUM, source = stl50, sid = TRACTID, weight = , output = , extensive = 50) -&gt; nhood50</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbnBvcDUwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDUwIDwtIGxlZnRfam9pbihzdGw1MCwgcG9wNTAsIGJ5ID0gXCJUUkFDVElEXCIpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJuaG9vZFwiLCBcIkJORF9OaGQ4OF9jdy5zaHBcIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw1MCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFwic3VtXCIsIG91dHB1dCA9IFwidGliYmxlXCIsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcInBvcDUwXCIpIC0+IG5ob29kNTBcbmBgYCJ9 -->
+<pre class="r"><code># unit test
+pop50 %&gt;% unique_id(TRACTID) -&gt; idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl50 &lt;- left_join(stl50, pop50, by = &quot;TRACTID&quot;)
+
+# interpolate to neighborhoods
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = stl50, sid = TRACTID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = &quot;pop50&quot;) -&gt; nhood50</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL1BlcnNvbmFsL1BEX25ob29kQ2hhbmdlL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -1940,28 +1961,30 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNTAsIHNvdXJjZVZhbHVlID0gcG9wNTAsIHJlc3VsdCA9IG5ob29kNTAsIHJlc3VsdFZhbHVlID0gcG9wNTApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A1MCwgc3RsNTApXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # unit test expect_equal(aw_verify(source = stl50, sourceValue = pop50, result = nhood50, resultValue = pop50), TRUE)</p>
-</div>
-<div id="clean-up-enviornment-1" class="section level1">
-<h1>clean-up enviornment</h1>
-<p>rm(pop50, stl50)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNTAsIHNvdXJjZVZhbHVlID0gcG9wNTAsIHJlc3VsdCA9IG5ob29kNTAsIHJlc3VsdFZhbHVlID0gcG9wNTApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A1MCwgc3RsNTApXG5gYGAifQ== -->
+<pre class="r"><code># unit test
+expect_equal(aw_verify(source = stl50, sourceValue = pop50, result = nhood50, resultValue = pop50), TRUE)
+
+# clean-up enviornment
+rm(pop50, stl50)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="section-2" class="section level3">
 <h3>1960</h3>
 <p>We’ll repeat this process for the 1960s era data.</p>
 <p>One issue with the 1960s data is that the <code>TRACTID</code> in the 1960 census data needs to be parsed out of a larger variable <code>Geo_FIPS</code>. This is addressed in the second pipeline.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5NjAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcXGRhdGFcXCwgXFxzcGF0aWFsXFwsIFxcU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MFxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNjAuc2hwXFwpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDYwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read in 1960 era tract boundaries, re-project st_read(here(, , _DEMOGRAPHICS_tracts60, _DEMOGRAPHICS_tracts60.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) -&gt; stl60</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDE5NjAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcImRhdGFcIiwgXCJzcGF0aWFsXCIsIFwiU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MFwiLCBcIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNjAuc2hwXCIpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDYwXG5gYGAifQ== -->
+<pre class="r"><code># read in 1960 era tract boundaries, re-project
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tracts60&quot;, &quot;STL_DEMOGRAPHICS_tracts60.shp&quot;),
+        stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) -&gt; stl60</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9QZXJzb25hbC9QRF9uaG9vZENoYW5nZS9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czYwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjggZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts60' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czYwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjggZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts60' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp' using driver `ESRI Shapefile'
 Simple feature collection with 128 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -1969,9 +1992,13 @@ bbox:           xmin: -90.32051 ymin: 38.53185 xmax: -90.16641 ymax: 38.77435
 epsg (SRID):    NA
 proj4string:    +proj=longlat +ellps=GRS80 +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5NjAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXFxkYXRhXFwsIFxcdGFidWxhclxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfcG9wNjAuY3N2XFwpKSAlPiVcbiAgc2VsZWN0KEdlb19GSVBTLCBTRV9UMDAxXzAwMSkgJT4lXG4gIHJlbmFtZShUUkFDVElEID0gR2VvX0ZJUFMsIFxuICAgICAgICAgcG9wNjAgPSBTRV9UMDAxXzAwMSkgJT4lXG4gIG11dGF0ZShUUkFDVElEID0gc3RyX3N1YihUUkFDVElELCA3LCAxMSkpIC0+IHBvcDYwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read in 1960 census counts, clean read_csv(here(, , _DEMOGRAPHICS_pop60.csv)) %&gt;% select(Geo_FIPS, SE_T001_001) %&gt;% rename(TRACTID = Geo_FIPS, pop60 = SE_T001_001) %&gt;% mutate(TRACTID = str_sub(TRACTID, 7, 11)) -&gt; pop60</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDE5NjAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXCJkYXRhXCIsIFwidGFidWxhclwiLCBcIlNUTF9ERU1PR1JBUEhJQ1NfcG9wNjAuY3N2XCIpKSAlPiVcbiAgc2VsZWN0KEdlb19GSVBTLCBTRV9UMDAxXzAwMSkgJT4lXG4gIHJlbmFtZShUUkFDVElEID0gR2VvX0ZJUFMsIFxuICAgICAgICAgcG9wNjAgPSBTRV9UMDAxXzAwMSkgJT4lXG4gIG11dGF0ZShUUkFDVElEID0gc3RyX3N1YihUUkFDVElELCA3LCAxMSkpIC0+IHBvcDYwXG5gYGAifQ== -->
+<pre class="r"><code># read in 1960 census counts, clean
+read_csv(here(&quot;data&quot;, &quot;tabular&quot;, &quot;STL_DEMOGRAPHICS_pop60.csv&quot;)) %&gt;%
+  select(Geo_FIPS, SE_T001_001) %&gt;%
+  rename(TRACTID = Geo_FIPS, 
+         pop60 = SE_T001_001) %&gt;%
+  mutate(TRACTID = str_sub(TRACTID, 7, 11)) -&gt; pop60</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiUGFyc2VkIHdpdGggY29sdW1uIHNwZWNpZmljYXRpb246XG5jb2xzKFxuICAuZGVmYXVsdCA9IGNvbF9kb3VibGUoKSxcbiAgR2VvX05hbWUgPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bSxcbiAgR2VvX1FOYW1lID0gXHUwMDFiWzMxbWNvbF9jaGFyYWN0ZXIoKVx1MDAxYlszOW0sXG4gIEdlb19GSVBTID0gXHUwMDFiWzMxbWNvbF9jaGFyYWN0ZXIoKVx1MDAxYlszOW0sXG4gIEdlb190cmFjdGNkID0gXHUwMDFiWzMxbWNvbF9jaGFyYWN0ZXIoKVx1MDAxYlszOW0sXG4gIEdlb19HSVNKT0lOID0gXHUwMDFiWzMxbWNvbF9jaGFyYWN0ZXIoKVx1MDAxYlszOW0sXG4gIEdlb19HSVNKb2luMiA9IFx1MDAxYlszMW1jb2xfY2hhcmFjdGVyKClcdTAwMWJbMzltLFxuICBHZW9fY291bnR5NjAgPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bVxuKVxuU2VlIHNwZWMoLi4uKSBmb3IgZnVsbCBjb2x1bW4gc3BlY2lmaWNhdGlvbnMuXG4ifQ== -->
 <pre><code>Parsed with column specification:
@@ -1987,21 +2014,25 @@ cols(
 )
 See spec(...) for full column specifications.</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbnBvcDYwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDYwIDwtIGxlZnRfam9pbihzdGw2MCwgcG9wNjAsIGJ5ID0gXFxUUkFDVElEXFwpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFxcZGF0YVxcLCBcXHNwYXRpYWxcXCwgXFxuaG9vZFxcLCBcXEJORF9OaGQ4OF9jdy5zaHBcXCksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw2MCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFxcc3VtXFwsIG91dHB1dCA9IFxcdGliYmxlXFwsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcXHBvcDYwXFwpIC0+IG5ob29kNjBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r # unit test pop60 %&gt;% unique_id(TRACTID) -&gt; idUnique expect_equal(idUnique, TRUE)</p>
-</div>
-</div>
-<div id="join-data-2" class="section level1">
-<h1>join data</h1>
-<p>stl60 &lt;- left_join(stl60, pop60, by = )</p>
-</div>
-<div id="interpolate-to-neighborhoods-1" class="section level1">
-<h1>interpolate to neighborhoods</h1>
-<p>st_read(here(, , , _Nhd88_cw.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) %&gt;% select(NHD_NUM) %&gt;% filter(NHD_NUM &lt;= 79) %&gt;% aw_interpolate(tid = NHD_NUM, source = stl60, sid = TRACTID, weight = , output = , extensive = 60) -&gt; nhood60</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbnBvcDYwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDYwIDwtIGxlZnRfam9pbihzdGw2MCwgcG9wNjAsIGJ5ID0gXCJUUkFDVElEXCIpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJuaG9vZFwiLCBcIkJORF9OaGQ4OF9jdy5zaHBcIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw2MCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFwic3VtXCIsIG91dHB1dCA9IFwidGliYmxlXCIsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcInBvcDYwXCIpIC0+IG5ob29kNjBcbmBgYCJ9 -->
+<pre class="r"><code># unit test
+pop60 %&gt;% unique_id(TRACTID) -&gt; idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl60 &lt;- left_join(stl60, pop60, by = &quot;TRACTID&quot;)
+
+# interpolate to neighborhoods
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = stl60, sid = TRACTID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = &quot;pop60&quot;) -&gt; nhood60</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL1BlcnNvbmFsL1BEX25ob29kQ2hhbmdlL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -2009,27 +2040,29 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNjAsIHNvdXJjZVZhbHVlID0gcG9wNjAsIHJlc3VsdCA9IG5ob29kNjAsIHJlc3VsdFZhbHVlID0gcG9wNjApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A2MCwgc3RsNjApXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # unit test expect_equal(aw_verify(source = stl60, sourceValue = pop60, result = nhood60, resultValue = pop60), TRUE)</p>
-</div>
-<div id="clean-up-enviornment-2" class="section level1">
-<h1>clean-up enviornment</h1>
-<p>rm(pop60, stl60)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNjAsIHNvdXJjZVZhbHVlID0gcG9wNjAsIHJlc3VsdCA9IG5ob29kNjAsIHJlc3VsdFZhbHVlID0gcG9wNjApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A2MCwgc3RsNjApXG5gYGAifQ== -->
+<pre class="r"><code># unit test
+expect_equal(aw_verify(source = stl60, sourceValue = pop60, result = nhood60, resultValue = pop60), TRUE)
+
+# clean-up enviornment
+rm(pop60, stl60)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="section-3" class="section level3">
 <h3>1970</h3>
 <p>We’ll repeat this process for the 1970s era data.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5NzAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcXGRhdGFcXCwgXFxzcGF0aWFsXFwsIFxcU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MFxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNzAuc2hwXFwpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDcwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read in 1970 era tract boundaries, re-project st_read(here(, , _DEMOGRAPHICS_tracts70, _DEMOGRAPHICS_tracts70.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) -&gt; stl70</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDE5NzAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcImRhdGFcIiwgXCJzcGF0aWFsXCIsIFwiU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MFwiLCBcIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNzAuc2hwXCIpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDcwXG5gYGAifQ== -->
+<pre class="r"><code># read in 1970 era tract boundaries, re-project
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tracts70&quot;, &quot;STL_DEMOGRAPHICS_tracts70.shp&quot;),
+        stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) -&gt; stl70</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9QZXJzb25hbC9QRF9uaG9vZENoYW5nZS9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czcwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjYgZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts70' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czcwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMjYgZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts70' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp' using driver `ESRI Shapefile'
 Simple feature collection with 126 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -2037,9 +2070,12 @@ bbox:           xmin: -90.32051 ymin: 38.53185 xmax: -90.16641 ymax: 38.77435
 epsg (SRID):    NA
 proj4string:    +proj=longlat +ellps=GRS80 +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5NzAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXFxkYXRhXFwsIFxcdGFidWxhclxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfcG9wNzAuY3N2XFwpKSAlPiVcbiAgc2VsZWN0KEdlb19UcmFjdENvZGUsIFNFX1QwMDFfMDAxKSAlPiVcbiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fVHJhY3RDb2RlLCBcbiAgICAgICAgIHBvcDcwID0gU0VfVDAwMV8wMDEpIC0+IHBvcDcwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read in 1970 census counts, clean read_csv(here(, , _DEMOGRAPHICS_pop70.csv)) %&gt;% select(Geo_TractCode, SE_T001_001) %&gt;% rename(TRACTID = Geo_TractCode, pop70 = SE_T001_001) -&gt; pop70</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDE5NzAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXCJkYXRhXCIsIFwidGFidWxhclwiLCBcIlNUTF9ERU1PR1JBUEhJQ1NfcG9wNzAuY3N2XCIpKSAlPiVcbiAgc2VsZWN0KEdlb19UcmFjdENvZGUsIFNFX1QwMDFfMDAxKSAlPiVcbiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fVHJhY3RDb2RlLCBcbiAgICAgICAgIHBvcDcwID0gU0VfVDAwMV8wMDEpIC0+IHBvcDcwXG5gYGAifQ== -->
+<pre class="r"><code># read in 1970 census counts, clean
+read_csv(here(&quot;data&quot;, &quot;tabular&quot;, &quot;STL_DEMOGRAPHICS_pop70.csv&quot;)) %&gt;%
+  select(Geo_TractCode, SE_T001_001) %&gt;%
+  rename(TRACTID = Geo_TractCode, 
+         pop70 = SE_T001_001) -&gt; pop70</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiUGFyc2VkIHdpdGggY29sdW1uIHNwZWNpZmljYXRpb246XG5jb2xzKFxuICBHZW9fRklQUyA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fTkFNRSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fUU5hbWUgPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bSxcbiAgR2VvX1N0YXRlID0gXHUwMDFiWzMybWNvbF9kb3VibGUoKVx1MDAxYlszOW0sXG4gIEdlb19DT1VOVFkgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX1RyYWN0Q29kZSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fVFJBQ1QgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX1NVRkZUUlQgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX01FVFJPQVJBID0gXHUwMDFiWzMybWNvbF9kb3VibGUoKVx1MDAxYlszOW0sXG4gIEdlb19QTEFDRSA9IFx1MDAxYlszM21jb2xfbG9naWNhbCgpXHUwMDFiWzM5bSxcbiAgR2VvX1VSQkFOQVJBID0gXHUwMDFiWzMzbWNvbF9sb2dpY2FsKClcdTAwMWJbMzltLFxuICBTRV9UMDAxXzAwMSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltXG4pXG4ifQ== -->
 <pre><code>Parsed with column specification:
@@ -2058,21 +2094,25 @@ cols(
   SE_T001_001 = [32mcol_double()[39m
 )</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbnBvcDcwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDcwIDwtIGxlZnRfam9pbihzdGw3MCwgcG9wNzAsIGJ5ID0gXFxUUkFDVElEXFwpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFxcZGF0YVxcLCBcXHNwYXRpYWxcXCwgXFxuaG9vZFxcLCBcXEJORF9OaGQ4OF9jdy5zaHBcXCksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw3MCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFxcc3VtXFwsIG91dHB1dCA9IFxcdGliYmxlXFwsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcXHBvcDcwXFwpIC0+IG5ob29kNzBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r # unit test pop70 %&gt;% unique_id(TRACTID) -&gt; idUnique expect_equal(idUnique, TRUE)</p>
-</div>
-</div>
-<div id="join-data-3" class="section level1">
-<h1>join data</h1>
-<p>stl70 &lt;- left_join(stl70, pop70, by = )</p>
-</div>
-<div id="interpolate-to-neighborhoods-2" class="section level1">
-<h1>interpolate to neighborhoods</h1>
-<p>st_read(here(, , , _Nhd88_cw.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) %&gt;% select(NHD_NUM) %&gt;% filter(NHD_NUM &lt;= 79) %&gt;% aw_interpolate(tid = NHD_NUM, source = stl70, sid = TRACTID, weight = , output = , extensive = 70) -&gt; nhood70</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbnBvcDcwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDcwIDwtIGxlZnRfam9pbihzdGw3MCwgcG9wNzAsIGJ5ID0gXCJUUkFDVElEXCIpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJuaG9vZFwiLCBcIkJORF9OaGQ4OF9jdy5zaHBcIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw3MCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFwic3VtXCIsIG91dHB1dCA9IFwidGliYmxlXCIsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcInBvcDcwXCIpIC0+IG5ob29kNzBcbmBgYCJ9 -->
+<pre class="r"><code># unit test
+pop70 %&gt;% unique_id(TRACTID) -&gt; idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl70 &lt;- left_join(stl70, pop70, by = &quot;TRACTID&quot;)
+
+# interpolate to neighborhoods
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = stl70, sid = TRACTID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = &quot;pop70&quot;) -&gt; nhood70</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL1BlcnNvbmFsL1BEX25ob29kQ2hhbmdlL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -2080,27 +2120,29 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNzAsIHNvdXJjZVZhbHVlID0gcG9wNzAsIHJlc3VsdCA9IG5ob29kNzAsIHJlc3VsdFZhbHVlID0gcG9wNzApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A3MCwgc3RsNzApXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # unit test expect_equal(aw_verify(source = stl70, sourceValue = pop70, result = nhood70, resultValue = pop70), TRUE)</p>
-</div>
-<div id="clean-up-enviornment-3" class="section level1">
-<h1>clean-up enviornment</h1>
-<p>rm(pop70, stl70)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsNzAsIHNvdXJjZVZhbHVlID0gcG9wNzAsIHJlc3VsdCA9IG5ob29kNzAsIHJlc3VsdFZhbHVlID0gcG9wNzApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A3MCwgc3RsNzApXG5gYGAifQ== -->
+<pre class="r"><code># unit test
+expect_equal(aw_verify(source = stl70, sourceValue = pop70, result = nhood70, resultValue = pop70), TRUE)
+
+# clean-up enviornment
+rm(pop70, stl70)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="section-4" class="section level3">
 <h3>1980</h3>
 <p>We’ll repeat this process for the 1980s era data.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5ODAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcXGRhdGFcXCwgXFxzcGF0aWFsXFwsIFxcU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MFxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzODAuc2hwXFwpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDgwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read in 1980 era tract boundaries, re-project st_read(here(, , _DEMOGRAPHICS_tracts80, _DEMOGRAPHICS_tracts80.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) -&gt; stl80</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDE5ODAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcImRhdGFcIiwgXCJzcGF0aWFsXCIsIFwiU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MFwiLCBcIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzODAuc2hwXCIpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDgwXG5gYGAifQ== -->
+<pre class="r"><code># read in 1980 era tract boundaries, re-project
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tracts80&quot;, &quot;STL_DEMOGRAPHICS_tracts80.shp&quot;),
+        stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) -&gt; stl80</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9QZXJzb25hbC9QRF9uaG9vZENoYW5nZS9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czgwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMTMgZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts80' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL3ByZW5lcmNnL0dpdEh1Yi9TVExfREVNT0dSQVBIWV9OaG9vZFBvcC9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czgwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMTMgZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
+<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts80' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp' using driver `ESRI Shapefile'
 Simple feature collection with 113 features and 1 field
 geometry type:  POLYGON
 dimension:      XY
@@ -2108,9 +2150,12 @@ bbox:           xmin: -90.32051 ymin: 38.53185 xmax: -90.16641 ymax: 38.77435
 epsg (SRID):    NA
 proj4string:    +proj=longlat +ellps=GRS80 +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5ODAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXFxkYXRhXFwsIFxcdGFidWxhclxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfcG9wODAuY3N2XFwpKSAlPiVcbiAgc2VsZWN0KEdlb19UUkFDVDYsIFNFX1QwMDFfMDAxKSAlPiVcbiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fVFJBQ1Q2LCBcbiAgICAgICAgIHBvcDgwID0gU0VfVDAwMV8wMDEpIC0+IHBvcDgwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read in 1980 census counts, clean read_csv(here(, , _DEMOGRAPHICS_pop80.csv)) %&gt;% select(Geo_TRACT6, SE_T001_001) %&gt;% rename(TRACTID = Geo_TRACT6, pop80 = SE_T001_001) -&gt; pop80</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDE5ODAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXCJkYXRhXCIsIFwidGFidWxhclwiLCBcIlNUTF9ERU1PR1JBUEhJQ1NfcG9wODAuY3N2XCIpKSAlPiVcbiAgc2VsZWN0KEdlb19UUkFDVDYsIFNFX1QwMDFfMDAxKSAlPiVcbiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fVFJBQ1Q2LCBcbiAgICAgICAgIHBvcDgwID0gU0VfVDAwMV8wMDEpIC0+IHBvcDgwXG5gYGAifQ== -->
+<pre class="r"><code># read in 1980 census counts, clean
+read_csv(here(&quot;data&quot;, &quot;tabular&quot;, &quot;STL_DEMOGRAPHICS_pop80.csv&quot;)) %&gt;%
+  select(Geo_TRACT6, SE_T001_001) %&gt;%
+  rename(TRACTID = Geo_TRACT6, 
+         pop80 = SE_T001_001) -&gt; pop80</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiUGFyc2VkIHdpdGggY29sdW1uIHNwZWNpZmljYXRpb246XG5jb2xzKFxuICBHZW9fTmFtZSA9IFx1MDAxYlszMW1jb2xfY2hhcmFjdGVyKClcdTAwMWJbMzltLFxuICBHZW9fUU5hbWUgPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bSxcbiAgR2VvX0dJU0pPSU4gPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bSxcbiAgR2VvX0dJU0pPSU4yID0gXHUwMDFiWzMybWNvbF9kb3VibGUoKVx1MDAxYlszOW0sXG4gIEdlb19TVU1MRVYgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX3NoYXBlX2FyZWEgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX0ZJUFMgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX1NUQVRFID0gXHUwMDFiWzMybWNvbF9kb3VibGUoKVx1MDAxYlszOW0sXG4gIEdlb19DT1VOVFkgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX1RSQUNUNiA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBTRV9UMDAxXzAwMSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltXG4pXG4ifQ== -->
 <pre><code>Parsed with column specification:
@@ -2128,21 +2173,25 @@ cols(
   SE_T001_001 = [32mcol_double()[39m
 )</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbnBvcDgwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDgwIDwtIGxlZnRfam9pbihzdGw4MCwgcG9wODAsIGJ5ID0gXFxUUkFDVElEXFwpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFxcZGF0YVxcLCBcXHNwYXRpYWxcXCwgXFxuaG9vZFxcLCBcXEJORF9OaGQ4OF9jdy5zaHBcXCksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw4MCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFxcc3VtXFwsIG91dHB1dCA9IFxcdGliYmxlXFwsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcXHBvcDgwXFwpIC0+IG5ob29kODBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r # unit test pop80 %&gt;% unique_id(TRACTID) -&gt; idUnique expect_equal(idUnique, TRUE)</p>
-</div>
-</div>
-<div id="join-data-4" class="section level1">
-<h1>join data</h1>
-<p>stl80 &lt;- left_join(stl80, pop80, by = )</p>
-</div>
-<div id="interpolate-to-neighborhoods-3" class="section level1">
-<h1>interpolate to neighborhoods</h1>
-<p>st_read(here(, , , _Nhd88_cw.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) %&gt;% select(NHD_NUM) %&gt;% filter(NHD_NUM &lt;= 79) %&gt;% aw_interpolate(tid = NHD_NUM, source = stl80, sid = TRACTID, weight = , output = , extensive = 80) -&gt; nhood80</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbnBvcDgwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDgwIDwtIGxlZnRfam9pbihzdGw4MCwgcG9wODAsIGJ5ID0gXCJUUkFDVElEXCIpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJuaG9vZFwiLCBcIkJORF9OaGQ4OF9jdy5zaHBcIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw4MCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFwic3VtXCIsIG91dHB1dCA9IFwidGliYmxlXCIsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcInBvcDgwXCIpIC0+IG5ob29kODBcbmBgYCJ9 -->
+<pre class="r"><code># unit test
+pop80 %&gt;% unique_id(TRACTID) -&gt; idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl80 &lt;- left_join(stl80, pop80, by = &quot;TRACTID&quot;)
+
+# interpolate to neighborhoods
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = stl80, sid = TRACTID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = &quot;pop80&quot;) -&gt; nhood80</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL1BlcnNvbmFsL1BEX25ob29kQ2hhbmdlL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -2150,69 +2199,57 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsODAsIHNvdXJjZVZhbHVlID0gcG9wODAsIHJlc3VsdCA9IG5ob29kODAsIHJlc3VsdFZhbHVlID0gcG9wODApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A4MCwgc3RsODApXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # unit test expect_equal(aw_verify(source = stl80, sourceValue = pop80, result = nhood80, resultValue = pop80), TRUE)</p>
-</div>
-<div id="clean-up-enviornment-4" class="section level1">
-<h1>clean-up enviornment</h1>
-<p>rm(pop80, stl80)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsODAsIHNvdXJjZVZhbHVlID0gcG9wODAsIHJlc3VsdCA9IG5ob29kODAsIHJlc3VsdFZhbHVlID0gcG9wODApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A4MCwgc3RsODApXG5gYGAifQ== -->
+<pre class="r"><code># unit test
+expect_equal(aw_verify(source = stl80, sourceValue = pop80, result = nhood80, resultValue = pop80), TRUE)
+
+# clean-up enviornment
+rm(pop80, stl80)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="section-5" class="section level3">
 <h3>1990</h3>
-<p>We’ll repeat this process for the 1990s era data.</p>
+<p>These data are from the decennial census. Note that the total population in neighborhoods is 12 people less than the total population in tracts, because Census Tract 1018.99 does not have any geometry.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5OTAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcXGRhdGFcXCwgXFxzcGF0aWFsXFwsIFxcU1RMX0RFTU9HUkFQSElDU190cmFjdHM5MFxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzOTAuc2hwXFwpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDkwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read in 1990 era tract boundaries, re-project st_read(here(, , _DEMOGRAPHICS_tracts90, _DEMOGRAPHICS_tracts90.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) -&gt; stl90</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDE5OTAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbiMgc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJTVExfREVNT0dSQVBISUNTX3RyYWN0czkwXCIsIFwiU1RMX0RFTU9HUkFQSElDU190cmFjdHM5MC5zaHBcIiksXG4jICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuIyAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiVcbiAjIG11dGF0ZShUUkFDVElEID0gYXMuY2hhcmFjdGVyKFRSQUNUSUQpKSAtPiBzdGw5MFxuXG4jIHJlYWQgaW4gMTk5MCBjZW5zdXMgY291bnRzLCBjbGVhblxuZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHZhcmlhYmxlID0gXCJQMDAxMDAwMVwiLCB5ZWFyID0gMTk5MCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCBnZW9tZXRyeSA9IFRSVUUpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JVxuICBzZWxlY3QoR0VPSUQsIHZhbHVlKSAlPiVcbiAgcmVuYW1lKHBvcDkwID0gdmFsdWUpIC0+IHBvcDkwXG5gYGAifQ== -->
+<pre class="r"><code># read in 1990 era tract boundaries, re-project
+# st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;STL_DEMOGRAPHICS_tracts90&quot;, &quot;STL_DEMOGRAPHICS_tracts90.shp&quot;),
+#        stringsAsFactors = FALSE) %&gt;%
+#  st_transform(crs = 26915) %&gt;%
+ # mutate(TRACTID = as.character(TRACTID)) -&gt; stl90
+
+# read in 1990 census counts, clean
+get_decennial(geography = &quot;tract&quot;, variable = &quot;P0010001&quot;, year = 1990, state = 29, county = 510, geometry = TRUE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(GEOID, value) %&gt;%
+  rename(pop90 = value) -&gt; pop90</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHM5MCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9QZXJzb25hbC9QRF9uaG9vZENoYW5nZS9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHM5MC9TVExfREVNT0dSQVBISUNTX3RyYWN0czkwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMTMgZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts90' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts90/STL_DEMOGRAPHICS_tracts90.shp' using driver `ESRI Shapefile'
-Simple feature collection with 113 features and 1 field
-geometry type:  POLYGON
-dimension:      XY
-bbox:           xmin: -90.32051 ymin: 38.53185 xmax: -90.16641 ymax: 38.77435
-epsg (SRID):    NA
-proj4string:    +proj=longlat +ellps=GRS80 +no_defs</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDE5OTAgZGVjZW5uaWFsIENlbnN1c1xuRG93bmxvYWRpbmcgZmVhdHVyZSBnZW9tZXRyeSBmcm9tIHRoZSBDZW5zdXMgd2Vic2l0ZS4gIFRvIGNhY2hlIHNoYXBlZmlsZXMgZm9yIHVzZSBpbiBmdXR1cmUgc2Vzc2lvbnMsIHNldCBgb3B0aW9ucyh0aWdyaXNfdXNlX2NhY2hlID0gVFJVRSlgLlxuIn0= -->
+<pre><code>Getting data from the 1990 decennial Census
+Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDE5OTAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXFxkYXRhXFwsIFxcdGFidWxhclxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfcG9wOTAuY3N2XFwpKSAlPiVcbiAgc2VsZWN0KEdlb19UUkFDVCwgU0VfVDAwMV8wMDEpICU+JVxuICByZW5hbWUoVFJBQ1RJRCA9IEdlb19UUkFDVCwgXG4gICAgICAgICBwb3A5MCA9IFNFX1QwMDFfMDAxKSAtPiBwb3A5MFxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r # read in 1990 census counts, clean read_csv(here(, , _DEMOGRAPHICS_pop90.csv)) %&gt;% select(Geo_TRACT, SE_T001_001) %&gt;% rename(TRACTID = Geo_TRACT, pop90 = SE_T001_001) -&gt; pop90</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbiMgcG9wOTAgJT4lIHVuaXF1ZV9pZChUUkFDVElEKSAtPiBpZFVuaXF1ZVxuIyBleHBlY3RfZXF1YWwoaWRVbmlxdWUsIFRSVUUpXG5cbiMgam9pbiBkYXRhXG4jIHN0bDkwIDwtIGxlZnRfam9pbihzdGw5MCwgcG9wOTAsIGJ5ID0gXCJUUkFDVElEXCIpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFwiZGF0YVwiLCBcInNwYXRpYWxcIiwgXCJuaG9vZFwiLCBcIkJORF9OaGQ4OF9jdy5zaHBcIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBwb3A5MCwgc2lkID0gR0VPSUQsIFxuICAgICAgICAgICAgICAgICB3ZWlnaHQgPSBcInN1bVwiLCBvdXRwdXQgPSBcInRpYmJsZVwiLCBcbiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gXCJwb3A5MFwiKSAtPiBuaG9vZDkwXG5gYGAifQ== -->
+<pre class="r"><code># unit test
+# pop90 %&gt;% unique_id(TRACTID) -&gt; idUnique
+# expect_equal(idUnique, TRUE)
+
+# join data
+# stl90 &lt;- left_join(stl90, pop90, by = &quot;TRACTID&quot;)
+
+# interpolate to neighborhoods
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = pop90, sid = GEOID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = &quot;pop90&quot;) -&gt; nhood90</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUGFyc2VkIHdpdGggY29sdW1uIHNwZWNpZmljYXRpb246XG5jb2xzKFxuICBHZW9fTkFNRSA9IFx1MDAxYlszMW1jb2xfY2hhcmFjdGVyKClcdTAwMWJbMzltLFxuICBHZW9fUU5hbWUgPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bSxcbiAgR2VvX1NVTUxFViA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fR0VPQ09NUCA9IFx1MDAxYlszMW1jb2xfY2hhcmFjdGVyKClcdTAwMWJbMzltLFxuICBHZW9fUkVHSU9OID0gXHUwMDFiWzMybWNvbF9kb3VibGUoKVx1MDAxYlszOW0sXG4gIEdlb19ESVZJU0lPTiA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fRklQUyA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fU1RBVEUgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX0NPVU5UWSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fVFJBQ1QgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgU0VfVDAwMV8wMDEgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bVxuKVxuIn0= -->
-<pre><code>Parsed with column specification:
-cols(
-  Geo_NAME = [31mcol_character()[39m,
-  Geo_QName = [31mcol_character()[39m,
-  Geo_SUMLEV = [32mcol_double()[39m,
-  Geo_GEOCOMP = [31mcol_character()[39m,
-  Geo_REGION = [32mcol_double()[39m,
-  Geo_DIVISION = [32mcol_double()[39m,
-  Geo_FIPS = [32mcol_double()[39m,
-  Geo_STATE = [32mcol_double()[39m,
-  Geo_COUNTY = [32mcol_double()[39m,
-  Geo_TRACT = [32mcol_double()[39m,
-  SE_T001_001 = [32mcol_double()[39m
-)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbnBvcDkwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDkwIDwtIGxlZnRfam9pbihzdGw5MCwgcG9wOTAsIGJ5ID0gXFxUUkFDVElEXFwpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFxcZGF0YVxcLCBcXHNwYXRpYWxcXCwgXFxuaG9vZFxcLCBcXEJORF9OaGQ4OF9jdy5zaHBcXCksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw5MCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFxcc3VtXFwsIG91dHB1dCA9IFxcdGliYmxlXFwsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcXHBvcDkwXFwpIC0+IG5ob29kOTBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r # unit test pop90 %&gt;% unique_id(TRACTID) -&gt; idUnique expect_equal(idUnique, TRUE)</p>
-</div>
-</div>
-<div id="join-data-5" class="section level1">
-<h1>join data</h1>
-<p>stl90 &lt;- left_join(stl90, pop90, by = )</p>
-</div>
-<div id="interpolate-to-neighborhoods-4" class="section level1">
-<h1>interpolate to neighborhoods</h1>
-<p>st_read(here(, , , _Nhd88_cw.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) %&gt;% select(NHD_NUM) %&gt;% filter(NHD_NUM &lt;= 79) %&gt;% aw_interpolate(tid = NHD_NUM, source = stl90, sid = TRACTID, weight = , output = , extensive = 90) -&gt; nhood90</p>
-<pre><code></code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL1BlcnNvbmFsL1BEX25ob29kQ2hhbmdlL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -2220,70 +2257,45 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsOTAsIHNvdXJjZVZhbHVlID0gcG9wOTAsIHJlc3VsdCA9IG5ob29kOTAsIHJlc3VsdFZhbHVlID0gcG9wOTApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3A5MCwgc3RsOTApXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # unit test expect_equal(aw_verify(source = stl90, sourceValue = pop90, result = nhood90, resultValue = pop90), TRUE)</p>
-</div>
-<div id="clean-up-enviornment-5" class="section level1">
-<h1>clean-up enviornment</h1>
-<p>rm(pop90, stl90)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gcG9wOTAsIHNvdXJjZVZhbHVlID0gcG9wOTAsIHJlc3VsdCA9IG5ob29kOTAsIHJlc3VsdFZhbHVlID0gcG9wOTApLCBGQUxTRSlcbmV4cGVjdF9lcXVhbChzdW0obmhvb2Q5MCRwb3A5MCksIHN1bShwb3A5MCRwb3A5MCktMTIpXG5cbiMgY2xlYW4tdXAgZW52aW9ybm1lbnRcbnJtKHBvcDkwKVxuYGBgIn0= -->
+<pre class="r"><code># unit test
+expect_equal(aw_verify(source = pop90, sourceValue = pop90, result = nhood90, resultValue = pop90), FALSE)
+expect_equal(sum(nhood90$pop90), sum(pop90$pop90)-12)
+
+# clean-up enviornment
+rm(pop90)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="section-6" class="section level3">
 <h3>2000</h3>
 <p>We’ll repeat this process for the 2000s era data.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDIwMDAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3RcbnN0X3JlYWQoaGVyZShcXGRhdGFcXCwgXFxzcGF0aWFsXFwsIFxcU1RMX0RFTU9HUkFQSElDU190cmFjdHMwMFxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzMDAuc2hwXFwpLFxuICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDAwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read in 2000 era tract boundaries, re-project st_read(here(, , _DEMOGRAPHICS_tracts00, _DEMOGRAPHICS_tracts00.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) -&gt; stl00</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIDIwMDAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbmdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gXCJ0cmFjdFwiLCB2YXJpYWJsZSA9IFwiUDAwMTAwMVwiLCB5ZWFyID0gMjAwMCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCBnZW9tZXRyeSA9IFRSVUUpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JVxuICBzZWxlY3QoR0VPSUQsIHZhbHVlKSAlPiVcbiAgcmVuYW1lKHBvcDAwID0gdmFsdWUpIC0+IHBvcDAwXG5gYGAifQ== -->
+<pre class="r"><code># read in 2000 census counts, clean
+get_decennial(geography = &quot;tract&quot;, variable = &quot;P001001&quot;, year = 2000, state = 29, county = 510, geometry = TRUE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(GEOID, value) %&gt;%
+  rename(pop00 = value) -&gt; pop00</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgU1RMX0RFTU9HUkFQSElDU190cmFjdHMwMCcgZnJvbSBkYXRhIHNvdXJjZSBgL1VzZXJzL2NocmlzL0dpdEh1Yi9QZXJzb25hbC9QRF9uaG9vZENoYW5nZS9kYXRhL3NwYXRpYWwvU1RMX0RFTU9HUkFQSElDU190cmFjdHMwMC9TVExfREVNT0dSQVBISUNTX3RyYWN0czAwLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCAxMTMgZmVhdHVyZXMgYW5kIDEgZmllbGRcbmdlb21ldHJ5IHR5cGU6ICBQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtOTAuMzIwNTEgeW1pbjogMzguNTMxODUgeG1heDogLTkwLjE2NjQxIHltYXg6IDM4Ljc3NDM1XG5lcHNnIChTUklEKTogICAgTkFcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtlbGxwcz1HUlM4MCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `STL_DEMOGRAPHICS_tracts00' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts00/STL_DEMOGRAPHICS_tracts00.shp' using driver `ESRI Shapefile'
-Simple feature collection with 113 features and 1 field
-geometry type:  POLYGON
-dimension:      XY
-bbox:           xmin: -90.32051 ymin: 38.53185 xmax: -90.16641 ymax: 38.77435
-epsg (SRID):    NA
-proj4string:    +proj=longlat +ellps=GRS80 +no_defs</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDAgZGVjZW5uaWFsIENlbnN1c1xuRG93bmxvYWRpbmcgZmVhdHVyZSBnZW9tZXRyeSBmcm9tIHRoZSBDZW5zdXMgd2Vic2l0ZS4gIFRvIGNhY2hlIHNoYXBlZmlsZXMgZm9yIHVzZSBpbiBmdXR1cmUgc2Vzc2lvbnMsIHNldCBgb3B0aW9ucyh0aWdyaXNfdXNlX2NhY2hlID0gVFJVRSlgLlxuIn0= -->
+<pre><code>Getting data from the 2000 decennial Census
+Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIDIwMDAgY2Vuc3VzIGNvdW50cywgY2xlYW5cbnJlYWRfY3N2KGhlcmUoXFxkYXRhXFwsIFxcdGFidWxhclxcLCBcXFNUTF9ERU1PR1JBUEhJQ1NfcG9wMDAuY3N2XFwpKSAlPiVcbiAgc2VsZWN0KEdlb19UUkFDVCwgU0VfVDAwMV8wMDEpICU+JVxuICByZW5hbWUoVFJBQ1RJRCA9IEdlb19UUkFDVCwgXG4gICAgICAgICBwb3AwMCA9IFNFX1QwMDFfMDAxKSAtPiBwb3AwMFxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r # read in 2000 census counts, clean read_csv(here(, , _DEMOGRAPHICS_pop00.csv)) %&gt;% select(Geo_TRACT, SE_T001_001) %&gt;% rename(TRACTID = Geo_TRACT, pop00 = SE_T001_001) -&gt; pop00</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBpbnRlcnBvbGF0ZSB0byBuZWlnaGJvcmhvb2RzXG5zdF9yZWFkKGhlcmUoXCJkYXRhXCIsIFwic3BhdGlhbFwiLCBcIm5ob29kXCIsIFwiQk5EX05oZDg4X2N3LnNocFwiKSwgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiVcbiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiVcbiAgc2VsZWN0KE5IRF9OVU0pICU+JVxuICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lXG4gIGF3X2ludGVycG9sYXRlKHRpZCA9IE5IRF9OVU0sIHNvdXJjZSA9IHBvcDAwLCBzaWQgPSBHRU9JRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFwic3VtXCIsIG91dHB1dCA9IFwidGliYmxlXCIsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcInBvcDAwXCIpIC0+IG5ob29kMDBcbmBgYCJ9 -->
+<pre class="r"><code># interpolate to neighborhoods
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = pop00, sid = GEOID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = &quot;pop00&quot;) -&gt; nhood00</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUGFyc2VkIHdpdGggY29sdW1uIHNwZWNpZmljYXRpb246XG5jb2xzKFxuICBHZW9fTkFNRSA9IFx1MDAxYlszMW1jb2xfY2hhcmFjdGVyKClcdTAwMWJbMzltLFxuICBHZW9fUU5hbWUgPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bSxcbiAgR2VvX0ZJUFMgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX1NVTUxFViA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fR0VPQ09NUCA9IFx1MDAxYlszMW1jb2xfY2hhcmFjdGVyKClcdTAwMWJbMzltLFxuICBHZW9fU1RBVEVDRSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fU1RBVEUgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX0NPVU5UWSA9IFx1MDAxYlszMm1jb2xfZG91YmxlKClcdTAwMWJbMzltLFxuICBHZW9fQ09VTlRZU0MgPSBcdTAwMWJbMzJtY29sX2RvdWJsZSgpXHUwMDFiWzM5bSxcbiAgR2VvX0NPVVNVQiA9IFx1MDAxYlszM21jb2xfbG9naWNhbCgpXHUwMDFiWzM5bSxcbiAgR2VvX1RSQUNUID0gXHUwMDFiWzMybWNvbF9kb3VibGUoKVx1MDAxYlszOW0sXG4gIFNFX1QwMDFfMDAxID0gXHUwMDFiWzMybWNvbF9kb3VibGUoKVx1MDAxYlszOW1cbilcbiJ9 -->
-<pre><code>Parsed with column specification:
-cols(
-  Geo_NAME = [31mcol_character()[39m,
-  Geo_QName = [31mcol_character()[39m,
-  Geo_FIPS = [32mcol_double()[39m,
-  Geo_SUMLEV = [32mcol_double()[39m,
-  Geo_GEOCOMP = [31mcol_character()[39m,
-  Geo_STATECE = [32mcol_double()[39m,
-  Geo_STATE = [32mcol_double()[39m,
-  Geo_COUNTY = [32mcol_double()[39m,
-  Geo_COUNTYSC = [32mcol_double()[39m,
-  Geo_COUSUB = [33mcol_logical()[39m,
-  Geo_TRACT = [32mcol_double()[39m,
-  SE_T001_001 = [32mcol_double()[39m
-)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbnBvcDAwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWVcbmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSlcblxuIyBqb2luIGRhdGFcbnN0bDAwIDwtIGxlZnRfam9pbihzdGwwMCwgcG9wMDAsIGJ5ID0gXFxUUkFDVElEXFwpXG5cbiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kc1xuc3RfcmVhZChoZXJlKFxcZGF0YVxcLCBcXHNwYXRpYWxcXCwgXFxuaG9vZFxcLCBcXEJORF9OaGQ4OF9jdy5zaHBcXCksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lXG4gIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lXG4gIHNlbGVjdChOSERfTlVNKSAlPiVcbiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JVxuICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGwwMCwgc2lkID0gVFJBQ1RJRCwgXG4gICAgICAgICAgICAgICAgIHdlaWdodCA9IFxcc3VtXFwsIG91dHB1dCA9IFxcdGliYmxlXFwsIFxuICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBcXHBvcDAwXFwpIC0+IG5ob29kMDBcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r # unit test pop00 %&gt;% unique_id(TRACTID) -&gt; idUnique expect_equal(idUnique, TRUE)</p>
-</div>
-</div>
-<div id="join-data-6" class="section level1">
-<h1>join data</h1>
-<p>stl00 &lt;- left_join(stl00, pop00, by = )</p>
-</div>
-<div id="interpolate-to-neighborhoods-5" class="section level1">
-<h1>interpolate to neighborhoods</h1>
-<p>st_read(here(, , , _Nhd88_cw.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) %&gt;% select(NHD_NUM) %&gt;% filter(NHD_NUM &lt;= 79) %&gt;% aw_interpolate(tid = NHD_NUM, source = stl00, sid = TRACTID, weight = , output = , extensive = 00) -&gt; nhood00</p>
-<pre><code></code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL1BlcnNvbmFsL1BEX25ob29kQ2hhbmdlL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvcHJlbmVyY2cvR2l0SHViL1NUTF9ERU1PR1JBUEhZX05ob29kUG9wL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
+<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
 Simple feature collection with 88 features and 6 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -2291,32 +2303,36 @@ bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
 epsg (SRID):    NA
 proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsMDAsIHNvdXJjZVZhbHVlID0gcG9wMDAsIHJlc3VsdCA9IG5ob29kMDAsIHJlc3VsdFZhbHVlID0gcG9wMDApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3AwMCwgc3RsMDApXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # unit test expect_equal(aw_verify(source = stl00, sourceValue = pop00, result = nhood00, resultValue = pop00), TRUE)</p>
-</div>
-<div id="clean-up-enviornment-6" class="section level1">
-<h1>clean-up enviornment</h1>
-<p>rm(pop00, stl00)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gcG9wMDAsIHNvdXJjZVZhbHVlID0gcG9wMDAsIHJlc3VsdCA9IG5ob29kMDAsIHJlc3VsdFZhbHVlID0gcG9wMDApLCBUUlVFKVxuXG4jIGNsZWFuLXVwIGVudmlvcm5tZW50XG5ybShwb3AwMClcbmBgYCJ9 -->
+<pre class="r"><code># unit test
+expect_equal(aw_verify(source = pop00, sourceValue = pop00, result = nhood00, resultValue = pop00), TRUE)
+
+# clean-up enviornment
+rm(pop00)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="combine-1940s-2000s-data" class="section level3">
 <h3>Combine 1940s-2000s Data</h3>
 <p>Next, we’ll join all of the neighborhood estimates we’ve created so far together into a single object:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGVmdF9qb2luKG5ob29kNDAsIG5ob29kNTAsIGJ5ID0gXFxOSERfTlVNXFwpICU+JVxuICBsZWZ0X2pvaW4oLiwgbmhvb2Q2MCwgYnkgPSBcXE5IRF9OVU1cXCkgJT4lXG4gIGxlZnRfam9pbiguLCBuaG9vZDcwLCBieSA9IFxcTkhEX05VTVxcKSAlPiVcbiAgbGVmdF9qb2luKC4sIG5ob29kODAsIGJ5ID0gXFxOSERfTlVNXFwpICU+JVxuICBsZWZ0X2pvaW4oLiwgbmhvb2Q5MCwgYnkgPSBcXE5IRF9OVU1cXCkgJT4lXG4gIGxlZnRfam9pbiguLCBuaG9vZDAwLCBieSA9IFxcTkhEX05VTVxcKSAtPiBuaG9vZFBvcF80MF8wMFxuXG4jIGNsZWFuIHVwIGVudmlvcm5tZW50XG5ybShuaG9vZDQwLCBuaG9vZDUwLCBuaG9vZDYwLCBuaG9vZDcwLCBuaG9vZDgwLCBuaG9vZDkwLCBuaG9vZDAwLCBpZFVuaXF1ZSwgdW5pcXVlX2lkKVxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r left_join(nhood40, nhood50, by = _NUM) %&gt;% left_join(., nhood60, by = _NUM) %&gt;% left_join(., nhood70, by = _NUM) %&gt;% left_join(., nhood80, by = _NUM) %&gt;% left_join(., nhood90, by = _NUM) %&gt;% left_join(., nhood00, by = _NUM) -&gt; nhoodPop_40_00</p>
-</div>
-</div>
-<div id="clean-up-enviornment-7" class="section level1">
-<h1>clean up enviornment</h1>
-<p>rm(nhood40, nhood50, nhood60, nhood70, nhood80, nhood90, nhood00, idUnique, unique_id)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGVmdF9qb2luKG5ob29kNDAsIG5ob29kNTAsIGJ5ID0gXCJOSERfTlVNXCIpICU+JVxuICBsZWZ0X2pvaW4oLiwgbmhvb2Q2MCwgYnkgPSBcIk5IRF9OVU1cIikgJT4lXG4gIGxlZnRfam9pbiguLCBuaG9vZDcwLCBieSA9IFwiTkhEX05VTVwiKSAlPiVcbiAgbGVmdF9qb2luKC4sIG5ob29kODAsIGJ5ID0gXCJOSERfTlVNXCIpICU+JVxuICBsZWZ0X2pvaW4oLiwgbmhvb2Q5MCwgYnkgPSBcIk5IRF9OVU1cIikgJT4lXG4gIGxlZnRfam9pbiguLCBuaG9vZDAwLCBieSA9IFwiTkhEX05VTVwiKSAtPiBuaG9vZFBvcF80MF8wMFxuXG4jIGNsZWFuIHVwIGVudmlvcm5tZW50XG5ybShuaG9vZDQwLCBuaG9vZDUwLCBuaG9vZDYwLCBuaG9vZDcwLCBuaG9vZDgwLCBuaG9vZDkwLCBuaG9vZDAwLCBpZFVuaXF1ZSwgdW5pcXVlX2lkKVxuYGBgIn0= -->
+<pre class="r"><code>left_join(nhood40, nhood50, by = &quot;NHD_NUM&quot;) %&gt;%
+  left_join(., nhood60, by = &quot;NHD_NUM&quot;) %&gt;%
+  left_join(., nhood70, by = &quot;NHD_NUM&quot;) %&gt;%
+  left_join(., nhood80, by = &quot;NHD_NUM&quot;) %&gt;%
+  left_join(., nhood90, by = &quot;NHD_NUM&quot;) %&gt;%
+  left_join(., nhood00, by = &quot;NHD_NUM&quot;) -&gt; nhoodPop_40_00
+
+# clean up enviornment
+rm(nhood40, nhood50, nhood60, nhood70, nhood80, nhood90, nhood00, idUnique, unique_id)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+</div>
 <div id="download-demographic-data-2010-2017" class="section level2">
 <h2>Download Demographic Data, 2010-2017</h2>
 <p>All data for this era are downloaded from the Census Bureau’s API via <code>tidycensus</code>.</p>
@@ -2325,10 +2341,6 @@ proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.999933333
 <p>These data are from the decennial census.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSBcXHRyYWN0XFwsIHZhcmlhYmxlcyA9IFxcUDAwMTAwMVxcLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIGdlb21ldHJ5ID0gVFJVRSkgJT4lIFxuICBzZWxlY3QoR0VPSUQsIE5BTUUsIHZhbHVlKSAlPiVcbiAgcmVuYW1lKHBvcDEwID0gdmFsdWUpIC0+IHN0bDEwXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r get_decennial(geography = , variables = 001001, state = 29, county = 510, geometry = TRUE) %&gt;% select(GEOID, NAME, value) %&gt;% rename(pop10 = value) -&gt; stl10</p>
-<pre><code></code></pre>
-<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -2337,13 +2349,12 @@ proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.999933333
 <p>These data are from the 2007-2011 5-year American Community Survey estimates.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcXHRyYWN0XFwsIHllYXIgPSAyMDExLCB2YXJpYWJsZXMgPSBcXEIwMTAwM18wMDFcXCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDExID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxMV9tID0gbW9lKSAtPiBzdGwxMVxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r get_acs(geography = , year = 2011, variables = 01003_001, state = 29, county = 510) %&gt;% select(GEOID, estimate, moe) %&gt;% rename(pop11 = estimate, pop11_m = moe) -&gt; stl11</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDExLCB2YXJpYWJsZXMgPSBcIkIwMTAwM18wMDFcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDExID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxMV9tID0gbW9lKSAtPiBzdGwxMVxuYGBgIn0= -->
+<pre class="r"><code>get_acs(geography = &quot;tract&quot;, year = 2011, variables = &quot;B01003_001&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(pop11 = estimate,
+         pop11_m = moe) -&gt; stl11</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDctMjAxMSA1LXllYXIgQUNTXG4ifQ== -->
-<pre><code>Getting data from the 2007-2011 5-year ACS</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -2352,13 +2363,12 @@ proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.999933333
 <p>These data are from the 2008-2012 5-year American Community Survey estimates.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcXHRyYWN0XFwsIHllYXIgPSAyMDEyLCB2YXJpYWJsZXMgPSBcXEIwMTAwM18wMDFcXCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDEyID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxMl9tID0gbW9lKSAtPiBzdGwxMlxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r get_acs(geography = , year = 2012, variables = 01003_001, state = 29, county = 510) %&gt;% select(GEOID, estimate, moe) %&gt;% rename(pop12 = estimate, pop12_m = moe) -&gt; stl12</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDEyLCB2YXJpYWJsZXMgPSBcIkIwMTAwM18wMDFcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDEyID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxMl9tID0gbW9lKSAtPiBzdGwxMlxuYGBgIn0= -->
+<pre class="r"><code>get_acs(geography = &quot;tract&quot;, year = 2012, variables = &quot;B01003_001&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(pop12 = estimate,
+         pop12_m = moe) -&gt; stl12</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDgtMjAxMiA1LXllYXIgQUNTXG4ifQ== -->
-<pre><code>Getting data from the 2008-2012 5-year ACS</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -2367,13 +2377,12 @@ proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.999933333
 <p>These data are from the 2009-2013 5-year American Community Survey estimates.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcXHRyYWN0XFwsIHllYXIgPSAyMDEzLCB2YXJpYWJsZXMgPSBcXEIwMTAwM18wMDFcXCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDEzID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxM19tID0gbW9lKSAtPiBzdGwxM1xuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r get_acs(geography = , year = 2013, variables = 01003_001, state = 29, county = 510) %&gt;% select(GEOID, estimate, moe) %&gt;% rename(pop13 = estimate, pop13_m = moe) -&gt; stl13</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDEzLCB2YXJpYWJsZXMgPSBcIkIwMTAwM18wMDFcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDEzID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxM19tID0gbW9lKSAtPiBzdGwxM1xuYGBgIn0= -->
+<pre class="r"><code>get_acs(geography = &quot;tract&quot;, year = 2013, variables = &quot;B01003_001&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(pop13 = estimate,
+         pop13_m = moe) -&gt; stl13</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMDktMjAxMyA1LXllYXIgQUNTXG4ifQ== -->
-<pre><code>Getting data from the 2009-2013 5-year ACS</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -2382,13 +2391,12 @@ proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.999933333
 <p>These data are from the 2010-2014 5-year American Community Survey estimates.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcXHRyYWN0XFwsIHllYXIgPSAyMDE0LCB2YXJpYWJsZXMgPSBcXEIwMTAwM18wMDFcXCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDE0ID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxNF9tID0gbW9lKSAtPiBzdGwxNFxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r get_acs(geography = , year = 2014, variables = 01003_001, state = 29, county = 510) %&gt;% select(GEOID, estimate, moe) %&gt;% rename(pop14 = estimate, pop14_m = moe) -&gt; stl14</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE0LCB2YXJpYWJsZXMgPSBcIkIwMTAwM18wMDFcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDE0ID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxNF9tID0gbW9lKSAtPiBzdGwxNFxuYGBgIn0= -->
+<pre class="r"><code>get_acs(geography = &quot;tract&quot;, year = 2014, variables = &quot;B01003_001&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(pop14 = estimate,
+         pop14_m = moe) -&gt; stl14</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTAtMjAxNCA1LXllYXIgQUNTXG4ifQ== -->
-<pre><code>Getting data from the 2010-2014 5-year ACS</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -2397,13 +2405,12 @@ proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.999933333
 <p>These data are from the 2011-2015 5-year American Community Survey estimates.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcXHRyYWN0XFwsIHllYXIgPSAyMDE1LCB2YXJpYWJsZXMgPSBcXEIwMTAwM18wMDFcXCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDE1ID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxNV9tID0gbW9lKSAtPiBzdGwxNVxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r get_acs(geography = , year = 2015, variables = 01003_001, state = 29, county = 510) %&gt;% select(GEOID, estimate, moe) %&gt;% rename(pop15 = estimate, pop15_m = moe) -&gt; stl15</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE1LCB2YXJpYWJsZXMgPSBcIkIwMTAwM18wMDFcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDE1ID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxNV9tID0gbW9lKSAtPiBzdGwxNVxuYGBgIn0= -->
+<pre class="r"><code>get_acs(geography = &quot;tract&quot;, year = 2015, variables = &quot;B01003_001&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(pop15 = estimate,
+         pop15_m = moe) -&gt; stl15</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTEtMjAxNSA1LXllYXIgQUNTXG4ifQ== -->
-<pre><code>Getting data from the 2011-2015 5-year ACS</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -2412,13 +2419,12 @@ proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.999933333
 <p>These data are from the 2012-2016 5-year American Community Survey estimates.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcXHRyYWN0XFwsIHllYXIgPSAyMDE2LCB2YXJpYWJsZXMgPSBcXEIwMTAwM18wMDFcXCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDE2ID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxNl9tID0gbW9lKSAtPiBzdGwxNlxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r get_acs(geography = , year = 2016, variables = 01003_001, state = 29, county = 510) %&gt;% select(GEOID, estimate, moe) %&gt;% rename(pop16 = estimate, pop16_m = moe) -&gt; stl16</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE2LCB2YXJpYWJsZXMgPSBcIkIwMTAwM18wMDFcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDE2ID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxNl9tID0gbW9lKSAtPiBzdGwxNlxuYGBgIn0= -->
+<pre class="r"><code>get_acs(geography = &quot;tract&quot;, year = 2016, variables = &quot;B01003_001&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(pop16 = estimate,
+         pop16_m = moe) -&gt; stl16</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTItMjAxNiA1LXllYXIgQUNTXG4ifQ== -->
-<pre><code>Getting data from the 2012-2016 5-year ACS</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -2427,13 +2433,12 @@ proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.999933333
 <p>These data are from the 2013-2017 5-year American Community Survey estimates.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcXHRyYWN0XFwsIHllYXIgPSAyMDE3LCB2YXJpYWJsZXMgPSBcXEIwMTAwM18wMDFcXCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDE3ID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxN19tID0gbW9lKSAtPiBzdGwxN1xuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r get_acs(geography = , year = 2017, variables = 01003_001, state = 29, county = 510) %&gt;% select(GEOID, estimate, moe) %&gt;% rename(pop17 = estimate, pop17_m = moe) -&gt; stl17</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0X2FjcyhnZW9ncmFwaHkgPSBcInRyYWN0XCIsIHllYXIgPSAyMDE3LCB2YXJpYWJsZXMgPSBcIkIwMTAwM18wMDFcIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiVcbiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiVcbiAgcmVuYW1lKHBvcDE3ID0gZXN0aW1hdGUsXG4gICAgICAgICBwb3AxN19tID0gbW9lKSAtPiBzdGwxN1xuYGBgIn0= -->
+<pre class="r"><code>get_acs(geography = &quot;tract&quot;, year = 2017, variables = &quot;B01003_001&quot;, state = 29, county = 510) %&gt;%
+  select(GEOID, estimate, moe) %&gt;%
+  rename(pop17 = estimate,
+         pop17_m = moe) -&gt; stl17</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTMtMjAxNyA1LXllYXIgQUNTXG4ifQ== -->
-<pre><code>Getting data from the 2013-2017 5-year ACS</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -2442,77 +2447,85 @@ proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.999933333
 <p>We have these data in a number of different tables, so the next step is to join them together by <code>GEOID</code>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGVmdF9qb2luKHN0bDEwLCBzdGwxMSwgYnkgPSBcXEdFT0lEXFwpICU+JVxuICBsZWZ0X2pvaW4oLiwgc3RsMTIsIGJ5ID0gXFxHRU9JRFxcKSAlPiVcbiAgbGVmdF9qb2luKC4sIHN0bDEzLCBieSA9IFxcR0VPSURcXCkgJT4lXG4gIGxlZnRfam9pbiguLCBzdGwxNCwgYnkgPSBcXEdFT0lEXFwpICU+JVxuICBsZWZ0X2pvaW4oLiwgc3RsMTUsIGJ5ID0gXFxHRU9JRFxcKSAlPiVcbiAgbGVmdF9qb2luKC4sIHN0bDE2LCBieSA9IFxcR0VPSURcXCkgJT4lXG4gIGxlZnRfam9pbiguLCBzdGwxNywgYnkgPSBcXEdFT0lEXFwpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHRyYWN0UG9wXG5cbiMgY2xlYW4gdXAgZW52aW9ybm1lbnRcbnJtKHN0bDEwLCBzdGwxMSwgc3RsMTIsIHN0bDEzLCBzdGwxNCwgc3RsMTUsIHN0bDE2LCBzdGwxNylcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r left_join(stl10, stl11, by = ) %&gt;% left_join(., stl12, by = ) %&gt;% left_join(., stl13, by = ) %&gt;% left_join(., stl14, by = ) %&gt;% left_join(., stl15, by = ) %&gt;% left_join(., stl16, by = ) %&gt;% left_join(., stl17, by = ) %&gt;% st_transform(crs = 26915) -&gt; tractPop</p>
-</div>
-</div>
-</div>
-<div id="clean-up-enviornment-8" class="section level1">
-<h1>clean up enviornment</h1>
-<p>rm(stl10, stl11, stl12, stl13, stl14, stl15, stl16, stl17)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGVmdF9qb2luKHN0bDEwLCBzdGwxMSwgYnkgPSBcIkdFT0lEXCIpICU+JVxuICBsZWZ0X2pvaW4oLiwgc3RsMTIsIGJ5ID0gXCJHRU9JRFwiKSAlPiVcbiAgbGVmdF9qb2luKC4sIHN0bDEzLCBieSA9IFwiR0VPSURcIikgJT4lXG4gIGxlZnRfam9pbiguLCBzdGwxNCwgYnkgPSBcIkdFT0lEXCIpICU+JVxuICBsZWZ0X2pvaW4oLiwgc3RsMTUsIGJ5ID0gXCJHRU9JRFwiKSAlPiVcbiAgbGVmdF9qb2luKC4sIHN0bDE2LCBieSA9IFwiR0VPSURcIikgJT4lXG4gIGxlZnRfam9pbiguLCBzdGwxNywgYnkgPSBcIkdFT0lEXCIpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHRyYWN0UG9wXG5cbiMgY2xlYW4gdXAgZW52aW9ybm1lbnRcbnJtKHN0bDEwLCBzdGwxMSwgc3RsMTIsIHN0bDEzLCBzdGwxNCwgc3RsMTUsIHN0bDE2LCBzdGwxNylcbmBgYCJ9 -->
+<pre class="r"><code>left_join(stl10, stl11, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl12, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl13, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl14, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl15, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl16, by = &quot;GEOID&quot;) %&gt;%
+  left_join(., stl17, by = &quot;GEOID&quot;) %&gt;%
+  st_transform(crs = 26915) -&gt; tractPop
+
+# clean up enviornment
+rm(stl10, stl11, stl12, stl13, stl14, stl15, stl16, stl17)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="interpolate-neighborhood-data" class="section level3">
 <h3>Interpolate Neighborhood Data</h3>
 <p>Next, we’ll use the same estimation process we used before on the 2010-2017 data:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIG5laWdoYm9yaG9vZCBkYXRhLCByZS1wcm9qZWN0LCBhbmQgaW50ZXJwb2xhdGVcbnN0X3JlYWQoaGVyZShcXGRhdGFcXCwgXFxzcGF0aWFsXFwsIFxcbmhvb2RcXCwgXFxCTkRfTmhkODhfY3cuc2hwXFwpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JVxuICBzZWxlY3QoTkhEX05VTSkgJT4lXG4gIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiVcbiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gdHJhY3RQb3AsIHNpZCA9IEdFT0lELCBcbiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gXFxzdW1cXCwgb3V0cHV0ID0gXFx0aWJibGVcXCwgXG4gICAgICAgICAgICAgICAgIGV4dGVuc2l2ZSA9IGMoXFxwb3AxMFxcLCBcXHBvcDExXFwsIFxccG9wMTFfbVxcLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcXHBvcDEyXFwsIFxccG9wMTJfbVxcLCBcXHBvcDEzXFwsIFxccG9wMTNfbVxcLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcXHBvcDE0XFwsIFxccG9wMTRfbVxcLCBcXHBvcDE1XFwsIFxccG9wMTVfbVxcLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcXHBvcDE2XFwsIFxccG9wMTZfbVxcLCBcXHBvcDE3XFwsIFxccG9wMTdfbVxcKVxuICAgICAgICAgICAgICAgICApIC0+IG5ob29kUG9wXzEwXzE3XG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # read neighborhood data, re-project, and interpolate st_read(here(, , , _Nhd88_cw.shp), stringsAsFactors = FALSE) %&gt;% st_transform(crs = 26915) %&gt;% select(NHD_NUM) %&gt;% filter(NHD_NUM &lt;= 79) %&gt;% aw_interpolate(tid = NHD_NUM, source = tractPop, sid = GEOID, weight = , output = , extensive = c(10, 11, 11_m, 12, 12_m, 13, 13_m, 14, 14_m, 15, 15_m, 16, 16_m, 17, 17_m) ) -&gt; nhoodPop_10_17</p>
-<pre><code></code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgQk5EX05oZDg4X2N3JyBmcm9tIGRhdGEgc291cmNlIGAvVXNlcnMvY2hyaXMvR2l0SHViL1BlcnNvbmFsL1BEX25ob29kQ2hhbmdlL2RhdGEvc3BhdGlhbC9uaG9vZC9CTkRfTmhkODhfY3cuc2hwJyB1c2luZyBkcml2ZXIgYEVTUkkgU2hhcGVmaWxlJ1xuU2ltcGxlIGZlYXR1cmUgY29sbGVjdGlvbiB3aXRoIDg4IGZlYXR1cmVzIGFuZCA2IGZpZWxkc1xuZ2VvbWV0cnkgdHlwZTogIE1VTFRJUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogODcxNTEyLjMgeW1pbjogOTgyOTk0LjQgeG1heDogOTEyODUwLjUgeW1heDogMTA3MDk1N1xuZXBzZyAoU1JJRCk6ICAgIE5BXG5wcm9qNHN0cmluZzogICAgK3Byb2o9dG1lcmMgK2xhdF8wPTM1LjgzMzMzMzMzMzMzMzM0ICtsb25fMD0tOTAuNSAraz0wLjk5OTkzMzMzMzMzMzMzMzMgK3hfMD0yNTAwMDAgK3lfMD0wICtkYXR1bT1OQUQ4MyArdW5pdHM9dXMtZnQgK25vX2RlZnNcbiJ9 -->
-<pre><code>Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
-Simple feature collection with 88 features and 6 fields
-geometry type:  MULTIPOLYGON
-dimension:      XY
-bbox:           xmin: 871512.3 ymin: 982994.4 xmax: 912850.5 ymax: 1070957
-epsg (SRID):    NA
-proj4string:    +proj=tmerc +lat_0=35.83333333333334 +lon_0=-90.5 +k=0.9999333333333333 +x_0=250000 +y_0=0 +datum=NAD83 +units=us-ft +no_defs</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB1bml0IHRlc3RcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTAsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDEwKSwgVFJVRSlcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTEsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDExKSwgVFJVRSlcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTIsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDEyKSwgVFJVRSlcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTMsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDEzKSwgVFJVRSlcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTQsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDE0KSwgVFJVRSlcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTUsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDE1KSwgVFJVRSlcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTYsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDE2KSwgVFJVRSlcbmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTcsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDE3KSwgVFJVRSlcblxuIyBjbGVhbiB1cCBlbnZpb3JubWVudFxucm0odHJhY3RQb3ApXG5gYGBcbmBgYCJ9 -->
-<p><code>r</code>r # unit test expect_equal(aw_verify(source = tractPop, sourceValue = pop10, result = nhoodPop_10_17, resultValue = pop10), TRUE) expect_equal(aw_verify(source = tractPop, sourceValue = pop11, result = nhoodPop_10_17, resultValue = pop11), TRUE) expect_equal(aw_verify(source = tractPop, sourceValue = pop12, result = nhoodPop_10_17, resultValue = pop12), TRUE) expect_equal(aw_verify(source = tractPop, sourceValue = pop13, result = nhoodPop_10_17, resultValue = pop13), TRUE) expect_equal(aw_verify(source = tractPop, sourceValue = pop14, result = nhoodPop_10_17, resultValue = pop14), TRUE) expect_equal(aw_verify(source = tractPop, sourceValue = pop15, result = nhoodPop_10_17, resultValue = pop15), TRUE) expect_equal(aw_verify(source = tractPop, sourceValue = pop16, result = nhoodPop_10_17, resultValue = pop16), TRUE) expect_equal(aw_verify(source = tractPop, sourceValue = pop17, result = nhoodPop_10_17, resultValue = pop17), TRUE)</p>
-</div>
-</div>
-<div id="clean-up-enviornment-9" class="section level1">
-<h1>clean up enviornment</h1>
-<p>rm(tractPop)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIG5laWdoYm9yaG9vZCBkYXRhLCByZS1wcm9qZWN0LCBhbmQgaW50ZXJwb2xhdGVcbnN0X3JlYWQoaGVyZShcImRhdGFcIiwgXCJzcGF0aWFsXCIsIFwibmhvb2RcIiwgXCJCTkRfTmhkODhfY3cuc2hwXCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JVxuICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JVxuICBzZWxlY3QoTkhEX05VTSkgJT4lXG4gIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiVcbiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gdHJhY3RQb3AsIHNpZCA9IEdFT0lELCBcbiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gXCJzdW1cIiwgb3V0cHV0ID0gXCJ0aWJibGVcIiwgXG4gICAgICAgICAgICAgICAgIGV4dGVuc2l2ZSA9IGMoXCJwb3AxMFwiLCBcInBvcDExXCIsIFwicG9wMTFfbVwiLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcInBvcDEyXCIsIFwicG9wMTJfbVwiLCBcInBvcDEzXCIsIFwicG9wMTNfbVwiLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcInBvcDE0XCIsIFwicG9wMTRfbVwiLCBcInBvcDE1XCIsIFwicG9wMTVfbVwiLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcInBvcDE2XCIsIFwicG9wMTZfbVwiLCBcInBvcDE3XCIsIFwicG9wMTdfbVwiKVxuICAgICAgICAgICAgICAgICApIC0+IG5ob29kUG9wXzEwXzE3XG5cbiMgdW5pdCB0ZXN0XG5leHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDEwLCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxMCksIFRSVUUpXG5leHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDExLCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxMSksIFRSVUUpXG5leHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDEyLCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxMiksIFRSVUUpXG5leHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDEzLCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxMyksIFRSVUUpXG5leHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDE0LCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxNCksIFRSVUUpXG5leHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDE1LCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxNSksIFRSVUUpXG5leHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDE2LCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxNiksIFRSVUUpXG5leHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDE3LCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxNyksIFRSVUUpXG5cbiMgY2xlYW4gdXAgZW52aW9ybm1lbnRcbnJtKHRyYWN0UG9wKVxuYGBgIn0= -->
+<pre class="r"><code># read neighborhood data, re-project, and interpolate
+st_read(here(&quot;data&quot;, &quot;spatial&quot;, &quot;nhood&quot;, &quot;BND_Nhd88_cw.shp&quot;), stringsAsFactors = FALSE) %&gt;%
+  st_transform(crs = 26915) %&gt;%
+  select(NHD_NUM) %&gt;%
+  filter(NHD_NUM &lt;= 79) %&gt;%
+  aw_interpolate(tid = NHD_NUM, source = tractPop, sid = GEOID, 
+                 weight = &quot;sum&quot;, output = &quot;tibble&quot;, 
+                 extensive = c(&quot;pop10&quot;, &quot;pop11&quot;, &quot;pop11_m&quot;, 
+                               &quot;pop12&quot;, &quot;pop12_m&quot;, &quot;pop13&quot;, &quot;pop13_m&quot;, 
+                               &quot;pop14&quot;, &quot;pop14_m&quot;, &quot;pop15&quot;, &quot;pop15_m&quot;, 
+                               &quot;pop16&quot;, &quot;pop16_m&quot;, &quot;pop17&quot;, &quot;pop17_m&quot;)
+                 ) -&gt; nhoodPop_10_17
+
+# unit test
+expect_equal(aw_verify(source = tractPop, sourceValue = pop10, result = nhoodPop_10_17, resultValue = pop10), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop11, result = nhoodPop_10_17, resultValue = pop11), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop12, result = nhoodPop_10_17, resultValue = pop12), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop13, result = nhoodPop_10_17, resultValue = pop13), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop14, result = nhoodPop_10_17, resultValue = pop14), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop15, result = nhoodPop_10_17, resultValue = pop15), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop16, result = nhoodPop_10_17, resultValue = pop16), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop17, result = nhoodPop_10_17, resultValue = pop17), TRUE)
+
+# clean up enviornment
+rm(tractPop)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+</div>
 <div id="combine-historical-and-modern-census-data" class="section level2">
 <h2>Combine Historical and Modern Census Data</h2>
 <p>Next, we’ll combine the two data objects to create a single table of census estimates:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubmhvb2RQb3AgPC0gbGVmdF9qb2luKG5ob29kUG9wXzQwXzAwLCBuaG9vZFBvcF8xMF8xNywgYnkgPSBcXE5IRF9OVU1cXClcblxuIyBjbGVhbiB1cCBlbnZpb3JubWVudFxucm0obmhvb2RQb3BfNDBfMDAsIG5ob29kUG9wXzEwXzE3KVxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r nhoodPop &lt;- left_join(nhoodPop_40_00, nhoodPop_10_17, by = _NUM)</p>
-</div>
-</div>
-<div id="clean-up-enviornment-10" class="section level1">
-<h1>clean up enviornment</h1>
-<p>rm(nhoodPop_40_00, nhoodPop_10_17)</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmhvb2RQb3AgPC0gbGVmdF9qb2luKG5ob29kUG9wXzQwXzAwLCBuaG9vZFBvcF8xMF8xNywgYnkgPSBcIk5IRF9OVU1cIilcblxuIyBjbGVhbiB1cCBlbnZpb3JubWVudFxucm0obmhvb2RQb3BfNDBfMDAsIG5ob29kUG9wXzEwXzE3KVxuYGBgIn0= -->
+<pre class="r"><code>nhoodPop &lt;- left_join(nhoodPop_40_00, nhoodPop_10_17, by = &quot;NHD_NUM&quot;)
+
+# clean up enviornment
+rm(nhoodPop_40_00, nhoodPop_10_17)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="export" class="section level2">
 <h2>Export</h2>
 <p>Finally, we’ll write the data to a <code>.csv</code> file for future analysis.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB3cml0ZSBvdXRwdXRcbndyaXRlX2NzdihuaG9vZFBvcCwgaGVyZShcXGRhdGFcXCwgXFxjbGVhblxcLCBcXFNUTF9Qb3BCeU5ob29kLmNzdlxcKSlcbmBgYFxuYGBgIn0= -->
-<p><code>r</code>r # write output write_csv(nhoodPop, here(, , _PopByNhood.csv))</p>
-<pre><code></code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3cml0ZSBvdXRwdXRcbndyaXRlX2NzdihuaG9vZFBvcCwgaGVyZShcImRhdGFcIiwgXCJjbGVhblwiLCBcIlNUTF9Qb3BCeU5ob29kLmNzdlwiKSlcbmBgYCJ9 -->
+<pre class="r"><code># write output
+write_csv(nhoodPop, here(&quot;data&quot;, &quot;clean&quot;, &quot;STL_PopByNhood.csv&quot;))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 </div>
-</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQnVpbGQgUG9wdWxhdGlvbiBFc3RpbWF0ZSBEYXRhIgphdXRob3I6ICJDaHJpc3RvcGhlciBQcmVuZXIsIFBoLkQuIgpkYXRlOiAnKGByIGZvcm1hdChTeXMudGltZSgpLCAiJUIgJWQsICVZIilgKScKb3V0cHV0OiAKICBnaXRodWJfZG9jdW1lbnQ6IGRlZmF1bHQKICBodG1sX25vdGVib29rOiBkZWZhdWx0IAotLS0KCiMjIEludHJvZHVjdGlvbgpUaGlzIG5vdGVib29rIGNyZWF0ZXMgdGhlIHJlcXVlc3RlZCBwb3B1bGF0aW9uIGVzdGltYXRlcy4KCiMjIERlcGVuZGVuY2llcwpUaGlzIG5vdGVib29rIHJlcXVpcmVzIGEgbnVtYmVyIG9mIGRpZmZlcmVudCBgUmAgcGFja2FnZXM6CgpgYGB7ciBsb2FkLXBhY2thZ2VzfQojIHRpZHl2ZXJzZSBwYWNrYWdlcwpsaWJyYXJ5KGRwbHlyKSAgICAgICAgICMgZGF0YSB3cmFuZ2xpbmcKbGlicmFyeShyZWFkcikgICAgICAgICAjIHdvcmtpbmcgd2l0aCBjc3YgZGF0YQpsaWJyYXJ5KHN0cmluZ3IpICAgICAgICMgc3RyaW5nIHRvb2xzCgojIHNwYXRpYWwgcGFja2FnZXMKbGlicmFyeShhcmVhbCkgICAgICAgICAjIGludGVycG9sYXRpb24KbGlicmFyeShzZikgICAgICAgICAgICAjIHdvcmtpbmcgd2l0aCBzcGF0aWFsIGRhdGEKbGlicmFyeSh0aWR5Y2Vuc3VzKSAgICAjIGNlbnN1cyBhcGkgYWNjZXNzCmxpYnJhcnkodGlncmlzKSAgICAgICAgIyB0aWdlci9saW5lIGFwaSBhY2Nlc3MKCiMgb3RoZXIgcGFja2FnZXMKbGlicmFyeShoZXJlKSAgICAgICAgICAjIGZpbGUgcGF0aCBtYW5hZ2VtZW50CmxpYnJhcnkodGVzdHRoYXQpICAgICAgIyB1bml0IHRlc3RpbmcKYGBgCgpXZSBhbHNvIHVzZSBhIGZ1bmN0aW9uIGZvciB1bml0IHRlc3RpbmcgSUQgbnVtYmVyczoKCmBgYHtyIGxvYWQtZnVuY3Rpb25zfQpzb3VyY2UoaGVyZSgic291cmNlIiwgInVuaXF1ZV9pZC5SIikpCmBgYAoKIyMgQ3JlYXRlIERlbW9ncmFwaGljIERhdGEsIDE5NDAtMjAwMApUaGVzZSBkZWNlbm5pYWwgY2Vuc3VzIGRhdGEgd2VyZSBvYnRhaW5lZCBmcm9tIHR3byBzb3VyY2VzLiBUaGUgdHJhY3QtbGV2ZWwgc2hhcGVmaWxlcyB3ZXJlIG9idGFpbmVkIGZyb20gSVBVTVMnIFtOSEdJU10oaHR0cHM6Ly93d3cubmhnaXMub3JnKSBkYXRhYmFzZS4gVGhleSBjb21lIGZvciB0aGUgZW50aXJlIFUuUy4gKG9yIGFzIG11Y2ggb2YgdGhlIFUuUy4gYXMgd2FzIHRyYWN0ZWQgYXQgdGhhdCBwb2ludCAtIGZ1bGwgdHJhY3QgY292ZXJhZ2UgaXMgcmVsYXRpdmVseSByZWNlbnQpLiBUaGV5IHdlcmUgbWVyZ2VkIHdpdGggdHJhY3QtbGV2ZWwgZGF0YSBvYnRhaW5lZCBmcm9tIFtTb2NpYWwgRXhwbG9yZXJdKGh0dHA6Ly9zb2NpYWxleHBsb3Jlci5jb20pIHRoYXQgd2FzIGFscmVhZHkgY2xlYW4gYW5kIHJlYWR5IHRvIHVzZSBmb3IgZWFjaCBkZWNhZGUuCgojIyMgMTk0MApGaXJzdCwgd2UgbmVlZCB0byBsb2FkIHRoZSBzaGFwZWZpbGUgZ2VvbWV0cnk6CgpgYGB7ciBsb2FkLTE5NDAtc2hhcGVmaWxlfQpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czQwIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNDAuc2hwIiksCiAgICAgICAgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDQwCmBgYAoKTmV4dCwgd2UgbmVlZCB0byBsb2FkIHRoZSBjZW5zdXMgZGF0YSBhbmQgY29tYmluZSBpdCB3aXRoIHRoZSBzcGF0aWFsIGRhdGEuIFdlIG5lZWQgdG8gY3JlYXRlIHRoZSBgVFJBQ1RJRGAgdmFyaWFibGUgb3V0IG9mIGEgbGFyZ2VyIHZhcmlhYmxlIG5hbWVkIGBHZW9fTmFtZWAuIEEgdW5pdCB0ZXN0IGlzIGluY2x1ZGVkIHRvIGVuc3VyZSB0aGF0IHRoZSBgVFJBQ1RJRGAgdmFyaWFibGUgd2UgYXJlIGNyZWF0aW5nIHVuaXF1ZWx5IGlkZW50aWZpZXMgb2JzZXJ2YXRpb25zOgoKYGBge3IgYWRkLTE5NDAtcG9wfQpyZWFkX2NzdihoZXJlKCJkYXRhIiwgInRhYnVsYXIiLCAiU1RMX0RFTU9HUkFQSElDU19wb3A0MC5jc3YiKSkgJT4lCiAgc2VsZWN0KEdlb19OYW1lLCBTRV9UMDAxXzAwMSkgJT4lCiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fTmFtZSwgCiAgICAgICAgIHBvcDQwID0gU0VfVDAwMV8wMDEpICU+JQogIG11dGF0ZShUUkFDVElEID0gc3RyX3BhZChzdHJpbmcgPSBUUkFDVElELCB3aWR0aCA9IDUsIHNpZGUgPSAibGVmdCIsIHBhZCA9ICIwIikpIC0+IHBvcDQwCgojIHVuaXQgdGVzdApwb3A0MCAlPiUgdW5pcXVlX2lkKFRSQUNUSUQpIC0+IGlkVW5pcXVlCmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSkKCiMgam9pbiBkYXRhCnN0bDQwIDwtIGxlZnRfam9pbihzdGw0MCwgcG9wNDAsIGJ5ID0gIlRSQUNUSUQiKQpgYGAKCkZpbmFsbHksIHdlJ2xsIHVzZSBhIHRlY2huaXF1ZSBjYWxsZWQgW2FyZWFsIHdlaWdodGVkIGludGVycG9sYXRpb25dKGh0dHBzOi8vc2x1LW9wZW5naXMuZ2l0aHViLmlvL2FyZWFsL2FydGljbGVzL2FyZWFsLXdlaWdodGVkLWludGVycG9sYXRpb24uaHRtbCkgdG8gcHJvZHVjZSBlc3RpbWF0ZXMgYXQgdGhlIG5laWdoYm9yaG9vZCBsZXZlbC4gV2UnbGwgaW1wb3J0IHRoZSBuZWlnaGJvcmhvb2QgZGF0YSwgcmUtcHJvamVjdCBpdCBzbyB0aGF0IGl0IG1hdGNoZXMgdGhlIHByb2plY3Rpb24gdXNlZCBmb3IgdGhlIDE5NDAgdHJhY3QgYm91bmRhcmllcywgc3Vic2V0IGl0IHNvIHRoYXQgd2UgaGF2ZSBvbmx5IHRoZSBuZWVkZWQgY29sdW1ucyBhbmQgb25seSByZXNpZGVudGlhbCBuZWlnaGJvcmhvb2RzIChsYXJnZSBwYXJrcyByZW1vdmVkKSwgYW5kIHRoZW4gaW50ZXJwb2xhdGUgYWxsIG9mIHRoZSB0cmFjdCBkYXRhIGludG8gbmVpZ2hib3Job29kcy4KCmBgYHtyIGludGVycG9sYXRlLTE5NDB9CiMgaW50ZXJwb2xhdGUKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OQU1FLCBOSERfTlVNKSAlPiUKICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lCiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gc3RsNDAsIHNpZCA9IFRSQUNUSUQsIAogICAgICAgICAgICAgICAgIHdlaWdodCA9ICJzdW0iLCBvdXRwdXQgPSAidGliYmxlIiwgCiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gInBvcDQwIikgLT4gbmhvb2Q0MAoKIyB1bml0IHRlc3QKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw0MCwgc291cmNlVmFsdWUgPSBwb3A0MCwgcmVzdWx0ID0gbmhvb2Q0MCwgcmVzdWx0VmFsdWUgPSBwb3A0MCksIFRSVUUpCgojIGNsZWFuLXVwIGVudmlvcm5tZW50CnJtKHBvcDQwLCBzdGw0MCkKYGBgCgpGb3IgdHJhY3RzIHRoYXQgc3RyYWRkbGUgb25lIG9mIHRoZSBsYXJnZSBwYXJrcywgdGhlaXIgZW50aXJlIHBvcHVsYXRpb24gaXMgYWxsb2NhdGVkIGludG8gdGhlIGFwcHJvcHJpYXRlIGFkamFjZW50IG5laWdoYm9yaG9vZC4gV2UgY29uZmlybSB0aGF0IHRoZSBlbnRpcmUgY2l0eSdzIHBvcHVsYXRpb24gdXNpbmcgYSB1bml0IHRlc3Qgd2l0aCB0aGUgYGF3X3ZlcmlmeSgpYCBmdW5jdGlvbi4gQXMgbG9uZyBhcyBgYXdfdmVyaWZ5KClgIHJldHVybnMgYFRSVUVgLCB3ZSBrbm93IHRoYXQgZWFjaCByZXNpZGVudCBoYXMgYmVlbiBhbGxvY2F0ZWQuIFdlIHdyYXAgdGhpcyBpbiBhIHVuaXQgdGVzdCBzbyB0aGF0IHRoZSBjb2RlIGVycm9ycyBvdXQgaWYgdGhpcyBhc3N1bXB0aW9uIGlzIG5vdCBtZXQuCgojIyMgMTk1MApGb3IgdGhlIHJlbWFpbmRlciBvZiB0aGUgZGVjZW5uaWFsIGNlbnN1cyBkYXRhLCBJJ20gZ29pbmcgdG8gdXNlIHRoZSBzYW1lIHdvcmtmbG93IGJ1dCBjb25kZW5zZSB0aGUgY29kZS4KClRoZSBvbmx5IG1ham9yIGNoYW5nZSB3aXRoIHRoaXMgZGVjYWRlIGlzIHRoYXQgdGhlIHRyYWN0IElEIG51bWJlcnMgYWxyZWFkeSBoYXZlIHRoZSBhcHByb3ByaWF0ZSBudW1iZXIgb2YgbGVhZGluZyB6ZXJvcywgc28gdGhlIGNvZGUgdG8gYWRkIHRoZW0gY2FuIGJlIG9taXR0ZWQuCgpgYGB7ciBjcmVhdGUtMTk1MC1lc3RpbWF0ZXN9CiMgcmVhZCBpbiAxOTUwIGVyYSB0cmFjdCBib3VuZGFyaWVzLCByZS1wcm9qZWN0CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNTAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNTAKCiMgcmVhZCBpbiAxOTUwIGNlbnN1cyBjb3VudHMsIGNsZWFuCnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3BvcDUwLmNzdiIpKSAlPiUKICBzZWxlY3QoR2VvX05hbWUsIFNFX1QwMDFfMDAxKSAlPiUKICByZW5hbWUoVFJBQ1RJRCA9IEdlb19OYW1lLCAKICAgICAgICAgcG9wNTAgPSBTRV9UMDAxXzAwMSkgLT4gcG9wNTAKCiMgdW5pdCB0ZXN0CnBvcDUwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsNTAgPC0gbGVmdF9qb2luKHN0bDUwLCBwb3A1MCwgYnkgPSAiVFJBQ1RJRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw1MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSAicG9wNTAiKSAtPiBuaG9vZDUwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDUwLCBzb3VyY2VWYWx1ZSA9IHBvcDUwLCByZXN1bHQgPSBuaG9vZDUwLCByZXN1bHRWYWx1ZSA9IHBvcDUwKSwgVFJVRSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wNTAsIHN0bDUwKQpgYGAKCiMjIyAxOTYwCldlJ2xsIHJlcGVhdCB0aGlzIHByb2Nlc3MgZm9yIHRoZSAxOTYwcyBlcmEgZGF0YS4KCk9uZSBpc3N1ZSB3aXRoIHRoZSAxOTYwcyBkYXRhIGlzIHRoYXQgdGhlIGBUUkFDVElEYCBpbiB0aGUgMTk2MCBjZW5zdXMgZGF0YSBuZWVkcyB0byBiZSBwYXJzZWQgb3V0IG9mIGEgbGFyZ2VyIHZhcmlhYmxlIGBHZW9fRklQU2AuIFRoaXMgaXMgYWRkcmVzc2VkIGluIHRoZSBzZWNvbmQgcGlwZWxpbmUuCgpgYGB7ciBjcmVhdGUtMTk2MC1lc3RpbWF0ZXN9CiMgcmVhZCBpbiAxOTYwIGVyYSB0cmFjdCBib3VuZGFyaWVzLCByZS1wcm9qZWN0CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNjAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNjAKCiMgcmVhZCBpbiAxOTYwIGNlbnN1cyBjb3VudHMsIGNsZWFuCnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3BvcDYwLmNzdiIpKSAlPiUKICBzZWxlY3QoR2VvX0ZJUFMsIFNFX1QwMDFfMDAxKSAlPiUKICByZW5hbWUoVFJBQ1RJRCA9IEdlb19GSVBTLCAKICAgICAgICAgcG9wNjAgPSBTRV9UMDAxXzAwMSkgJT4lCiAgbXV0YXRlKFRSQUNUSUQgPSBzdHJfc3ViKFRSQUNUSUQsIDcsIDExKSkgLT4gcG9wNjAKCiMgdW5pdCB0ZXN0CnBvcDYwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsNjAgPC0gbGVmdF9qb2luKHN0bDYwLCBwb3A2MCwgYnkgPSAiVFJBQ1RJRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw2MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSAicG9wNjAiKSAtPiBuaG9vZDYwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDYwLCBzb3VyY2VWYWx1ZSA9IHBvcDYwLCByZXN1bHQgPSBuaG9vZDYwLCByZXN1bHRWYWx1ZSA9IHBvcDYwKSwgVFJVRSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wNjAsIHN0bDYwKQpgYGAKCiMjIyAxOTcwCldlJ2xsIHJlcGVhdCB0aGlzIHByb2Nlc3MgZm9yIHRoZSAxOTcwcyBlcmEgZGF0YS4KCmBgYHtyIGNyZWF0ZS0xOTcwLWVzdGltYXRlc30KIyByZWFkIGluIDE5NzAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3QKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czcwLnNocCIpLAogICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAtPiBzdGw3MAoKIyByZWFkIGluIDE5NzAgY2Vuc3VzIGNvdW50cywgY2xlYW4KcmVhZF9jc3YoaGVyZSgiZGF0YSIsICJ0YWJ1bGFyIiwgIlNUTF9ERU1PR1JBUEhJQ1NfcG9wNzAuY3N2IikpICU+JQogIHNlbGVjdChHZW9fVHJhY3RDb2RlLCBTRV9UMDAxXzAwMSkgJT4lCiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fVHJhY3RDb2RlLCAKICAgICAgICAgcG9wNzAgPSBTRV9UMDAxXzAwMSkgLT4gcG9wNzAKCiMgdW5pdCB0ZXN0CnBvcDcwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsNzAgPC0gbGVmdF9qb2luKHN0bDcwLCBwb3A3MCwgYnkgPSAiVFJBQ1RJRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw3MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSAicG9wNzAiKSAtPiBuaG9vZDcwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDcwLCBzb3VyY2VWYWx1ZSA9IHBvcDcwLCByZXN1bHQgPSBuaG9vZDcwLCByZXN1bHRWYWx1ZSA9IHBvcDcwKSwgVFJVRSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wNzAsIHN0bDcwKQpgYGAKCiMjIyAxOTgwCldlJ2xsIHJlcGVhdCB0aGlzIHByb2Nlc3MgZm9yIHRoZSAxOTgwcyBlcmEgZGF0YS4KCmBgYHtyIGNyZWF0ZS0xOTgwLWVzdGltYXRlc30KIyByZWFkIGluIDE5ODAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3QKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czgwLnNocCIpLAogICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAtPiBzdGw4MAoKIyByZWFkIGluIDE5ODAgY2Vuc3VzIGNvdW50cywgY2xlYW4KcmVhZF9jc3YoaGVyZSgiZGF0YSIsICJ0YWJ1bGFyIiwgIlNUTF9ERU1PR1JBUEhJQ1NfcG9wODAuY3N2IikpICU+JQogIHNlbGVjdChHZW9fVFJBQ1Q2LCBTRV9UMDAxXzAwMSkgJT4lCiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fVFJBQ1Q2LCAKICAgICAgICAgcG9wODAgPSBTRV9UMDAxXzAwMSkgLT4gcG9wODAKCiMgdW5pdCB0ZXN0CnBvcDgwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsODAgPC0gbGVmdF9qb2luKHN0bDgwLCBwb3A4MCwgYnkgPSAiVFJBQ1RJRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw4MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSAicG9wODAiKSAtPiBuaG9vZDgwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDgwLCBzb3VyY2VWYWx1ZSA9IHBvcDgwLCByZXN1bHQgPSBuaG9vZDgwLCByZXN1bHRWYWx1ZSA9IHBvcDgwKSwgVFJVRSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wODAsIHN0bDgwKQpgYGAKCiMjIyAxOTkwCldlJ2xsIHJlcGVhdCB0aGlzIHByb2Nlc3MgZm9yIHRoZSAxOTkwcyBlcmEgZGF0YS4KCmBgYHtyIGNyZWF0ZS0xOTkwLWVzdGltYXRlc30KIyByZWFkIGluIDE5OTAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3QKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM5MCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czkwLnNocCIpLAogICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAtPiBzdGw5MAoKIyByZWFkIGluIDE5OTAgY2Vuc3VzIGNvdW50cywgY2xlYW4KZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSAidHJhY3QiLCB2YXJpYWJsZSA9ICJQMDAxMDAwMSIsIHllYXIgPSAxOTkwLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgdmFsdWUpICU+JQogIHJlbmFtZShUUkFDVElEID0gR0VPSUQsIAogICAgICAgICBwb3A5MCA9IHZhbHVlKSAtPiBwb3A5MAoKIyB1bml0IHRlc3QKcG9wOTAgJT4lIHVuaXF1ZV9pZChUUkFDVElEKSAtPiBpZFVuaXF1ZQpleHBlY3RfZXF1YWwoaWRVbmlxdWUsIFRSVUUpCgojIGpvaW4gZGF0YQpzdGw5MCA8LSBsZWZ0X2pvaW4oc3RsOTAsIHBvcDkwLCBieSA9ICJUUkFDVElEIikKCiMgaW50ZXJwb2xhdGUgdG8gbmVpZ2hib3Job29kcwpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJuaG9vZCIsICJCTkRfTmhkODhfY3cuc2hwIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoTkhEX05VTSkgJT4lCiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JQogIGF3X2ludGVycG9sYXRlKHRpZCA9IE5IRF9OVU0sIHNvdXJjZSA9IHN0bDkwLCBzaWQgPSBUUkFDVElELCAKICAgICAgICAgICAgICAgICB3ZWlnaHQgPSAic3VtIiwgb3V0cHV0ID0gInRpYmJsZSIsIAogICAgICAgICAgICAgICAgIGV4dGVuc2l2ZSA9ICJwb3A5MCIpIC0+IG5ob29kOTAKCiMgdW5pdCB0ZXN0CmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gc3RsOTAsIHNvdXJjZVZhbHVlID0gcG9wOTAsIHJlc3VsdCA9IG5ob29kOTAsIHJlc3VsdFZhbHVlID0gcG9wOTApLCBUUlVFKQoKIyBjbGVhbi11cCBlbnZpb3JubWVudApybShwb3A5MCwgc3RsOTApCmBgYAoKIyMjIDIwMDAKV2UnbGwgcmVwZWF0IHRoaXMgcHJvY2VzcyBmb3IgdGhlIDIwMDBzIGVyYSBkYXRhLgoKYGBge3IgY3JlYXRlLTIwMDAtZXN0aW1hdGVzfQojIHJlYWQgaW4gMjAwMCBlcmEgdHJhY3QgYm91bmRhcmllcywgcmUtcHJvamVjdApzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czAwIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzMDAuc2hwIiksCiAgICAgICAgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDAwCgojIHJlYWQgaW4gMjAwMCBjZW5zdXMgY291bnRzLCBjbGVhbgpyZWFkX2NzdihoZXJlKCJkYXRhIiwgInRhYnVsYXIiLCAiU1RMX0RFTU9HUkFQSElDU19wb3AwMC5jc3YiKSkgJT4lCiAgc2VsZWN0KEdlb19UUkFDVCwgU0VfVDAwMV8wMDEpICU+JQogIHJlbmFtZShUUkFDVElEID0gR2VvX1RSQUNULCAKICAgICAgICAgcG9wMDAgPSBTRV9UMDAxXzAwMSkgLT4gcG9wMDAKCiMgdW5pdCB0ZXN0CnBvcDAwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsMDAgPC0gbGVmdF9qb2luKHN0bDAwLCBwb3AwMCwgYnkgPSAiVFJBQ1RJRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGwwMCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSAicG9wMDAiKSAtPiBuaG9vZDAwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDAwLCBzb3VyY2VWYWx1ZSA9IHBvcDAwLCByZXN1bHQgPSBuaG9vZDAwLCByZXN1bHRWYWx1ZSA9IHBvcDAwKSwgVFJVRSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wMDAsIHN0bDAwKQpgYGAKCiMjIyBDb21iaW5lIDE5NDBzLTIwMDBzIERhdGEKTmV4dCwgd2UnbGwgam9pbiBhbGwgb2YgdGhlIG5laWdoYm9yaG9vZCBlc3RpbWF0ZXMgd2UndmUgY3JlYXRlZCBzbyBmYXIgdG9nZXRoZXIgaW50byBhIHNpbmdsZSBvYmplY3Q6CgpgYGB7ciBqb2luLTE5NDAtMjAwMH0KbGVmdF9qb2luKG5ob29kNDAsIG5ob29kNTAsIGJ5ID0gIk5IRF9OVU0iKSAlPiUKICBsZWZ0X2pvaW4oLiwgbmhvb2Q2MCwgYnkgPSAiTkhEX05VTSIpICU+JQogIGxlZnRfam9pbiguLCBuaG9vZDcwLCBieSA9ICJOSERfTlVNIikgJT4lCiAgbGVmdF9qb2luKC4sIG5ob29kODAsIGJ5ID0gIk5IRF9OVU0iKSAlPiUKICBsZWZ0X2pvaW4oLiwgbmhvb2Q5MCwgYnkgPSAiTkhEX05VTSIpICU+JQogIGxlZnRfam9pbiguLCBuaG9vZDAwLCBieSA9ICJOSERfTlVNIikgLT4gbmhvb2RQb3BfNDBfMDAKCiMgY2xlYW4gdXAgZW52aW9ybm1lbnQKcm0obmhvb2Q0MCwgbmhvb2Q1MCwgbmhvb2Q2MCwgbmhvb2Q3MCwgbmhvb2Q4MCwgbmhvb2Q5MCwgbmhvb2QwMCwgaWRVbmlxdWUsIHVuaXF1ZV9pZCkKYGBgCgojIyBEb3dubG9hZCBEZW1vZ3JhcGhpYyBEYXRhLCAyMDEwLTIwMTcKQWxsIGRhdGEgZm9yIHRoaXMgZXJhIGFyZSBkb3dubG9hZGVkIGZyb20gdGhlIENlbnN1cyBCdXJlYXUncyBBUEkgdmlhIGB0aWR5Y2Vuc3VzYC4gCgojIyMgMjAxMApUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSBkZWNlbm5pYWwgY2Vuc3VzLgoKYGBge3IgZG93bmxvYWQtMjAxMCwgcmVzdWx0cz0naGlkZSd9CmdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgdmFyaWFibGVzID0gIlAwMDEwMDEiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIGdlb21ldHJ5ID0gVFJVRSkgJT4lIAogIHNlbGVjdChHRU9JRCwgTkFNRSwgdmFsdWUpICU+JQogIHJlbmFtZShwb3AxMCA9IHZhbHVlKSAtPiBzdGwxMApgYGAKCiMjIyAyMDExClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIDIwMDctMjAxMSA1LXllYXIgQW1lcmljYW4gQ29tbXVuaXR5IFN1cnZleSBlc3RpbWF0ZXMuCgpgYGB7ciBkb3dubG9hZC0yMDExfQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDExLCB2YXJpYWJsZXMgPSAiQjAxMDAzXzAwMSIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUocG9wMTEgPSBlc3RpbWF0ZSwKICAgICAgICAgcG9wMTFfbSA9IG1vZSkgLT4gc3RsMTEKYGBgCgojIyMgMjAxMgpUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSAyMDA4LTIwMTIgNS15ZWFyIEFtZXJpY2FuIENvbW11bml0eSBTdXJ2ZXkgZXN0aW1hdGVzLgoKYGBge3IgZG93bmxvYWQtMjAxMn0KZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxMiwgdmFyaWFibGVzID0gIkIwMTAwM18wMDEiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKHBvcDEyID0gZXN0aW1hdGUsCiAgICAgICAgIHBvcDEyX20gPSBtb2UpIC0+IHN0bDEyCmBgYAoKIyMjIDIwMTMKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgMjAwOS0yMDEzIDUteWVhciBBbWVyaWNhbiBDb21tdW5pdHkgU3VydmV5IGVzdGltYXRlcy4KCmBgYHtyIGRvd25sb2FkLTIwMTN9CmdldF9hY3MoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgeWVhciA9IDIwMTMsIHZhcmlhYmxlcyA9ICJCMDEwMDNfMDAxIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiUKICBzZWxlY3QoR0VPSUQsIGVzdGltYXRlLCBtb2UpICU+JQogIHJlbmFtZShwb3AxMyA9IGVzdGltYXRlLAogICAgICAgICBwb3AxM19tID0gbW9lKSAtPiBzdGwxMwpgYGAKCiMjIyAyMDE0ClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIDIwMTAtMjAxNCA1LXllYXIgQW1lcmljYW4gQ29tbXVuaXR5IFN1cnZleSBlc3RpbWF0ZXMuCgpgYGB7ciBkb3dubG9hZC0yMDE0fQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDE0LCB2YXJpYWJsZXMgPSAiQjAxMDAzXzAwMSIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUocG9wMTQgPSBlc3RpbWF0ZSwKICAgICAgICAgcG9wMTRfbSA9IG1vZSkgLT4gc3RsMTQKYGBgCgojIyMgMjAxNQpUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSAyMDExLTIwMTUgNS15ZWFyIEFtZXJpY2FuIENvbW11bml0eSBTdXJ2ZXkgZXN0aW1hdGVzLgoKYGBge3IgZG93bmxvYWQtMjAxNX0KZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxNSwgdmFyaWFibGVzID0gIkIwMTAwM18wMDEiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKHBvcDE1ID0gZXN0aW1hdGUsCiAgICAgICAgIHBvcDE1X20gPSBtb2UpIC0+IHN0bDE1CmBgYAoKIyMjIDIwMTYKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgMjAxMi0yMDE2IDUteWVhciBBbWVyaWNhbiBDb21tdW5pdHkgU3VydmV5IGVzdGltYXRlcy4KCmBgYHtyIGRvd25sb2FkLTIwMTZ9CmdldF9hY3MoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgeWVhciA9IDIwMTYsIHZhcmlhYmxlcyA9ICJCMDEwMDNfMDAxIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiUKICBzZWxlY3QoR0VPSUQsIGVzdGltYXRlLCBtb2UpICU+JQogIHJlbmFtZShwb3AxNiA9IGVzdGltYXRlLAogICAgICAgICBwb3AxNl9tID0gbW9lKSAtPiBzdGwxNgpgYGAKCiMjIyAyMDE3ClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIDIwMTMtMjAxNyA1LXllYXIgQW1lcmljYW4gQ29tbXVuaXR5IFN1cnZleSBlc3RpbWF0ZXMuCgpgYGB7ciBkb3dubG9hZC0yMDE3fQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDE3LCB2YXJpYWJsZXMgPSAiQjAxMDAzXzAwMSIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUocG9wMTcgPSBlc3RpbWF0ZSwKICAgICAgICAgcG9wMTdfbSA9IG1vZSkgLT4gc3RsMTcKYGBgCgojIyMgQ29tYmluZSBEYXRhCldlIGhhdmUgdGhlc2UgZGF0YSBpbiBhIG51bWJlciBvZiBkaWZmZXJlbnQgdGFibGVzLCBzbyB0aGUgbmV4dCBzdGVwIGlzIHRvIGpvaW4gdGhlbSB0b2dldGhlciBieSBgR0VPSURgLgoKYGBge3IgY29tYmluZS1kYXRhfQpsZWZ0X2pvaW4oc3RsMTAsIHN0bDExLCBieSA9ICJHRU9JRCIpICU+JQogIGxlZnRfam9pbiguLCBzdGwxMiwgYnkgPSAiR0VPSUQiKSAlPiUKICBsZWZ0X2pvaW4oLiwgc3RsMTMsIGJ5ID0gIkdFT0lEIikgJT4lCiAgbGVmdF9qb2luKC4sIHN0bDE0LCBieSA9ICJHRU9JRCIpICU+JQogIGxlZnRfam9pbiguLCBzdGwxNSwgYnkgPSAiR0VPSUQiKSAlPiUKICBsZWZ0X2pvaW4oLiwgc3RsMTYsIGJ5ID0gIkdFT0lEIikgJT4lCiAgbGVmdF9qb2luKC4sIHN0bDE3LCBieSA9ICJHRU9JRCIpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gdHJhY3RQb3AKCiMgY2xlYW4gdXAgZW52aW9ybm1lbnQKcm0oc3RsMTAsIHN0bDExLCBzdGwxMiwgc3RsMTMsIHN0bDE0LCBzdGwxNSwgc3RsMTYsIHN0bDE3KQpgYGAKCiMjIyBJbnRlcnBvbGF0ZSBOZWlnaGJvcmhvb2QgRGF0YQpOZXh0LCB3ZSdsbCB1c2UgdGhlIHNhbWUgZXN0aW1hdGlvbiBwcm9jZXNzIHdlIHVzZWQgYmVmb3JlIG9uIHRoZSAyMDEwLTIwMTcgZGF0YToKCmBgYHtyIGludGVycG9sYXRlfQojIHJlYWQgbmVpZ2hib3Job29kIGRhdGEsIHJlLXByb2plY3QsIGFuZCBpbnRlcnBvbGF0ZQpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJuaG9vZCIsICJCTkRfTmhkODhfY3cuc2hwIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoTkhEX05VTSkgJT4lCiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JQogIGF3X2ludGVycG9sYXRlKHRpZCA9IE5IRF9OVU0sIHNvdXJjZSA9IHRyYWN0UG9wLCBzaWQgPSBHRU9JRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBjKCJwb3AxMCIsICJwb3AxMSIsICJwb3AxMV9tIiwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAicG9wMTIiLCAicG9wMTJfbSIsICJwb3AxMyIsICJwb3AxM19tIiwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAicG9wMTQiLCAicG9wMTRfbSIsICJwb3AxNSIsICJwb3AxNV9tIiwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAicG9wMTYiLCAicG9wMTZfbSIsICJwb3AxNyIsICJwb3AxN19tIikKICAgICAgICAgICAgICAgICApIC0+IG5ob29kUG9wXzEwXzE3CgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDEwLCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxMCksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTEsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDExKSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFBvcCwgc291cmNlVmFsdWUgPSBwb3AxMiwgcmVzdWx0ID0gbmhvb2RQb3BfMTBfMTcsIHJlc3VsdFZhbHVlID0gcG9wMTIpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDEzLCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxMyksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTQsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDE0KSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFBvcCwgc291cmNlVmFsdWUgPSBwb3AxNSwgcmVzdWx0ID0gbmhvb2RQb3BfMTBfMTcsIHJlc3VsdFZhbHVlID0gcG9wMTUpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDE2LCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxNiksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTcsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDE3KSwgVFJVRSkKCiMgY2xlYW4gdXAgZW52aW9ybm1lbnQKcm0odHJhY3RQb3ApCmBgYAoKIyMgQ29tYmluZSBIaXN0b3JpY2FsIGFuZCBNb2Rlcm4gQ2Vuc3VzIERhdGEKTmV4dCwgd2UnbGwgY29tYmluZSB0aGUgdHdvIGRhdGEgb2JqZWN0cyB0byBjcmVhdGUgYSBzaW5nbGUgdGFibGUgb2YgY2Vuc3VzIGVzdGltYXRlczoKCmBgYHtyIGpvaW4tYWxsLWRhdGF9Cm5ob29kUG9wIDwtIGxlZnRfam9pbihuaG9vZFBvcF80MF8wMCwgbmhvb2RQb3BfMTBfMTcsIGJ5ID0gIk5IRF9OVU0iKQoKIyBjbGVhbiB1cCBlbnZpb3JubWVudApybShuaG9vZFBvcF80MF8wMCwgbmhvb2RQb3BfMTBfMTcpCmBgYAoKIyMgRXhwb3J0CkZpbmFsbHksIHdlJ2xsIHdyaXRlIHRoZSBkYXRhIHRvIGEgYC5jc3ZgIGZpbGUgZm9yIGZ1dHVyZSBhbmFseXNpcy4KCmBgYHtyfQojIHdyaXRlIG91dHB1dAp3cml0ZV9jc3Yobmhvb2RQb3AsIGhlcmUoImRhdGEiLCAiY2xlYW4iLCAiU1RMX1BvcEJ5Tmhvb2QuY3N2IikpCmBgYAo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQnVpbGQgUG9wdWxhdGlvbiBFc3RpbWF0ZSBEYXRhIgphdXRob3I6ICJDaHJpc3RvcGhlciBQcmVuZXIsIFBoLkQuIgpkYXRlOiAnKGByIGZvcm1hdChTeXMudGltZSgpLCAiJUIgJWQsICVZIilgKScKb3V0cHV0OiAKICBnaXRodWJfZG9jdW1lbnQ6IGRlZmF1bHQKICBodG1sX25vdGVib29rOiBkZWZhdWx0IAotLS0KCiMjIEludHJvZHVjdGlvbgpUaGlzIG5vdGVib29rIGNyZWF0ZXMgdGhlIHJlcXVlc3RlZCBwb3B1bGF0aW9uIGVzdGltYXRlcy4KCiMjIERlcGVuZGVuY2llcwpUaGlzIG5vdGVib29rIHJlcXVpcmVzIGEgbnVtYmVyIG9mIGRpZmZlcmVudCBgUmAgcGFja2FnZXM6CgpgYGB7ciBsb2FkLXBhY2thZ2VzfQojIHRpZHl2ZXJzZSBwYWNrYWdlcwpsaWJyYXJ5KGRwbHlyKSAgICAgICAgICMgZGF0YSB3cmFuZ2xpbmcKbGlicmFyeShyZWFkcikgICAgICAgICAjIHdvcmtpbmcgd2l0aCBjc3YgZGF0YQpsaWJyYXJ5KHN0cmluZ3IpICAgICAgICMgc3RyaW5nIHRvb2xzCgojIHNwYXRpYWwgcGFja2FnZXMKbGlicmFyeShhcmVhbCkgICAgICAgICAjIGludGVycG9sYXRpb24KbGlicmFyeShzZikgICAgICAgICAgICAjIHdvcmtpbmcgd2l0aCBzcGF0aWFsIGRhdGEKbGlicmFyeSh0aWR5Y2Vuc3VzKSAgICAjIGNlbnN1cyBhcGkgYWNjZXNzCmxpYnJhcnkodGlncmlzKSAgICAgICAgIyB0aWdlci9saW5lIGFwaSBhY2Nlc3MKCiMgb3RoZXIgcGFja2FnZXMKbGlicmFyeShoZXJlKSAgICAgICAgICAjIGZpbGUgcGF0aCBtYW5hZ2VtZW50CmxpYnJhcnkodGVzdHRoYXQpICAgICAgIyB1bml0IHRlc3RpbmcKYGBgCgpXZSBhbHNvIHVzZSBhIGZ1bmN0aW9uIGZvciB1bml0IHRlc3RpbmcgSUQgbnVtYmVyczoKCmBgYHtyIGxvYWQtZnVuY3Rpb25zfQpzb3VyY2UoaGVyZSgic291cmNlIiwgInVuaXF1ZV9pZC5SIikpCmBgYAoKIyMgQ3JlYXRlIERlbW9ncmFwaGljIERhdGEsIDE5NDAtMjAwMApUaGVzZSBkZWNlbm5pYWwgY2Vuc3VzIGRhdGEgd2VyZSBvYnRhaW5lZCBmcm9tIHR3byBzb3VyY2VzLiBUaGUgdHJhY3QtbGV2ZWwgc2hhcGVmaWxlcyB3ZXJlIG9idGFpbmVkIGZyb20gSVBVTVMnIFtOSEdJU10oaHR0cHM6Ly93d3cubmhnaXMub3JnKSBkYXRhYmFzZS4gVGhleSBjb21lIGZvciB0aGUgZW50aXJlIFUuUy4gKG9yIGFzIG11Y2ggb2YgdGhlIFUuUy4gYXMgd2FzIHRyYWN0ZWQgYXQgdGhhdCBwb2ludCAtIGZ1bGwgdHJhY3QgY292ZXJhZ2UgaXMgcmVsYXRpdmVseSByZWNlbnQpLiBUaGV5IHdlcmUgbWVyZ2VkIHdpdGggdHJhY3QtbGV2ZWwgZGF0YSBvYnRhaW5lZCBmcm9tIFtTb2NpYWwgRXhwbG9yZXJdKGh0dHA6Ly9zb2NpYWxleHBsb3Jlci5jb20pIHRoYXQgd2FzIGFscmVhZHkgY2xlYW4gYW5kIHJlYWR5IHRvIHVzZSBmb3IgZWFjaCBkZWNhZGUuCgojIyMgMTk0MApGaXJzdCwgd2UgbmVlZCB0byBsb2FkIHRoZSBzaGFwZWZpbGUgZ2VvbWV0cnk6CgpgYGB7ciBsb2FkLTE5NDAtc2hhcGVmaWxlfQpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czQwIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNDAuc2hwIiksCiAgICAgICAgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpIC0+IHN0bDQwCmBgYAoKTmV4dCwgd2UgbmVlZCB0byBsb2FkIHRoZSBjZW5zdXMgZGF0YSBhbmQgY29tYmluZSBpdCB3aXRoIHRoZSBzcGF0aWFsIGRhdGEuIFdlIG5lZWQgdG8gY3JlYXRlIHRoZSBgVFJBQ1RJRGAgdmFyaWFibGUgb3V0IG9mIGEgbGFyZ2VyIHZhcmlhYmxlIG5hbWVkIGBHZW9fTmFtZWAuIEEgdW5pdCB0ZXN0IGlzIGluY2x1ZGVkIHRvIGVuc3VyZSB0aGF0IHRoZSBgVFJBQ1RJRGAgdmFyaWFibGUgd2UgYXJlIGNyZWF0aW5nIHVuaXF1ZWx5IGlkZW50aWZpZXMgb2JzZXJ2YXRpb25zOgoKYGBge3IgYWRkLTE5NDAtcG9wfQpyZWFkX2NzdihoZXJlKCJkYXRhIiwgInRhYnVsYXIiLCAiU1RMX0RFTU9HUkFQSElDU19wb3A0MC5jc3YiKSkgJT4lCiAgc2VsZWN0KEdlb19OYW1lLCBTRV9UMDAxXzAwMSkgJT4lCiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fTmFtZSwgCiAgICAgICAgIHBvcDQwID0gU0VfVDAwMV8wMDEpICU+JQogIG11dGF0ZShUUkFDVElEID0gc3RyX3BhZChzdHJpbmcgPSBUUkFDVElELCB3aWR0aCA9IDUsIHNpZGUgPSAibGVmdCIsIHBhZCA9ICIwIikpIC0+IHBvcDQwCgojIHVuaXQgdGVzdApwb3A0MCAlPiUgdW5pcXVlX2lkKFRSQUNUSUQpIC0+IGlkVW5pcXVlCmV4cGVjdF9lcXVhbChpZFVuaXF1ZSwgVFJVRSkKCiMgam9pbiBkYXRhCnN0bDQwIDwtIGxlZnRfam9pbihzdGw0MCwgcG9wNDAsIGJ5ID0gIlRSQUNUSUQiKQpgYGAKCkZpbmFsbHksIHdlJ2xsIHVzZSBhIHRlY2huaXF1ZSBjYWxsZWQgW2FyZWFsIHdlaWdodGVkIGludGVycG9sYXRpb25dKGh0dHBzOi8vc2x1LW9wZW5naXMuZ2l0aHViLmlvL2FyZWFsL2FydGljbGVzL2FyZWFsLXdlaWdodGVkLWludGVycG9sYXRpb24uaHRtbCkgdG8gcHJvZHVjZSBlc3RpbWF0ZXMgYXQgdGhlIG5laWdoYm9yaG9vZCBsZXZlbC4gV2UnbGwgaW1wb3J0IHRoZSBuZWlnaGJvcmhvb2QgZGF0YSwgcmUtcHJvamVjdCBpdCBzbyB0aGF0IGl0IG1hdGNoZXMgdGhlIHByb2plY3Rpb24gdXNlZCBmb3IgdGhlIDE5NDAgdHJhY3QgYm91bmRhcmllcywgc3Vic2V0IGl0IHNvIHRoYXQgd2UgaGF2ZSBvbmx5IHRoZSBuZWVkZWQgY29sdW1ucyBhbmQgb25seSByZXNpZGVudGlhbCBuZWlnaGJvcmhvb2RzIChsYXJnZSBwYXJrcyByZW1vdmVkKSwgYW5kIHRoZW4gaW50ZXJwb2xhdGUgYWxsIG9mIHRoZSB0cmFjdCBkYXRhIGludG8gbmVpZ2hib3Job29kcy4KCmBgYHtyIGludGVycG9sYXRlLTE5NDB9CiMgaW50ZXJwb2xhdGUKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OQU1FLCBOSERfTlVNKSAlPiUKICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lCiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gc3RsNDAsIHNpZCA9IFRSQUNUSUQsIAogICAgICAgICAgICAgICAgIHdlaWdodCA9ICJzdW0iLCBvdXRwdXQgPSAidGliYmxlIiwgCiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gInBvcDQwIikgLT4gbmhvb2Q0MAoKIyB1bml0IHRlc3QKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBzdGw0MCwgc291cmNlVmFsdWUgPSBwb3A0MCwgcmVzdWx0ID0gbmhvb2Q0MCwgcmVzdWx0VmFsdWUgPSBwb3A0MCksIFRSVUUpCgojIGNsZWFuLXVwIGVudmlvcm5tZW50CnJtKHBvcDQwLCBzdGw0MCkKYGBgCgpGb3IgdHJhY3RzIHRoYXQgc3RyYWRkbGUgb25lIG9mIHRoZSBsYXJnZSBwYXJrcywgdGhlaXIgZW50aXJlIHBvcHVsYXRpb24gaXMgYWxsb2NhdGVkIGludG8gdGhlIGFwcHJvcHJpYXRlIGFkamFjZW50IG5laWdoYm9yaG9vZC4gV2UgY29uZmlybSB0aGF0IHRoZSBlbnRpcmUgY2l0eSdzIHBvcHVsYXRpb24gdXNpbmcgYSB1bml0IHRlc3Qgd2l0aCB0aGUgYGF3X3ZlcmlmeSgpYCBmdW5jdGlvbi4gQXMgbG9uZyBhcyBgYXdfdmVyaWZ5KClgIHJldHVybnMgYFRSVUVgLCB3ZSBrbm93IHRoYXQgZWFjaCByZXNpZGVudCBoYXMgYmVlbiBhbGxvY2F0ZWQuIFdlIHdyYXAgdGhpcyBpbiBhIHVuaXQgdGVzdCBzbyB0aGF0IHRoZSBjb2RlIGVycm9ycyBvdXQgaWYgdGhpcyBhc3N1bXB0aW9uIGlzIG5vdCBtZXQuCgojIyMgMTk1MApGb3IgdGhlIHJlbWFpbmRlciBvZiB0aGUgZGVjZW5uaWFsIGNlbnN1cyBkYXRhLCBJJ20gZ29pbmcgdG8gdXNlIHRoZSBzYW1lIHdvcmtmbG93IGJ1dCBjb25kZW5zZSB0aGUgY29kZS4KClRoZSBvbmx5IG1ham9yIGNoYW5nZSB3aXRoIHRoaXMgZGVjYWRlIGlzIHRoYXQgdGhlIHRyYWN0IElEIG51bWJlcnMgYWxyZWFkeSBoYXZlIHRoZSBhcHByb3ByaWF0ZSBudW1iZXIgb2YgbGVhZGluZyB6ZXJvcywgc28gdGhlIGNvZGUgdG8gYWRkIHRoZW0gY2FuIGJlIG9taXR0ZWQuCgpgYGB7ciBjcmVhdGUtMTk1MC1lc3RpbWF0ZXN9CiMgcmVhZCBpbiAxOTUwIGVyYSB0cmFjdCBib3VuZGFyaWVzLCByZS1wcm9qZWN0CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNTAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM1MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNTAKCiMgcmVhZCBpbiAxOTUwIGNlbnN1cyBjb3VudHMsIGNsZWFuCnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3BvcDUwLmNzdiIpKSAlPiUKICBzZWxlY3QoR2VvX05hbWUsIFNFX1QwMDFfMDAxKSAlPiUKICByZW5hbWUoVFJBQ1RJRCA9IEdlb19OYW1lLCAKICAgICAgICAgcG9wNTAgPSBTRV9UMDAxXzAwMSkgLT4gcG9wNTAKCiMgdW5pdCB0ZXN0CnBvcDUwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsNTAgPC0gbGVmdF9qb2luKHN0bDUwLCBwb3A1MCwgYnkgPSAiVFJBQ1RJRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw1MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSAicG9wNTAiKSAtPiBuaG9vZDUwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDUwLCBzb3VyY2VWYWx1ZSA9IHBvcDUwLCByZXN1bHQgPSBuaG9vZDUwLCByZXN1bHRWYWx1ZSA9IHBvcDUwKSwgVFJVRSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wNTAsIHN0bDUwKQpgYGAKCiMjIyAxOTYwCldlJ2xsIHJlcGVhdCB0aGlzIHByb2Nlc3MgZm9yIHRoZSAxOTYwcyBlcmEgZGF0YS4KCk9uZSBpc3N1ZSB3aXRoIHRoZSAxOTYwcyBkYXRhIGlzIHRoYXQgdGhlIGBUUkFDVElEYCBpbiB0aGUgMTk2MCBjZW5zdXMgZGF0YSBuZWVkcyB0byBiZSBwYXJzZWQgb3V0IG9mIGEgbGFyZ2VyIHZhcmlhYmxlIGBHZW9fRklQU2AuIFRoaXMgaXMgYWRkcmVzc2VkIGluIHRoZSBzZWNvbmQgcGlwZWxpbmUuCgpgYGB7ciBjcmVhdGUtMTk2MC1lc3RpbWF0ZXN9CiMgcmVhZCBpbiAxOTYwIGVyYSB0cmFjdCBib3VuZGFyaWVzLCByZS1wcm9qZWN0CnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIlNUTF9ERU1PR1JBUEhJQ1NfdHJhY3RzNjAiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM2MC5zaHAiKSwKICAgICAgICBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gc3RsNjAKCiMgcmVhZCBpbiAxOTYwIGNlbnN1cyBjb3VudHMsIGNsZWFuCnJlYWRfY3N2KGhlcmUoImRhdGEiLCAidGFidWxhciIsICJTVExfREVNT0dSQVBISUNTX3BvcDYwLmNzdiIpKSAlPiUKICBzZWxlY3QoR2VvX0ZJUFMsIFNFX1QwMDFfMDAxKSAlPiUKICByZW5hbWUoVFJBQ1RJRCA9IEdlb19GSVBTLCAKICAgICAgICAgcG9wNjAgPSBTRV9UMDAxXzAwMSkgJT4lCiAgbXV0YXRlKFRSQUNUSUQgPSBzdHJfc3ViKFRSQUNUSUQsIDcsIDExKSkgLT4gcG9wNjAKCiMgdW5pdCB0ZXN0CnBvcDYwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsNjAgPC0gbGVmdF9qb2luKHN0bDYwLCBwb3A2MCwgYnkgPSAiVFJBQ1RJRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw2MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSAicG9wNjAiKSAtPiBuaG9vZDYwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDYwLCBzb3VyY2VWYWx1ZSA9IHBvcDYwLCByZXN1bHQgPSBuaG9vZDYwLCByZXN1bHRWYWx1ZSA9IHBvcDYwKSwgVFJVRSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wNjAsIHN0bDYwKQpgYGAKCiMjIyAxOTcwCldlJ2xsIHJlcGVhdCB0aGlzIHByb2Nlc3MgZm9yIHRoZSAxOTcwcyBlcmEgZGF0YS4KCmBgYHtyIGNyZWF0ZS0xOTcwLWVzdGltYXRlc30KIyByZWFkIGluIDE5NzAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3QKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM3MCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czcwLnNocCIpLAogICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAtPiBzdGw3MAoKIyByZWFkIGluIDE5NzAgY2Vuc3VzIGNvdW50cywgY2xlYW4KcmVhZF9jc3YoaGVyZSgiZGF0YSIsICJ0YWJ1bGFyIiwgIlNUTF9ERU1PR1JBUEhJQ1NfcG9wNzAuY3N2IikpICU+JQogIHNlbGVjdChHZW9fVHJhY3RDb2RlLCBTRV9UMDAxXzAwMSkgJT4lCiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fVHJhY3RDb2RlLCAKICAgICAgICAgcG9wNzAgPSBTRV9UMDAxXzAwMSkgLT4gcG9wNzAKCiMgdW5pdCB0ZXN0CnBvcDcwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsNzAgPC0gbGVmdF9qb2luKHN0bDcwLCBwb3A3MCwgYnkgPSAiVFJBQ1RJRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw3MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSAicG9wNzAiKSAtPiBuaG9vZDcwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDcwLCBzb3VyY2VWYWx1ZSA9IHBvcDcwLCByZXN1bHQgPSBuaG9vZDcwLCByZXN1bHRWYWx1ZSA9IHBvcDcwKSwgVFJVRSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wNzAsIHN0bDcwKQpgYGAKCiMjIyAxOTgwCldlJ2xsIHJlcGVhdCB0aGlzIHByb2Nlc3MgZm9yIHRoZSAxOTgwcyBlcmEgZGF0YS4KCmBgYHtyIGNyZWF0ZS0xOTgwLWVzdGltYXRlc30KIyByZWFkIGluIDE5ODAgZXJhIHRyYWN0IGJvdW5kYXJpZXMsIHJlLXByb2plY3QKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAiU1RMX0RFTU9HUkFQSElDU190cmFjdHM4MCIsICJTVExfREVNT0dSQVBISUNTX3RyYWN0czgwLnNocCIpLAogICAgICAgIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAtPiBzdGw4MAoKIyByZWFkIGluIDE5ODAgY2Vuc3VzIGNvdW50cywgY2xlYW4KcmVhZF9jc3YoaGVyZSgiZGF0YSIsICJ0YWJ1bGFyIiwgIlNUTF9ERU1PR1JBUEhJQ1NfcG9wODAuY3N2IikpICU+JQogIHNlbGVjdChHZW9fVFJBQ1Q2LCBTRV9UMDAxXzAwMSkgJT4lCiAgcmVuYW1lKFRSQUNUSUQgPSBHZW9fVFJBQ1Q2LCAKICAgICAgICAgcG9wODAgPSBTRV9UMDAxXzAwMSkgLT4gcG9wODAKCiMgdW5pdCB0ZXN0CnBvcDgwICU+JSB1bmlxdWVfaWQoVFJBQ1RJRCkgLT4gaWRVbmlxdWUKZXhwZWN0X2VxdWFsKGlkVW5pcXVlLCBUUlVFKQoKIyBqb2luIGRhdGEKc3RsODAgPC0gbGVmdF9qb2luKHN0bDgwLCBwb3A4MCwgYnkgPSAiVFJBQ1RJRCIpCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBzdGw4MCwgc2lkID0gVFJBQ1RJRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSAicG9wODAiKSAtPiBuaG9vZDgwCgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHN0bDgwLCBzb3VyY2VWYWx1ZSA9IHBvcDgwLCByZXN1bHQgPSBuaG9vZDgwLCByZXN1bHRWYWx1ZSA9IHBvcDgwKSwgVFJVRSkKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wODAsIHN0bDgwKQpgYGAKCiMjIyAxOTkwClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIGRlY2VubmlhbCBjZW5zdXMuIE5vdGUgdGhhdCB0aGUgdG90YWwgcG9wdWxhdGlvbiBpbiBuZWlnaGJvcmhvb2RzIGlzIDEyIHBlb3BsZSBsZXNzIHRoYW4gdGhlIHRvdGFsIHBvcHVsYXRpb24gaW4gdHJhY3RzLCBiZWNhdXNlIENlbnN1cyBUcmFjdCAxMDE4Ljk5IGRvZXMgbm90IGhhdmUgYW55IGdlb21ldHJ5LgoKYGBge3IgY3JlYXRlLTE5OTAtZXN0aW1hdGVzfQojIHJlYWQgaW4gMTk5MCBjZW5zdXMgY291bnRzLCBjbGVhbgpnZXRfZGVjZW5uaWFsKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHZhcmlhYmxlID0gIlAwMDEwMDAxIiwgeWVhciA9IDE5OTAsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCwgZ2VvbWV0cnkgPSBUUlVFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChHRU9JRCwgdmFsdWUpICU+JQogIHJlbmFtZShwb3A5MCA9IHZhbHVlKSAtPiBwb3A5MAoKIyBpbnRlcnBvbGF0ZSB0byBuZWlnaGJvcmhvb2RzCnN0X3JlYWQoaGVyZSgiZGF0YSIsICJzcGF0aWFsIiwgIm5ob29kIiwgIkJORF9OaGQ4OF9jdy5zaHAiKSwgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKSAlPiUKICBzdF90cmFuc2Zvcm0oY3JzID0gMjY5MTUpICU+JQogIHNlbGVjdChOSERfTlVNKSAlPiUKICBmaWx0ZXIoTkhEX05VTSA8PSA3OSkgJT4lCiAgYXdfaW50ZXJwb2xhdGUodGlkID0gTkhEX05VTSwgc291cmNlID0gcG9wOTAsIHNpZCA9IEdFT0lELCAKICAgICAgICAgICAgICAgICB3ZWlnaHQgPSAic3VtIiwgb3V0cHV0ID0gInRpYmJsZSIsIAogICAgICAgICAgICAgICAgIGV4dGVuc2l2ZSA9ICJwb3A5MCIpIC0+IG5ob29kOTAKCiMgdW5pdCB0ZXN0CmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gcG9wOTAsIHNvdXJjZVZhbHVlID0gcG9wOTAsIHJlc3VsdCA9IG5ob29kOTAsIHJlc3VsdFZhbHVlID0gcG9wOTApLCBGQUxTRSkKZXhwZWN0X2VxdWFsKHN1bShuaG9vZDkwJHBvcDkwKSwgc3VtKHBvcDkwJHBvcDkwKS0xMikKCiMgY2xlYW4tdXAgZW52aW9ybm1lbnQKcm0ocG9wOTApCmBgYAoKIyMjIDIwMDAKV2UnbGwgcmVwZWF0IHRoaXMgcHJvY2VzcyBmb3IgdGhlIDIwMDBzIGVyYSBkYXRhLgoKYGBge3IgY3JlYXRlLTIwMDAtZXN0aW1hdGVzfQojIHJlYWQgaW4gMjAwMCBjZW5zdXMgY291bnRzLCBjbGVhbgpnZXRfZGVjZW5uaWFsKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHZhcmlhYmxlID0gIlAwMDEwMDEiLCB5ZWFyID0gMjAwMCwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwLCBnZW9tZXRyeSA9IFRSVUUpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KEdFT0lELCB2YWx1ZSkgJT4lCiAgcmVuYW1lKHBvcDAwID0gdmFsdWUpIC0+IHBvcDAwCgojIGludGVycG9sYXRlIHRvIG5laWdoYm9yaG9vZHMKc3RfcmVhZChoZXJlKCJkYXRhIiwgInNwYXRpYWwiLCAibmhvb2QiLCAiQk5EX05oZDg4X2N3LnNocCIpLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgJT4lCiAgc2VsZWN0KE5IRF9OVU0pICU+JQogIGZpbHRlcihOSERfTlVNIDw9IDc5KSAlPiUKICBhd19pbnRlcnBvbGF0ZSh0aWQgPSBOSERfTlVNLCBzb3VyY2UgPSBwb3AwMCwgc2lkID0gR0VPSUQsIAogICAgICAgICAgICAgICAgIHdlaWdodCA9ICJzdW0iLCBvdXRwdXQgPSAidGliYmxlIiwgCiAgICAgICAgICAgICAgICAgZXh0ZW5zaXZlID0gInBvcDAwIikgLT4gbmhvb2QwMAoKIyB1bml0IHRlc3QKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSBwb3AwMCwgc291cmNlVmFsdWUgPSBwb3AwMCwgcmVzdWx0ID0gbmhvb2QwMCwgcmVzdWx0VmFsdWUgPSBwb3AwMCksIFRSVUUpCgojIGNsZWFuLXVwIGVudmlvcm5tZW50CnJtKHBvcDAwKQpgYGAKCiMjIyBDb21iaW5lIDE5NDBzLTIwMDBzIERhdGEKTmV4dCwgd2UnbGwgam9pbiBhbGwgb2YgdGhlIG5laWdoYm9yaG9vZCBlc3RpbWF0ZXMgd2UndmUgY3JlYXRlZCBzbyBmYXIgdG9nZXRoZXIgaW50byBhIHNpbmdsZSBvYmplY3Q6CgpgYGB7ciBqb2luLTE5NDAtMjAwMH0KbGVmdF9qb2luKG5ob29kNDAsIG5ob29kNTAsIGJ5ID0gIk5IRF9OVU0iKSAlPiUKICBsZWZ0X2pvaW4oLiwgbmhvb2Q2MCwgYnkgPSAiTkhEX05VTSIpICU+JQogIGxlZnRfam9pbiguLCBuaG9vZDcwLCBieSA9ICJOSERfTlVNIikgJT4lCiAgbGVmdF9qb2luKC4sIG5ob29kODAsIGJ5ID0gIk5IRF9OVU0iKSAlPiUKICBsZWZ0X2pvaW4oLiwgbmhvb2Q5MCwgYnkgPSAiTkhEX05VTSIpICU+JQogIGxlZnRfam9pbiguLCBuaG9vZDAwLCBieSA9ICJOSERfTlVNIikgLT4gbmhvb2RQb3BfNDBfMDAKCiMgY2xlYW4gdXAgZW52aW9ybm1lbnQKcm0obmhvb2Q0MCwgbmhvb2Q1MCwgbmhvb2Q2MCwgbmhvb2Q3MCwgbmhvb2Q4MCwgbmhvb2Q5MCwgbmhvb2QwMCwgaWRVbmlxdWUsIHVuaXF1ZV9pZCkKYGBgCgojIyBEb3dubG9hZCBEZW1vZ3JhcGhpYyBEYXRhLCAyMDEwLTIwMTcKQWxsIGRhdGEgZm9yIHRoaXMgZXJhIGFyZSBkb3dubG9hZGVkIGZyb20gdGhlIENlbnN1cyBCdXJlYXUncyBBUEkgdmlhIGB0aWR5Y2Vuc3VzYC4gCgojIyMgMjAxMApUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSBkZWNlbm5pYWwgY2Vuc3VzLgoKYGBge3IgZG93bmxvYWQtMjAxMCwgcmVzdWx0cz0naGlkZSd9CmdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgdmFyaWFibGVzID0gIlAwMDEwMDEiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTAsIGdlb21ldHJ5ID0gVFJVRSkgJT4lIAogIHNlbGVjdChHRU9JRCwgTkFNRSwgdmFsdWUpICU+JQogIHJlbmFtZShwb3AxMCA9IHZhbHVlKSAtPiBzdGwxMApgYGAKCiMjIyAyMDExClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIDIwMDctMjAxMSA1LXllYXIgQW1lcmljYW4gQ29tbXVuaXR5IFN1cnZleSBlc3RpbWF0ZXMuCgpgYGB7ciBkb3dubG9hZC0yMDExfQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDExLCB2YXJpYWJsZXMgPSAiQjAxMDAzXzAwMSIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUocG9wMTEgPSBlc3RpbWF0ZSwKICAgICAgICAgcG9wMTFfbSA9IG1vZSkgLT4gc3RsMTEKYGBgCgojIyMgMjAxMgpUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSAyMDA4LTIwMTIgNS15ZWFyIEFtZXJpY2FuIENvbW11bml0eSBTdXJ2ZXkgZXN0aW1hdGVzLgoKYGBge3IgZG93bmxvYWQtMjAxMn0KZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxMiwgdmFyaWFibGVzID0gIkIwMTAwM18wMDEiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKHBvcDEyID0gZXN0aW1hdGUsCiAgICAgICAgIHBvcDEyX20gPSBtb2UpIC0+IHN0bDEyCmBgYAoKIyMjIDIwMTMKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgMjAwOS0yMDEzIDUteWVhciBBbWVyaWNhbiBDb21tdW5pdHkgU3VydmV5IGVzdGltYXRlcy4KCmBgYHtyIGRvd25sb2FkLTIwMTN9CmdldF9hY3MoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgeWVhciA9IDIwMTMsIHZhcmlhYmxlcyA9ICJCMDEwMDNfMDAxIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiUKICBzZWxlY3QoR0VPSUQsIGVzdGltYXRlLCBtb2UpICU+JQogIHJlbmFtZShwb3AxMyA9IGVzdGltYXRlLAogICAgICAgICBwb3AxM19tID0gbW9lKSAtPiBzdGwxMwpgYGAKCiMjIyAyMDE0ClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIDIwMTAtMjAxNCA1LXllYXIgQW1lcmljYW4gQ29tbXVuaXR5IFN1cnZleSBlc3RpbWF0ZXMuCgpgYGB7ciBkb3dubG9hZC0yMDE0fQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDE0LCB2YXJpYWJsZXMgPSAiQjAxMDAzXzAwMSIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUocG9wMTQgPSBlc3RpbWF0ZSwKICAgICAgICAgcG9wMTRfbSA9IG1vZSkgLT4gc3RsMTQKYGBgCgojIyMgMjAxNQpUaGVzZSBkYXRhIGFyZSBmcm9tIHRoZSAyMDExLTIwMTUgNS15ZWFyIEFtZXJpY2FuIENvbW11bml0eSBTdXJ2ZXkgZXN0aW1hdGVzLgoKYGBge3IgZG93bmxvYWQtMjAxNX0KZ2V0X2FjcyhnZW9ncmFwaHkgPSAidHJhY3QiLCB5ZWFyID0gMjAxNSwgdmFyaWFibGVzID0gIkIwMTAwM18wMDEiLCBzdGF0ZSA9IDI5LCBjb3VudHkgPSA1MTApICU+JQogIHNlbGVjdChHRU9JRCwgZXN0aW1hdGUsIG1vZSkgJT4lCiAgcmVuYW1lKHBvcDE1ID0gZXN0aW1hdGUsCiAgICAgICAgIHBvcDE1X20gPSBtb2UpIC0+IHN0bDE1CmBgYAoKIyMjIDIwMTYKVGhlc2UgZGF0YSBhcmUgZnJvbSB0aGUgMjAxMi0yMDE2IDUteWVhciBBbWVyaWNhbiBDb21tdW5pdHkgU3VydmV5IGVzdGltYXRlcy4KCmBgYHtyIGRvd25sb2FkLTIwMTZ9CmdldF9hY3MoZ2VvZ3JhcGh5ID0gInRyYWN0IiwgeWVhciA9IDIwMTYsIHZhcmlhYmxlcyA9ICJCMDEwMDNfMDAxIiwgc3RhdGUgPSAyOSwgY291bnR5ID0gNTEwKSAlPiUKICBzZWxlY3QoR0VPSUQsIGVzdGltYXRlLCBtb2UpICU+JQogIHJlbmFtZShwb3AxNiA9IGVzdGltYXRlLAogICAgICAgICBwb3AxNl9tID0gbW9lKSAtPiBzdGwxNgpgYGAKCiMjIyAyMDE3ClRoZXNlIGRhdGEgYXJlIGZyb20gdGhlIDIwMTMtMjAxNyA1LXllYXIgQW1lcmljYW4gQ29tbXVuaXR5IFN1cnZleSBlc3RpbWF0ZXMuCgpgYGB7ciBkb3dubG9hZC0yMDE3fQpnZXRfYWNzKGdlb2dyYXBoeSA9ICJ0cmFjdCIsIHllYXIgPSAyMDE3LCB2YXJpYWJsZXMgPSAiQjAxMDAzXzAwMSIsIHN0YXRlID0gMjksIGNvdW50eSA9IDUxMCkgJT4lCiAgc2VsZWN0KEdFT0lELCBlc3RpbWF0ZSwgbW9lKSAlPiUKICByZW5hbWUocG9wMTcgPSBlc3RpbWF0ZSwKICAgICAgICAgcG9wMTdfbSA9IG1vZSkgLT4gc3RsMTcKYGBgCgojIyMgQ29tYmluZSBEYXRhCldlIGhhdmUgdGhlc2UgZGF0YSBpbiBhIG51bWJlciBvZiBkaWZmZXJlbnQgdGFibGVzLCBzbyB0aGUgbmV4dCBzdGVwIGlzIHRvIGpvaW4gdGhlbSB0b2dldGhlciBieSBgR0VPSURgLgoKYGBge3IgY29tYmluZS1kYXRhfQpsZWZ0X2pvaW4oc3RsMTAsIHN0bDExLCBieSA9ICJHRU9JRCIpICU+JQogIGxlZnRfam9pbiguLCBzdGwxMiwgYnkgPSAiR0VPSUQiKSAlPiUKICBsZWZ0X2pvaW4oLiwgc3RsMTMsIGJ5ID0gIkdFT0lEIikgJT4lCiAgbGVmdF9qb2luKC4sIHN0bDE0LCBieSA9ICJHRU9JRCIpICU+JQogIGxlZnRfam9pbiguLCBzdGwxNSwgYnkgPSAiR0VPSUQiKSAlPiUKICBsZWZ0X2pvaW4oLiwgc3RsMTYsIGJ5ID0gIkdFT0lEIikgJT4lCiAgbGVmdF9qb2luKC4sIHN0bDE3LCBieSA9ICJHRU9JRCIpICU+JQogIHN0X3RyYW5zZm9ybShjcnMgPSAyNjkxNSkgLT4gdHJhY3RQb3AKCiMgY2xlYW4gdXAgZW52aW9ybm1lbnQKcm0oc3RsMTAsIHN0bDExLCBzdGwxMiwgc3RsMTMsIHN0bDE0LCBzdGwxNSwgc3RsMTYsIHN0bDE3KQpgYGAKCiMjIyBJbnRlcnBvbGF0ZSBOZWlnaGJvcmhvb2QgRGF0YQpOZXh0LCB3ZSdsbCB1c2UgdGhlIHNhbWUgZXN0aW1hdGlvbiBwcm9jZXNzIHdlIHVzZWQgYmVmb3JlIG9uIHRoZSAyMDEwLTIwMTcgZGF0YToKCmBgYHtyIGludGVycG9sYXRlfQojIHJlYWQgbmVpZ2hib3Job29kIGRhdGEsIHJlLXByb2plY3QsIGFuZCBpbnRlcnBvbGF0ZQpzdF9yZWFkKGhlcmUoImRhdGEiLCAic3BhdGlhbCIsICJuaG9vZCIsICJCTkRfTmhkODhfY3cuc2hwIiksIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkgJT4lCiAgc3RfdHJhbnNmb3JtKGNycyA9IDI2OTE1KSAlPiUKICBzZWxlY3QoTkhEX05VTSkgJT4lCiAgZmlsdGVyKE5IRF9OVU0gPD0gNzkpICU+JQogIGF3X2ludGVycG9sYXRlKHRpZCA9IE5IRF9OVU0sIHNvdXJjZSA9IHRyYWN0UG9wLCBzaWQgPSBHRU9JRCwgCiAgICAgICAgICAgICAgICAgd2VpZ2h0ID0gInN1bSIsIG91dHB1dCA9ICJ0aWJibGUiLCAKICAgICAgICAgICAgICAgICBleHRlbnNpdmUgPSBjKCJwb3AxMCIsICJwb3AxMSIsICJwb3AxMV9tIiwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAicG9wMTIiLCAicG9wMTJfbSIsICJwb3AxMyIsICJwb3AxM19tIiwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAicG9wMTQiLCAicG9wMTRfbSIsICJwb3AxNSIsICJwb3AxNV9tIiwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAicG9wMTYiLCAicG9wMTZfbSIsICJwb3AxNyIsICJwb3AxN19tIikKICAgICAgICAgICAgICAgICApIC0+IG5ob29kUG9wXzEwXzE3CgojIHVuaXQgdGVzdApleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDEwLCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxMCksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTEsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDExKSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFBvcCwgc291cmNlVmFsdWUgPSBwb3AxMiwgcmVzdWx0ID0gbmhvb2RQb3BfMTBfMTcsIHJlc3VsdFZhbHVlID0gcG9wMTIpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDEzLCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxMyksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTQsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDE0KSwgVFJVRSkKZXhwZWN0X2VxdWFsKGF3X3ZlcmlmeShzb3VyY2UgPSB0cmFjdFBvcCwgc291cmNlVmFsdWUgPSBwb3AxNSwgcmVzdWx0ID0gbmhvb2RQb3BfMTBfMTcsIHJlc3VsdFZhbHVlID0gcG9wMTUpLCBUUlVFKQpleHBlY3RfZXF1YWwoYXdfdmVyaWZ5KHNvdXJjZSA9IHRyYWN0UG9wLCBzb3VyY2VWYWx1ZSA9IHBvcDE2LCByZXN1bHQgPSBuaG9vZFBvcF8xMF8xNywgcmVzdWx0VmFsdWUgPSBwb3AxNiksIFRSVUUpCmV4cGVjdF9lcXVhbChhd192ZXJpZnkoc291cmNlID0gdHJhY3RQb3AsIHNvdXJjZVZhbHVlID0gcG9wMTcsIHJlc3VsdCA9IG5ob29kUG9wXzEwXzE3LCByZXN1bHRWYWx1ZSA9IHBvcDE3KSwgVFJVRSkKCiMgY2xlYW4gdXAgZW52aW9ybm1lbnQKcm0odHJhY3RQb3ApCmBgYAoKIyMgQ29tYmluZSBIaXN0b3JpY2FsIGFuZCBNb2Rlcm4gQ2Vuc3VzIERhdGEKTmV4dCwgd2UnbGwgY29tYmluZSB0aGUgdHdvIGRhdGEgb2JqZWN0cyB0byBjcmVhdGUgYSBzaW5nbGUgdGFibGUgb2YgY2Vuc3VzIGVzdGltYXRlczoKCmBgYHtyIGpvaW4tYWxsLWRhdGF9Cm5ob29kUG9wIDwtIGxlZnRfam9pbihuaG9vZFBvcF80MF8wMCwgbmhvb2RQb3BfMTBfMTcsIGJ5ID0gIk5IRF9OVU0iKQoKIyBjbGVhbiB1cCBlbnZpb3JubWVudApybShuaG9vZFBvcF80MF8wMCwgbmhvb2RQb3BfMTBfMTcpCmBgYAoKIyMgRXhwb3J0CkZpbmFsbHksIHdlJ2xsIHdyaXRlIHRoZSBkYXRhIHRvIGEgYC5jc3ZgIGZpbGUgZm9yIGZ1dHVyZSBhbmFseXNpcy4KCmBgYHtyfQojIHdyaXRlIG91dHB1dAp3cml0ZV9jc3Yobmhvb2RQb3AsIGhlcmUoImRhdGEiLCAiY2xlYW4iLCAiU1RMX1BvcEJ5Tmhvb2QuY3N2IikpCmBgYAo=</div>
 
 
 

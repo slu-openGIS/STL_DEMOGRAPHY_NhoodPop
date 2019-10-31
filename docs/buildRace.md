@@ -1,7 +1,7 @@
 Build Race Data
 ================
 Christopher Prener, Ph.D.
-(September 06, 2019)
+(October 31, 2019)
 
 ## Introduction
 
@@ -59,7 +59,7 @@ library(tigris)        # tiger/line api access
 library(here)          # file path management
 ```
 
-    ## here() starts at /Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop
+    ## here() starts at /Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop
 
 ``` r
 library(testthat)      # unit testing
@@ -90,7 +90,8 @@ and ready to use for each decade.
 
 ### 1940
 
-First, we need to load the shapefile geometry:
+First, we need to load the shapefile
+geometry:
 
 ``` r
 st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_tracts40.shp"),
@@ -98,7 +99,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl40
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts40' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts40' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 128 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -154,7 +155,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "nonwhite")) -> nhood40
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -193,7 +194,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts50", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl50
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts50' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts50' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 128 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -236,7 +237,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "black")) -> nhood50
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -267,7 +268,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts60", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl60
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts60' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts60' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 128 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -310,7 +311,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "black")) -> nhood60
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -342,7 +343,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts70", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl70
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts70' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts70' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 126 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -385,7 +386,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "black")) -> nhood70
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -416,7 +417,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts80", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl80
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts80' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts80' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 113 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -459,7 +460,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = c("white", "black")) -> nhood80
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -902,7 +903,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  ) -> nhoodRace_10_17
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/chris-prener/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY

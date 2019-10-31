@@ -1,6 +1,6 @@
- ---
-title: "Population Research Data"
-author: "Carter Hanford"
+---
+title: "Build Population Estimate Data"
+author: "Christopher Prener, Ph.D."
 date: '(`r format(Sys.time(), "%B %d, %Y")`)'
 output: 
   github_document: default
@@ -8,234 +8,453 @@ output:
 ---
 
 ## Introduction
-This R notebook is for looking at decennial census population data from 1940-1980 for a research project on redlining in the city of St. Louis.
+This notebook creates the requested population estimates.
 
 ## Dependencies
-This notebook requires the following packages:
+This notebook requires a number of different `R` packages:
 
-```{r packages, message=FALSE, warning=FALSE}
-library(here)       # directory
-library(readr)      # read .csv files
-library(dplyr)      # data manipulation
-library(tidyverse)  # data cleaning 
-library(knitr)      # knit to documents
-library(ggplot2)    # data plotting
+```{r load-packages}
+# tidyverse packages
+library(dplyr)         # data wrangling
+library(readr)         # working with csv data
+library(stringr)       # string tools
+
+# spatial packages
+library(areal)         # interpolation
+library(sf)            # working with spatial data
+library(tidycensus)    # census api access
+library(tigris)        # tiger/line api access
+
+# other packages
+library(here)          # file path management
+library(testthat)      # unit testing
 ```
 
-## Load Data
-The following code chunk will load each decennial census data year into our global environment.
+We also use a function for unit testing ID numbers:
 
-```{r data-load}
-pop1940 <- read.csv(here("data", "raw", "pop1940.csv"))
-pop1950 <- read.csv(here("data", "raw", "pop1950.csv"))
-pop1960 <- read.csv(here("data", "raw", "pop1960.csv"))
-pop1970 <- read.csv(here("data", "raw", "pop1970.csv"))
-pop1980 <- read.csv(here("data", "raw", "pop1980.csv"))
+```{r load-functions}
+source(here("source", "unique_id.R"))
 ```
 
-## Select Census Tracts
-For this project we only want the St. Louis City and St. Louis County census tracts, so we will need to filter the data by state and by census tract so that we only have Missouri, and the correct tracts.
+## Create Demographic Data, 1940-2000
+These decennial census data were obtained from two sources. The tract-level shapefiles were obtained from IPUMS' [NHGIS](https://www.nhgis.org) database. They come for the entire U.S. (or as much of the U.S. as was tracted at that point - full tract coverage is relatively recent). They were merged with tract-level data obtained from [Social Explorer](http://socialexplorer.com) that was already clean and ready to use for each decade.
 
 ### 1940
-We will start with the year 1940.
+First, we need to load the shapefile geometry:
 
-```{r filter-state-1940}
-pop1940 %>%
-  filter(STATE == "Missouri") -> pop1940
+```{r load-1940-shapefile}
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_tracts40.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl40
 ```
 
-Now we will filter so we only have the correct census tracts.
+Next, we need to load the census data and combine it with the spatial data. We need to create the `TRACTID` variable out of a larger variable named `Geo_Name`. A unit test is included to ensure that the `TRACTID` variable we are creating uniquely identifies observations:
 
-```{r filter-tracts-1940}
-pop1940 %>%
-  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1940
+```{r add-1940-pop}
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop40.csv")) %>%
+  select(Geo_Name, SE_T001_001) %>%
+  rename(TRACTID = Geo_Name, 
+         pop40 = SE_T001_001) %>%
+  mutate(TRACTID = str_pad(string = TRACTID, width = 5, side = "left", pad = "0")) -> pop40
+
+# unit test
+pop40 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl40 <- left_join(stl40, pop40, by = "TRACTID")
 ```
 
-Now 'pop1940' is properly filtered.
+Finally, we'll use a technique called [areal weighted interpolation](https://slu-opengis.github.io/areal/articles/areal-weighted-interpolation.html) to produce estimates at the neighborhood level. We'll import the neighborhood data, re-project it so that it matches the projection used for the 1940 tract boundaries, subset it so that we have only the needed columns and only residential neighborhoods (large parks removed), and then interpolate all of the tract data into neighborhoods.
 
-Since i'll be repeating the same code in the following lines, I won't add narration.
+```{r interpolate-1940}
+# interpolate
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NAME, NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = stl40, sid = TRACTID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = "pop40") -> nhood40
+
+# unit test
+expect_equal(aw_verify(source = stl40, sourceValue = pop40, result = nhood40, resultValue = pop40), TRUE)
+
+# clean-up enviornment
+rm(pop40, stl40)
+```
+
+For tracts that straddle one of the large parks, their entire population is allocated into the appropriate adjacent neighborhood. We confirm that the entire city's population using a unit test with the `aw_verify()` function. As long as `aw_verify()` returns `TRUE`, we know that each resident has been allocated. We wrap this in a unit test so that the code errors out if this assumption is not met.
 
 ### 1950
+For the remainder of the decennial census data, I'm going to use the same workflow but condense the code.
 
-```{r filter-state-1950}
-pop1950 %>%
-  filter(STATE == "Missouri") -> pop1950
-```
+The only major change with this decade is that the tract ID numbers already have the appropriate number of leading zeros, so the code to add them can be omitted.
 
-```{r filter-tracts-1950}
-pop1950 %>%
-  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1950
+```{r create-1950-estimates}
+# read in 1950 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts50", "STL_DEMOGRAPHICS_tracts50.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl50
+
+# read in 1950 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop50.csv")) %>%
+  select(Geo_Name, SE_T001_001) %>%
+  rename(TRACTID = Geo_Name, 
+         pop50 = SE_T001_001) -> pop50
+
+# unit test
+pop50 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl50 <- left_join(stl50, pop50, by = "TRACTID")
+
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = stl50, sid = TRACTID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = "pop50") -> nhood50
+
+# unit test
+expect_equal(aw_verify(source = stl50, sourceValue = pop50, result = nhood50, resultValue = pop50), TRUE)
+
+# clean-up enviornment
+rm(pop50, stl50)
 ```
 
 ### 1960
+We'll repeat this process for the 1960s era data.
 
-```{r filter-state-1960}
-pop1960 %>%
-  filter(STATE == "Missouri") -> pop1960
-```
+One issue with the 1960s data is that the `TRACTID` in the 1960 census data needs to be parsed out of a larger variable `Geo_FIPS`. This is addressed in the second pipeline.
 
-```{r filter-tracts-1960}
-pop1960 %>%
-  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1960
+```{r create-1960-estimates}
+# read in 1960 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts60", "STL_DEMOGRAPHICS_tracts60.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl60
+
+# read in 1960 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop60.csv")) %>%
+  select(Geo_FIPS, SE_T001_001) %>%
+  rename(TRACTID = Geo_FIPS, 
+         pop60 = SE_T001_001) %>%
+  mutate(TRACTID = str_sub(TRACTID, 7, 11)) -> pop60
+
+# unit test
+pop60 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl60 <- left_join(stl60, pop60, by = "TRACTID")
+
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = stl60, sid = TRACTID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = "pop60") -> nhood60
+
+# unit test
+expect_equal(aw_verify(source = stl60, sourceValue = pop60, result = nhood60, resultValue = pop60), TRUE)
+
+# clean-up enviornment
+rm(pop60, stl60)
 ```
 
 ### 1970
+We'll repeat this process for the 1970s era data.
 
-```{r filter-state-1970}
-pop1970 %>%
-  filter(STATE == "Missouri") -> pop1970
-```
+```{r create-1970-estimates}
+# read in 1970 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts70", "STL_DEMOGRAPHICS_tracts70.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl70
 
-```{r filter-tracts-1970}
-pop1970 %>%
-  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1970
+# read in 1970 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop70.csv")) %>%
+  select(Geo_TractCode, SE_T001_001) %>%
+  rename(TRACTID = Geo_TractCode, 
+         pop70 = SE_T001_001) -> pop70
+
+# unit test
+pop70 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl70 <- left_join(stl70, pop70, by = "TRACTID")
+
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = stl70, sid = TRACTID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = "pop70") -> nhood70
+
+# unit test
+expect_equal(aw_verify(source = stl70, sourceValue = pop70, result = nhood70, resultValue = pop70), TRUE)
+
+# clean-up enviornment
+rm(pop70, stl70)
 ```
 
 ### 1980
+We'll repeat this process for the 1980s era data.
 
-```{r filter-state-1980}
-pop1980 %>%
-  filter(STATE == "Missouri") -> pop1980
+```{r create-1980-estimates}
+# read in 1980 era tract boundaries, re-project
+st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts80", "STL_DEMOGRAPHICS_tracts80.shp"),
+        stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) -> stl80
+
+# read in 1980 census counts, clean
+read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop80.csv")) %>%
+  select(Geo_TRACT6, SE_T001_001) %>%
+  rename(TRACTID = Geo_TRACT6, 
+         pop80 = SE_T001_001) -> pop80
+
+# unit test
+pop80 %>% unique_id(TRACTID) -> idUnique
+expect_equal(idUnique, TRUE)
+
+# join data
+stl80 <- left_join(stl80, pop80, by = "TRACTID")
+
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = stl80, sid = TRACTID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = "pop80") -> nhood80
+
+# unit test
+expect_equal(aw_verify(source = stl80, sourceValue = pop80, result = nhood80, resultValue = pop80), TRUE)
+
+# clean-up enviornment
+rm(pop80, stl80)
 ```
 
-```{r filter-tracts-1980}
-pop1980 %>%
-  filter(COUNTY == "St Louis City" | COUNTY == "St Louis") -> pop1980
+### 1990
+These data are from the decennial census. Note that the total population in neighborhoods is 12 people less than the total population in tracts, because Census Tract 1018.99 does not have any geometry.
+
+```{r create-1990-estimates}
+# read in 1990 census counts, clean
+get_decennial(geography = "tract", variable = "P0010001", year = 1990, state = 29, county = 510, geometry = TRUE) %>%
+  st_transform(crs = 26915) %>%
+  select(GEOID, value) %>%
+  rename(pop90 = value) -> pop90
+
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = pop90, sid = GEOID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = "pop90") -> nhood90
+
+# unit test
+expect_equal(aw_verify(source = pop90, sourceValue = pop90, result = nhood90, resultValue = pop90), FALSE)
+expect_equal(sum(nhood90$pop90), sum(pop90$pop90)-12)
+
+# clean-up enviornment
+rm(pop90)
 ```
 
-## Select/Rename Variables
-It is unclear by the current distinction which variables represent `Population`, but for example we know `BUB001` represents population count in the `race1940` data set. I will know change the variable names for each data set, starting with 1940, to represent the correct population variables we are looking for. The code gets repetive for this section as well, so I will leave out narrative in between sections.
+### 2000
+We'll repeat this process for the 2000s era data.
 
-```{r rename1940}
-pop1940 %>%
-  rename(pop40 = BUB001) -> pop1940
+```{r create-2000-estimates}
+# read in 2000 census counts, clean
+get_decennial(geography = "tract", variable = "P001001", year = 2000, state = 29, county = 510, geometry = TRUE) %>%
+  st_transform(crs = 26915) %>%
+  select(GEOID, value) %>%
+  rename(pop00 = value) -> pop00
+
+# interpolate to neighborhoods
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = pop00, sid = GEOID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = "pop00") -> nhood00
+
+# unit test
+expect_equal(aw_verify(source = pop00, sourceValue = pop00, result = nhood00, resultValue = pop00), TRUE)
+
+# clean-up enviornment
+rm(pop00)
 ```
 
-```{r rename1950}
-pop1950 %>%
-  rename(pop50 = BZ8001) -> pop1950
+### Combine 1940s-2000s Data
+Next, we'll join all of the neighborhood estimates we've created so far together into a single object:
+
+```{r join-1940-2000}
+left_join(nhood40, nhood50, by = "NHD_NUM") %>%
+  left_join(., nhood60, by = "NHD_NUM") %>%
+  left_join(., nhood70, by = "NHD_NUM") %>%
+  left_join(., nhood80, by = "NHD_NUM") %>%
+  left_join(., nhood90, by = "NHD_NUM") %>%
+  left_join(., nhood00, by = "NHD_NUM") -> nhoodPop_40_00
+
+# clean up enviornment
+rm(nhood40, nhood50, nhood60, nhood70, nhood80, nhood90, nhood00, idUnique, unique_id)
 ```
 
-```{r rename1960}
-pop1960 %>%
-  rename(pop60 = CA4001) -> pop1960
+## Download Demographic Data, 2010-2017
+All data for this era are downloaded from the Census Bureau's API via `tidycensus`. 
+
+### 2010
+These data are from the decennial census.
+
+```{r download-2010, results='hide'}
+get_decennial(geography = "tract", variables = "P001001", state = 29, county = 510, geometry = TRUE) %>% 
+  select(GEOID, NAME, value) %>%
+  rename(pop10 = value) -> stl10
 ```
 
-```{r rename1970}
-pop1970 %>%
-  rename(pop70 = C1I001) -> pop1970
+### 2011
+These data are from the 2007-2011 5-year American Community Survey estimates.
+
+```{r download-2011}
+get_acs(geography = "tract", year = 2011, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop11 = estimate,
+         pop11_m = moe) -> stl11
 ```
 
-```{r rename1980}
-pop1980 %>%
-  rename(pop80 = C6W001) -> pop1980
+### 2012
+These data are from the 2008-2012 5-year American Community Survey estimates.
+
+```{r download-2012}
+get_acs(geography = "tract", year = 2012, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop12 = estimate,
+         pop12_m = moe) -> stl12
 ```
 
-Now that I have the population variables characterized intuitively, we can clean up the data sets by removing unnecessary variables.  The only variables we want to keep are: `YEAR`, `COUNTYA`, `TRACTA`, `POSTTRACTA`, and the population variables.
+### 2013
+These data are from the 2009-2013 5-year American Community Survey estimates.
 
-Similar to above, the code gets repetive so I'll refrain from narrative after the first section.
-
-```{r select1940}
-pop1940 %>%
-  select(-STATE, -COUNTY, -STATEA, -PRETRACTA, -AREANAME, -GISJOIN) -> pop1940
+```{r download-2013}
+get_acs(geography = "tract", year = 2013, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop13 = estimate,
+         pop13_m = moe) -> stl13
 ```
 
-```{r select1950}
-pop1950 %>%
-  select(-STATE, -COUNTY, -STATEA, -PRETRACTA, -AREANAME, -GISJOIN) -> pop1950
+### 2014
+These data are from the 2010-2014 5-year American Community Survey estimates.
+
+```{r download-2014}
+get_acs(geography = "tract", year = 2014, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop14 = estimate,
+         pop14_m = moe) -> stl14
 ```
 
-```{r select1960}
-pop1960 %>%
-  select(-STATE, -COUNTY, -STATEA, -PRETRACTA, -AREANAME, -GISJOIN) -> pop1960
+### 2015
+These data are from the 2011-2015 5-year American Community Survey estimates.
+
+```{r download-2015}
+get_acs(geography = "tract", year = 2015, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop15 = estimate,
+         pop15_m = moe) -> stl15
 ```
 
-```{r select1970}
-pop1970 %>%
-  select(-STATE, -COUNTY, -STATEA, -CTY_SUBA, -PLACEA, -SCSAA, -SMSAA, -URB_AREAA, -BLOCKA, -CDA, -GISJOIN, -AREANAME) -> pop1970
+### 2016
+These data are from the 2012-2016 5-year American Community Survey estimates.
+
+```{r download-2016}
+get_acs(geography = "tract", year = 2016, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop16 = estimate,
+         pop16_m = moe) -> stl16
 ```
 
-```{r select1980}
-pop1980 %>%
-  select(-STATE, -COUNTY, -STATEA, -CTY_SUBA, -PLACEA, -ELECPRCTA, -BLOCKA, -BLCK_GRPA, -ENUMDISTA, -GISJOIN, -AREANAME) -> pop1980
+### 2017
+These data are from the 2013-2017 5-year American Community Survey estimates.
+
+```{r download-2017}
+get_acs(geography = "tract", year = 2017, variables = "B01003_001", state = 29, county = 510) %>%
+  select(GEOID, estimate, moe) %>%
+  rename(pop17 = estimate,
+         pop17_m = moe) -> stl17
 ```
 
-## Join Variables
-Now we want to join `TRACTA` and `POSTTRCTA` together into one single variable. We can do this for the years 1940, 1950, and 1960, however 1970 does not have a `POSTTRACTA`. For this reason, I've left the tract information the data set and will not be joining any variables.
+### Combine Data
+We have these data in a number of different tables, so the next step is to join them together by `GEOID`.
 
-```{r join1940}
-pop1940 %>%
-  unite("tractID", c("TRACTA", "POSTTRCTA")) -> pop1940
+```{r combine-data}
+left_join(stl10, stl11, by = "GEOID") %>%
+  left_join(., stl12, by = "GEOID") %>%
+  left_join(., stl13, by = "GEOID") %>%
+  left_join(., stl14, by = "GEOID") %>%
+  left_join(., stl15, by = "GEOID") %>%
+  left_join(., stl16, by = "GEOID") %>%
+  left_join(., stl17, by = "GEOID") %>%
+  st_transform(crs = 26915) -> tractPop
+
+# clean up enviornment
+rm(stl10, stl11, stl12, stl13, stl14, stl15, stl16, stl17)
 ```
 
-```{r join1950}
-pop1950 %>%
-  unite("tractID", c("TRACTA", "POSTTRCTA")) -> pop1950
+### Interpolate Neighborhood Data
+Next, we'll use the same estimation process we used before on the 2010-2017 data:
+
+```{r interpolate}
+# read neighborhood data, re-project, and interpolate
+st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
+  st_transform(crs = 26915) %>%
+  select(NHD_NUM) %>%
+  filter(NHD_NUM <= 79) %>%
+  aw_interpolate(tid = NHD_NUM, source = tractPop, sid = GEOID, 
+                 weight = "sum", output = "tibble", 
+                 extensive = c("pop10", "pop11", "pop11_m", 
+                               "pop12", "pop12_m", "pop13", "pop13_m", 
+                               "pop14", "pop14_m", "pop15", "pop15_m", 
+                               "pop16", "pop16_m", "pop17", "pop17_m")
+                 ) -> nhoodPop_10_17
+
+# unit test
+expect_equal(aw_verify(source = tractPop, sourceValue = pop10, result = nhoodPop_10_17, resultValue = pop10), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop11, result = nhoodPop_10_17, resultValue = pop11), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop12, result = nhoodPop_10_17, resultValue = pop12), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop13, result = nhoodPop_10_17, resultValue = pop13), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop14, result = nhoodPop_10_17, resultValue = pop14), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop15, result = nhoodPop_10_17, resultValue = pop15), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop16, result = nhoodPop_10_17, resultValue = pop16), TRUE)
+expect_equal(aw_verify(source = tractPop, sourceValue = pop17, result = nhoodPop_10_17, resultValue = pop17), TRUE)
+
+# clean up enviornment
+rm(tractPop)
 ```
 
-```{r join1960}
-pop1960 %>%
-  unite("tractID", c("TRACTA", "POSTTRCTA")) -> pop1960
+## Combine Historical and Modern Census Data
+Next, we'll combine the two data objects to create a single table of census estimates:
+
+```{r join-all-data}
+nhoodPop <- left_join(nhoodPop_40_00, nhoodPop_10_17, by = "NHD_NUM")
+
+# clean up enviornment
+rm(nhoodPop_40_00, nhoodPop_10_17)
 ```
 
-Now, for organizational purposes I want to get rid of the underscores in the new joined variable for tracts. This only applies for the years 1940-1960.
-
-```{r spaces1940}
-pop1940 %>%
-  mutate(tractID=str_replace(tractID, pattern = "_", replacement = "")) -> pop1940
-```
-
-```{r spaces1950}
-pop1950 %>%
-  mutate(tractID=str_replace(tractID, pattern = "_", replacement = "")) -> pop1950
-```
-
-```{r spaces1960}
-pop1960 %>%
-  mutate(tractID=str_replace(tractID, pattern = "_", replacement = "")) -> pop1960
-```
-
-Now that those are joined, the last thing I want to do is to convert all variables to lowercase and specific names for organizational purposes.
-
-```{r case1940}
-pop1940 %>%
-  rename(year = YEAR) %>%
-  rename(countyID = COUNTYA) -> pop1940
-```
-
-```{r case1950}
-pop1950 %>%
-  rename(year = YEAR) %>%
-  rename(countyID = COUNTYA) -> pop1950
-```
-
-```{r case1960}
-pop1960 %>%
-  rename(year = YEAR) %>%
-  rename(countyID = COUNTYA) -> pop1960
-```
-
-```{r case1970}
-pop1970 %>%
-  rename(year = YEAR) %>%
-  rename(countyID = COUNTYA) %>%
-  rename(tractID = TRACTA) -> pop1970
-```
-
-```{r case1980}
-pop1980 %>%
-  rename(year = YEAR) %>%
-  rename(countyID = COUNTYA) %>%
-  rename(tractID = TRACTA) -> pop1980
-```
-
-## Data Export
-Finally, we can export the cleaned census population data into our clean data folder in the project directory.
+## Export
+Finally, we'll write the data to a `.csv` file for future analysis.
 
 ```{r}
-write_csv(pop1940, here("data", "clean", "pop1940clean.csv"))
-write_csv(pop1950, here("data", "clean", "pop1950clean.csv"))
-write_csv(pop1960, here("data", "clean", "pop1960clean.csv"))
-write_csv(pop1970, here("data", "clean", "pop1970clean.csv"))
-write_csv(pop1980, here("data", "clean", "pop1980clean.csv"))
+# write output
+write_csv(nhoodPop, here("data", "clean", "STL_PopByNhood.csv"))
 ```

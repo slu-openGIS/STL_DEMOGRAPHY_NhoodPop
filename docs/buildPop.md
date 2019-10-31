@@ -1,7 +1,7 @@
 Build Population Estimate Data
 ================
 Christopher Prener, Ph.D.
-(January 24, 2019)
+(October 31, 2019)
 
 ## Introduction
 
@@ -58,7 +58,7 @@ library(tigris)        # tiger/line api access
 library(here)          # file path management
 ```
 
-    ## here() starts at /Users/chris/GitHub/Personal/PD_nhoodChange
+    ## here() starts at /Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop
 
 ``` r
 library(testthat)      # unit testing
@@ -98,7 +98,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts40", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl40
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts40' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts40' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts40/STL_DEMOGRAPHICS_tracts40.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 128 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -158,7 +158,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = "pop40") -> nhood40
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -197,7 +197,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts50", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl50
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts50' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts50' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts50/STL_DEMOGRAPHICS_tracts50.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 128 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -242,7 +242,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = "pop50") -> nhood50
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -273,7 +273,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts60", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl60
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts60' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts60' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts60/STL_DEMOGRAPHICS_tracts60.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 128 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -322,7 +322,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = "pop60") -> nhood60
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -349,7 +349,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts70", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl70
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts70' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts70' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts70/STL_DEMOGRAPHICS_tracts70.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 126 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -399,7 +399,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = "pop70") -> nhood70
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -426,7 +426,7 @@ st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts80", "STL_DEMOGRAPHICS_t
   st_transform(crs = 26915) -> stl80
 ```
 
-    ## Reading layer `STL_DEMOGRAPHICS_tracts80' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp' using driver `ESRI Shapefile'
+    ## Reading layer `STL_DEMOGRAPHICS_tracts80' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/STL_DEMOGRAPHICS_tracts80/STL_DEMOGRAPHICS_tracts80.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 113 features and 1 field
     ## geometry type:  POLYGON
     ## dimension:      XY
@@ -475,7 +475,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  extensive = "pop80") -> nhood80
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -493,65 +493,86 @@ rm(pop80, stl80)
 
 ### 1990
 
-We’ll repeat this process for the 1990s era data.
-
-``` r
-# read in 1990 era tract boundaries, re-project
-st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts90", "STL_DEMOGRAPHICS_tracts90.shp"),
-        stringsAsFactors = FALSE) %>%
-  st_transform(crs = 26915) -> stl90
-```
-
-    ## Reading layer `STL_DEMOGRAPHICS_tracts90' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts90/STL_DEMOGRAPHICS_tracts90.shp' using driver `ESRI Shapefile'
-    ## Simple feature collection with 113 features and 1 field
-    ## geometry type:  POLYGON
-    ## dimension:      XY
-    ## bbox:           xmin: -90.32051 ymin: 38.53185 xmax: -90.16641 ymax: 38.77435
-    ## epsg (SRID):    NA
-    ## proj4string:    +proj=longlat +ellps=GRS80 +no_defs
+These data are from the decennial census. Note that the total population
+in neighborhoods is 12 people less than the total population in tracts,
+because Census Tract 1018.99 does not have any geometry.
 
 ``` r
 # read in 1990 census counts, clean
-read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop90.csv")) %>%
-  select(Geo_TRACT, SE_T001_001) %>%
-  rename(TRACTID = Geo_TRACT, 
-         pop90 = SE_T001_001) -> pop90
+get_decennial(geography = "tract", variable = "P0010001", year = 1990, state = 29, county = 510, geometry = TRUE) %>%
+  st_transform(crs = 26915) %>%
+  select(GEOID, value) %>%
+  rename(pop90 = value) -> pop90
 ```
 
-    ## Parsed with column specification:
-    ## cols(
-    ##   Geo_NAME = col_character(),
-    ##   Geo_QName = col_character(),
-    ##   Geo_SUMLEV = col_double(),
-    ##   Geo_GEOCOMP = col_character(),
-    ##   Geo_REGION = col_double(),
-    ##   Geo_DIVISION = col_double(),
-    ##   Geo_FIPS = col_double(),
-    ##   Geo_STATE = col_double(),
-    ##   Geo_COUNTY = col_double(),
-    ##   Geo_TRACT = col_double(),
-    ##   SE_T001_001 = col_double()
-    ## )
+    ## Getting data from the 1990 decennial Census
+
+    ## Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.
+
+    ## 
+      |                                                                       
+      |                                                                 |   0%
+      |                                                                       
+      |===                                                              |   5%
+      |                                                                       
+      |=======                                                          |  10%
+      |                                                                       
+      |==========                                                       |  15%
+      |                                                                       
+      |===========                                                      |  16%
+      |                                                                       
+      |=============                                                    |  20%
+      |                                                                       
+      |=================                                                |  25%
+      |                                                                       
+      |====================                                             |  31%
+      |                                                                       
+      |======================                                           |  33%
+      |                                                                       
+      |=========================                                        |  38%
+      |                                                                       
+      |===========================                                      |  41%
+      |                                                                       
+      |==============================                                   |  46%
+      |                                                                       
+      |=================================                                |  51%
+      |                                                                       
+      |===================================                              |  54%
+      |                                                                       
+      |======================================                           |  59%
+      |                                                                       
+      |========================================                         |  61%
+      |                                                                       
+      |===========================================                      |  67%
+      |                                                                       
+      |===============================================                  |  72%
+      |                                                                       
+      |================================================                 |  74%
+      |                                                                       
+      |====================================================             |  79%
+      |                                                                       
+      |=====================================================            |  82%
+      |                                                                       
+      |=========================================================        |  87%
+      |                                                                       
+      |============================================================     |  92%
+      |                                                                       
+      |==============================================================   |  95%
+      |                                                                       
+      |=================================================================| 100%
 
 ``` r
-# unit test
-pop90 %>% unique_id(TRACTID) -> idUnique
-expect_equal(idUnique, TRUE)
-
-# join data
-stl90 <- left_join(stl90, pop90, by = "TRACTID")
-
 # interpolate to neighborhoods
 st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
   st_transform(crs = 26915) %>%
   select(NHD_NUM) %>%
   filter(NHD_NUM <= 79) %>%
-  aw_interpolate(tid = NHD_NUM, source = stl90, sid = TRACTID, 
+  aw_interpolate(tid = NHD_NUM, source = pop90, sid = GEOID, 
                  weight = "sum", output = "tibble", 
                  extensive = "pop90") -> nhood90
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -561,10 +582,11 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
 
 ``` r
 # unit test
-expect_equal(aw_verify(source = stl90, sourceValue = pop90, result = nhood90, resultValue = pop90), TRUE)
+expect_equal(aw_verify(source = pop90, sourceValue = pop90, result = nhood90, resultValue = pop90), FALSE)
+expect_equal(sum(nhood90$pop90), sum(pop90$pop90)-12)
 
 # clean-up enviornment
-rm(pop90, stl90)
+rm(pop90)
 ```
 
 ### 2000
@@ -572,63 +594,399 @@ rm(pop90, stl90)
 We’ll repeat this process for the 2000s era data.
 
 ``` r
-# read in 2000 era tract boundaries, re-project
-st_read(here("data", "spatial", "STL_DEMOGRAPHICS_tracts00", "STL_DEMOGRAPHICS_tracts00.shp"),
-        stringsAsFactors = FALSE) %>%
-  st_transform(crs = 26915) -> stl00
-```
-
-    ## Reading layer `STL_DEMOGRAPHICS_tracts00' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/STL_DEMOGRAPHICS_tracts00/STL_DEMOGRAPHICS_tracts00.shp' using driver `ESRI Shapefile'
-    ## Simple feature collection with 113 features and 1 field
-    ## geometry type:  POLYGON
-    ## dimension:      XY
-    ## bbox:           xmin: -90.32051 ymin: 38.53185 xmax: -90.16641 ymax: 38.77435
-    ## epsg (SRID):    NA
-    ## proj4string:    +proj=longlat +ellps=GRS80 +no_defs
-
-``` r
 # read in 2000 census counts, clean
-read_csv(here("data", "tabular", "STL_DEMOGRAPHICS_pop00.csv")) %>%
-  select(Geo_TRACT, SE_T001_001) %>%
-  rename(TRACTID = Geo_TRACT, 
-         pop00 = SE_T001_001) -> pop00
+get_decennial(geography = "tract", variable = "P001001", year = 2000, state = 29, county = 510, geometry = TRUE) %>%
+  st_transform(crs = 26915) %>%
+  select(GEOID, value) %>%
+  rename(pop00 = value) -> pop00
 ```
 
-    ## Parsed with column specification:
-    ## cols(
-    ##   Geo_NAME = col_character(),
-    ##   Geo_QName = col_character(),
-    ##   Geo_FIPS = col_double(),
-    ##   Geo_SUMLEV = col_double(),
-    ##   Geo_GEOCOMP = col_character(),
-    ##   Geo_STATECE = col_double(),
-    ##   Geo_STATE = col_double(),
-    ##   Geo_COUNTY = col_double(),
-    ##   Geo_COUNTYSC = col_double(),
-    ##   Geo_COUSUB = col_logical(),
-    ##   Geo_TRACT = col_double(),
-    ##   SE_T001_001 = col_double()
-    ## )
+    ## Getting data from the 2000 decennial Census
+
+    ## Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.
+
+    ## 
+    Downloading: 16 kB     
+    Downloading: 16 kB     
+    Downloading: 25 kB     
+    Downloading: 25 kB     
+    Downloading: 41 kB     
+    Downloading: 41 kB     
+    Downloading: 49 kB     
+    Downloading: 49 kB     
+    Downloading: 49 kB     
+    Downloading: 49 kB     
+    Downloading: 57 kB     
+    Downloading: 57 kB     
+    Downloading: 57 kB     
+    Downloading: 57 kB     
+    Downloading: 65 kB     
+    Downloading: 65 kB     
+    Downloading: 65 kB     
+    Downloading: 65 kB     
+    Downloading: 81 kB     
+    Downloading: 81 kB     
+    Downloading: 89 kB     
+    Downloading: 89 kB     
+    Downloading: 89 kB     
+    Downloading: 89 kB     
+    Downloading: 110 kB     
+    Downloading: 110 kB     
+    Downloading: 110 kB     
+    Downloading: 110 kB     
+    Downloading: 110 kB     
+    Downloading: 110 kB     
+    Downloading: 120 kB     
+    Downloading: 120 kB     
+    Downloading: 120 kB     
+    Downloading: 120 kB     
+    Downloading: 140 kB     
+    Downloading: 140 kB     
+    Downloading: 140 kB     
+    Downloading: 140 kB     
+    Downloading: 150 kB     
+    Downloading: 150 kB     
+    Downloading: 150 kB     
+    Downloading: 150 kB     
+    Downloading: 160 kB     
+    Downloading: 160 kB     
+    Downloading: 170 kB     
+    Downloading: 170 kB     
+    Downloading: 170 kB     
+    Downloading: 170 kB     
+    Downloading: 190 kB     
+    Downloading: 190 kB     
+    Downloading: 190 kB     
+    Downloading: 190 kB     
+    Downloading: 190 kB     
+    Downloading: 190 kB     
+    Downloading: 190 kB     
+    Downloading: 190 kB     
+    Downloading: 200 kB     
+    Downloading: 200 kB     
+    Downloading: 210 kB     
+    Downloading: 210 kB     
+    Downloading: 210 kB     
+    Downloading: 210 kB     
+    Downloading: 230 kB     
+    Downloading: 230 kB     
+    Downloading: 240 kB     
+    Downloading: 240 kB     
+    Downloading: 240 kB     
+    Downloading: 240 kB     
+    Downloading: 240 kB     
+    Downloading: 240 kB     
+    Downloading: 240 kB     
+    Downloading: 240 kB     
+    Downloading: 250 kB     
+    Downloading: 250 kB     
+    Downloading: 250 kB     
+    Downloading: 250 kB     
+    Downloading: 270 kB     
+    Downloading: 270 kB     
+    Downloading: 280 kB     
+    Downloading: 280 kB     
+    Downloading: 280 kB     
+    Downloading: 280 kB     
+    Downloading: 290 kB     
+    Downloading: 290 kB     
+    Downloading: 300 kB     
+    Downloading: 300 kB     
+    Downloading: 300 kB     
+    Downloading: 300 kB     
+    Downloading: 310 kB     
+    Downloading: 310 kB     
+    Downloading: 310 kB     
+    Downloading: 310 kB     
+    Downloading: 320 kB     
+    Downloading: 320 kB     
+    Downloading: 320 kB     
+    Downloading: 320 kB     
+    Downloading: 330 kB     
+    Downloading: 330 kB     
+    Downloading: 340 kB     
+    Downloading: 340 kB     
+    Downloading: 340 kB     
+    Downloading: 340 kB     
+    Downloading: 360 kB     
+    Downloading: 360 kB     
+    Downloading: 360 kB     
+    Downloading: 360 kB     
+    Downloading: 360 kB     
+    Downloading: 360 kB     
+    Downloading: 370 kB     
+    Downloading: 370 kB     
+    Downloading: 370 kB     
+    Downloading: 370 kB     
+    Downloading: 390 kB     
+    Downloading: 390 kB     
+    Downloading: 400 kB     
+    Downloading: 400 kB     
+    Downloading: 420 kB     
+    Downloading: 420 kB     
+    Downloading: 420 kB     
+    Downloading: 420 kB     
+    Downloading: 420 kB     
+    Downloading: 420 kB     
+    Downloading: 420 kB     
+    Downloading: 420 kB     
+    Downloading: 420 kB     
+    Downloading: 420 kB     
+    Downloading: 440 kB     
+    Downloading: 440 kB     
+    Downloading: 440 kB     
+    Downloading: 440 kB     
+    Downloading: 440 kB     
+    Downloading: 440 kB     
+    Downloading: 440 kB     
+    Downloading: 440 kB     
+    Downloading: 450 kB     
+    Downloading: 450 kB     
+    Downloading: 450 kB     
+    Downloading: 450 kB     
+    Downloading: 450 kB     
+    Downloading: 450 kB     
+    Downloading: 450 kB     
+    Downloading: 450 kB     
+    Downloading: 470 kB     
+    Downloading: 470 kB     
+    Downloading: 470 kB     
+    Downloading: 470 kB     
+    Downloading: 470 kB     
+    Downloading: 470 kB     
+    Downloading: 470 kB     
+    Downloading: 470 kB     
+    Downloading: 480 kB     
+    Downloading: 480 kB     
+    Downloading: 480 kB     
+    Downloading: 480 kB     
+    Downloading: 500 kB     
+    Downloading: 500 kB     
+    Downloading: 500 kB     
+    Downloading: 500 kB     
+    Downloading: 500 kB     
+    Downloading: 500 kB     
+    Downloading: 500 kB     
+    Downloading: 500 kB     
+    Downloading: 500 kB     
+    Downloading: 500 kB     
+    Downloading: 520 kB     
+    Downloading: 520 kB     
+    Downloading: 520 kB     
+    Downloading: 520 kB     
+    Downloading: 520 kB     
+    Downloading: 520 kB     
+    Downloading: 520 kB     
+    Downloading: 520 kB     
+    Downloading: 530 kB     
+    Downloading: 530 kB     
+    Downloading: 530 kB     
+    Downloading: 530 kB     
+    Downloading: 550 kB     
+    Downloading: 550 kB     
+    Downloading: 550 kB     
+    Downloading: 550 kB     
+    Downloading: 550 kB     
+    Downloading: 550 kB     
+    Downloading: 550 kB     
+    Downloading: 550 kB     
+    Downloading: 550 kB     
+    Downloading: 550 kB     
+    Downloading: 570 kB     
+    Downloading: 570 kB     
+    Downloading: 580 kB     
+    Downloading: 580 kB     
+    Downloading: 580 kB     
+    Downloading: 580 kB     
+    Downloading: 580 kB     
+    Downloading: 580 kB     
+    Downloading: 590 kB     
+    Downloading: 590 kB     
+    Downloading: 600 kB     
+    Downloading: 600 kB     
+    Downloading: 600 kB     
+    Downloading: 600 kB     
+    Downloading: 600 kB     
+    Downloading: 600 kB     
+    Downloading: 610 kB     
+    Downloading: 610 kB     
+    Downloading: 610 kB     
+    Downloading: 610 kB     
+    Downloading: 620 kB     
+    Downloading: 620 kB     
+    Downloading: 620 kB     
+    Downloading: 620 kB     
+    Downloading: 630 kB     
+    Downloading: 630 kB     
+    Downloading: 640 kB     
+    Downloading: 640 kB     
+    Downloading: 640 kB     
+    Downloading: 640 kB     
+    Downloading: 640 kB     
+    Downloading: 640 kB     
+    Downloading: 660 kB     
+    Downloading: 660 kB     
+    Downloading: 660 kB     
+    Downloading: 660 kB     
+    Downloading: 660 kB     
+    Downloading: 660 kB     
+    Downloading: 660 kB     
+    Downloading: 660 kB     
+    Downloading: 680 kB     
+    Downloading: 680 kB     
+    Downloading: 680 kB     
+    Downloading: 680 kB     
+    Downloading: 680 kB     
+    Downloading: 680 kB     
+    Downloading: 680 kB     
+    Downloading: 680 kB     
+    Downloading: 680 kB     
+    Downloading: 680 kB     
+    Downloading: 700 kB     
+    Downloading: 700 kB     
+    Downloading: 700 kB     
+    Downloading: 700 kB     
+    Downloading: 700 kB     
+    Downloading: 700 kB     
+    Downloading: 700 kB     
+    Downloading: 700 kB     
+    Downloading: 700 kB     
+    Downloading: 700 kB     
+    Downloading: 710 kB     
+    Downloading: 710 kB     
+    Downloading: 720 kB     
+    Downloading: 720 kB     
+    Downloading: 720 kB     
+    Downloading: 720 kB     
+    Downloading: 720 kB     
+    Downloading: 720 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 740 kB     
+    Downloading: 760 kB     
+    Downloading: 760 kB     
+    Downloading: 760 kB     
+    Downloading: 760 kB     
+    Downloading: 760 kB     
+    Downloading: 760 kB     
+    Downloading: 760 kB     
+    Downloading: 760 kB     
+    Downloading: 760 kB     
+    Downloading: 760 kB     
+    Downloading: 780 kB     
+    Downloading: 780 kB     
+    Downloading: 790 kB     
+    Downloading: 790 kB     
+    Downloading: 790 kB     
+    Downloading: 790 kB     
+    Downloading: 790 kB     
+    Downloading: 790 kB     
+    Downloading: 790 kB     
+    Downloading: 790 kB     
+    Downloading: 790 kB     
+    Downloading: 790 kB     
+    Downloading: 810 kB     
+    Downloading: 810 kB     
+    Downloading: 810 kB     
+    Downloading: 810 kB     
+    Downloading: 810 kB     
+    Downloading: 810 kB     
+    Downloading: 810 kB     
+    Downloading: 810 kB     
+    Downloading: 810 kB     
+    Downloading: 810 kB     
+    Downloading: 830 kB     
+    Downloading: 830 kB     
+    Downloading: 830 kB     
+    Downloading: 830 kB     
+    Downloading: 830 kB     
+    Downloading: 830 kB     
+    Downloading: 830 kB     
+    Downloading: 830 kB     
+    Downloading: 840 kB     
+    Downloading: 840 kB     
+    Downloading: 840 kB     
+    Downloading: 840 kB     
+    Downloading: 860 kB     
+    Downloading: 860 kB     
+    Downloading: 860 kB     
+    Downloading: 860 kB     
+    Downloading: 870 kB     
+    Downloading: 870 kB     
+    Downloading: 870 kB     
+    Downloading: 870 kB     
+    Downloading: 880 kB     
+    Downloading: 880 kB     
+    Downloading: 880 kB     
+    Downloading: 880 kB     
+    Downloading: 880 kB     
+    Downloading: 880 kB     
+    Downloading: 880 kB     
+    Downloading: 880 kB     
+    Downloading: 900 kB     
+    Downloading: 900 kB     
+    Downloading: 910 kB     
+    Downloading: 910 kB     
+    Downloading: 910 kB     
+    Downloading: 910 kB     
+    Downloading: 910 kB     
+    Downloading: 910 kB     
+    Downloading: 920 kB     
+    Downloading: 920 kB     
+    Downloading: 930 kB     
+    Downloading: 930 kB     
+    Downloading: 930 kB     
+    Downloading: 930 kB     
+    Downloading: 930 kB     
+    Downloading: 930 kB     
+    Downloading: 930 kB     
+    Downloading: 930 kB     
+    Downloading: 950 kB     
+    Downloading: 950 kB     
+    Downloading: 960 kB     
+    Downloading: 960 kB     
+    Downloading: 960 kB     
+    Downloading: 960 kB     
+    Downloading: 960 kB     
+    Downloading: 960 kB     
+    Downloading: 970 kB     
+    Downloading: 970 kB     
+    Downloading: 980 kB     
+    Downloading: 980 kB     
+    Downloading: 980 kB     
+    Downloading: 980 kB     
+    Downloading: 990 kB     
+    Downloading: 990 kB     
+    Downloading: 990 kB     
+    Downloading: 990 kB     
+    Downloading: 1 MB     
+    Downloading: 1 MB     
+    Downloading: 1 MB     
+    Downloading: 1 MB     
+    Downloading: 1 MB     
+    Downloading: 1 MB
 
 ``` r
-# unit test
-pop00 %>% unique_id(TRACTID) -> idUnique
-expect_equal(idUnique, TRUE)
-
-# join data
-stl00 <- left_join(stl00, pop00, by = "TRACTID")
-
 # interpolate to neighborhoods
 st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors = FALSE) %>%
   st_transform(crs = 26915) %>%
   select(NHD_NUM) %>%
   filter(NHD_NUM <= 79) %>%
-  aw_interpolate(tid = NHD_NUM, source = stl00, sid = TRACTID, 
+  aw_interpolate(tid = NHD_NUM, source = pop00, sid = GEOID, 
                  weight = "sum", output = "tibble", 
                  extensive = "pop00") -> nhood00
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
@@ -638,10 +996,10 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
 
 ``` r
 # unit test
-expect_equal(aw_verify(source = stl00, sourceValue = pop00, result = nhood00, resultValue = pop00), TRUE)
+expect_equal(aw_verify(source = pop00, sourceValue = pop00, result = nhood00, resultValue = pop00), TRUE)
 
 # clean-up enviornment
-rm(pop00, stl00)
+rm(pop00)
 ```
 
 ### Combine 1940s-2000s Data
@@ -818,7 +1176,7 @@ st_read(here("data", "spatial", "nhood", "BND_Nhd88_cw.shp"), stringsAsFactors =
                  ) -> nhoodPop_10_17
 ```
 
-    ## Reading layer `BND_Nhd88_cw' from data source `/Users/chris/GitHub/Personal/PD_nhoodChange/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
+    ## Reading layer `BND_Nhd88_cw' from data source `/Users/prenercg/GitHub/STL_DEMOGRAPHY_NhoodPop/data/spatial/nhood/BND_Nhd88_cw.shp' using driver `ESRI Shapefile'
     ## Simple feature collection with 88 features and 6 fields
     ## geometry type:  MULTIPOLYGON
     ## dimension:      XY
