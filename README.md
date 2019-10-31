@@ -1,6 +1,6 @@
 # STL_DEMOGRAPHY_NhoodPop
 
-This repository contains code for creating a data set originally requested by Janelle O'Day at the St. Louis Post-Dispatch, containing both total population and race by neighborhood in St. Louis between 1940 and 2017. These use the "modern" neighborhood boundaries, which have only been in use for the last few decades.
+This repository contains code for creating a data set originally requested by Janelle O'Dae at the St. Louis Post-Dispatch, containing both total population and race by neighborhood in St. Louis between 1940 and 2017. These use the "modern" neighborhood boundaries, which have only been in use for the last few decades.
 
 ## Background
 Census tracts, which are commonly used units geographic entities in demography and other social sciences, are often used as proxies for "neighborhoods" despite the fact that they rarely map onto real-world neighborhood boundaries (either as they are subjectively understood or objectively delineated). They also change each decade when the U.S. Census Bureau administers the decennial census. 
