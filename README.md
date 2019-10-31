@@ -23,6 +23,15 @@ The same process was used to create counts for white and black residents by neig
 
 The two data frames, one for the historical data (1940-2000) and one for the modern data (2010-2017) were then combined and written to the file found at `data/clean/STL_PopByNhood.csv`. All `R` code is found in `docs/buildPop.Rmd` and `docs/buildRace.Rmd`. All original source data can be found in `data/spatial/` and `data/tabular`.
 
+## Results
+### Data
+This repository contains two clean neighborhood-level data sets - one for population and one for race. These can be found in `data/clean/`.
+
+### Data Visualizations
+This repository also contains maps of both population density and percent African American by year for 1950-2010 as well as 2017. These are found in `results/`. This is an example map, showing the percentage of non-white residents by neighborhood in 1940:
+
+![](https://raw.githubusercontent.com/chris-prener/STL_DEMOGRAPHY_NhoodPop/master/results/Map_PctBlack/map_1940_nonwhite.png?token=ADHXHOREPJBGPH6PT7KAKFC5XM6W6)
+
 ## Notes
 
 ### Non-Integer Data
