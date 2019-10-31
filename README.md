@@ -21,7 +21,7 @@ Data for 2010 through 2017 were downloaded and cleaned one at a time, and then c
 
 The same process was used to create counts for white and black residents by neighborhood. Note that, in 1940, the Census counted only white and non-white residents.
 
-The two data frames, one for the historical data (1940-2000) and one for the modern data (2010-2017) were then combined and written to the file found at `data/clean/STL_PopByNhood.csv`. All `R` code is found in `docs/buildPop.Rmd` and `docs/buildRace.Rmd`. All original source data can be found in `data/spatial/` and `data/tabular`.
+The two data frames, one for the historical data (1940-2000) and one for the modern data (2010-2017) were then combined and written. All `R` code is found in `docs/buildPop.Rmd` and `docs/buildRace.Rmd`. All original source data can be found in `data/spatial/` and `data/tabular`.
 
 ## Results
 ### Data
